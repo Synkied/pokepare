@@ -1,0 +1,7 @@
+.pytest_cache
+__pycache__/
+pokepare.sublime-project
+pokepare.sublime-workspace
+settings/production.py
+staticfiles
+node_modules
