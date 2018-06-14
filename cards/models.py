@@ -1,17 +1,29 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
 
 class Card(models.Model):
     name = models.CharField(max_length=500)
-    description = models.CharField(max_length=255)
-    card_type = models.CharField(max_length=50)
-    version = models.CharField(max_length=50)
-    number = models.CharField(max_length=20)
-    card_set = models.CharField(max_length=255)
-    condition = models.CharField(max_length=50)
-    edition = models.CharField(max_length=255)
-    year = models.PositiveIntegerField()
-    language = models.CharField(max_length=5)
-    url = models.URLField()
+    description = models.CharField(max_length=255, blank=True, null=True)
+    card_type = models.CharField(max_length=50, blank=True, null=True)
+    version = models.CharField(max_length=50, blank=True, null=True)
+    number = models.CharField(max_length=20, blank=True, null=True)
+    card_set = models.CharField(max_length=255, blank=True, null=True)
+    condition = models.CharField(max_length=50, blank=True, null=True)
+    edition = models.CharField(max_length=255, blank=True, null=True)
+    year = models.PositiveIntegerField(blank=True, null=True)
+    language = models.CharField(max_length=5, blank=True, null=True)
+    url = models.URLField(blank=True, null=True)
+
+    created_at = models.DateTimeField(
+        default=timezone.now,
+        editable=False,
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('created_at',)

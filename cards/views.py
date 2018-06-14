@@ -1,11 +1,46 @@
+from django.views import View
 from django.shortcuts import render
-from django.views.generic import View
+from rest_framework import viewsets
+from rest_framework import permissions
+
+from .serializers import CardSerializer
+from .models import Card
 
 # Create your views here.
 
 
-class CardsView(View):
+class CardViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows cards to be viewed or edited.
+    """
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class CardView(View):
+
     template_name = "cards.html"
 
     def get(self, request):
-        return render(request, self.template_name)
+
+        cards = Card.objects.all()
+
+        context = {
+            "cards": cards,
+        }
+
+        return render(request, self.template_name, context)
+
+
+class CardViewDetail(View):
+
+    template_name = "cards.html"
+
+    def get(self, request, pk):
+
+        context = {
+
+        }
+
+        return render(request, self.template_name, context)

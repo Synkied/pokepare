@@ -6,5 +6,6 @@ from . import views
 app_name = "cards"
 
 urlpatterns = [
-    path('', views.CardsView.as_view(), name="cards")
+    path('', views.CardView.as_view(), name="card_list"),
+    path('<int:pk>', views.CardViewDetail.as_view(), name="card_detail"),
 ]
