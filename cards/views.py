@@ -16,6 +16,7 @@ class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    lookup_field = 'name'
 
 
 class CardView(View):
@@ -40,7 +41,6 @@ class CardViewDetail(View):
     def get(self, request, pk):
 
         context = {
-
         }
 
         return render(request, self.template_name, context)

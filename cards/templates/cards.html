@@ -1,13 +1,14 @@
+{% load render_bundle from webpack_loader %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PokePare</title>
+    <title>Django - Vue</title>
+
 </head>
 <body>
-    <div id="app">
-        {% for card in cards %}
-            <p>{{ card.name }}</p>
-        {% endfor %}
-    </div>
+<div id="app">
+</div>
+{% render_bundle 'app' %}
 </body>
 </html>

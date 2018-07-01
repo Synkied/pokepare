@@ -18,14 +18,7 @@ from django.contrib import admin
 from django.conf.urls import include
 from django.views.generic import TemplateView
 from django.urls import path
-from rest_framework import routers
-
-from cards import views as card_views
-
-
-router = routers.DefaultRouter()
-router.register(r'cards', card_views.CardViewSet)
-
+from .routers import router
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8080',
+)
+
 
 # Application definition
 
@@ -40,11 +44,13 @@ INSTALLED_APPS = [
     'cards',
     'webpack_loader',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -128,12 +134,12 @@ STATIC_URL = '/static/'
 
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'assets'),
+    os.path.join(BASE_DIR, 'static'),
 )
 
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'bundles/',
+        'BUNDLE_DIR_NAME': '',
         'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
     }
 }
