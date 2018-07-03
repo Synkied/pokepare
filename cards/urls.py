@@ -7,5 +7,5 @@ app_name = "cards"
 
 urlpatterns = [
     path('', views.CardView.as_view(), name="card_list"),
-    path('<int:pk>', views.CardViewDetail.as_view(), name="card_detail"),
+    path('<str:name>', views.CardViewDetail.as_view(), name="card_detail"),
 ]

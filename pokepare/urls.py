@@ -25,4 +25,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('cards/', include('cards.urls'), name="cards"),
+    path('pokemons/', include('pokemons.urls'), name="pokemons"),
 ]

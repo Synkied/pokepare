@@ -1,5 +1,5 @@
 <template>
-  <div id="card">
+  <div id="cards">
     <h1>{{ msg }}</h1>
           <fieldset>
           <input :class="{'bounce animated': animated}" @animationend="animated = false"
@@ -8,13 +8,16 @@
         <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
       </fieldset>
     <div>
-      <template v-if="status === 200">
+      <template v-if="status === 200 && user_query == null">
+        <p>{{ cards }}</p>
+      </template>
+      <template v-if="status === 200 && user_query != null">
         <p v-html="card_name" class="mt-1 card-text text-center"></p>
         <p v-html="card_desc" class="mt-1 card-text text-center"></p>
         <img :src="card_img" alt="card image">
       </template>
-      <template v-else>
-        <p>No card found for this query.</p>
+      <template v-else-if="status === 'NO_QUERY'">
+        <p>Please enter a correct query.</p>
       </template>
     </div>
   </div>
@@ -35,12 +38,13 @@ function capitalize (s) {
 export default {
   data () {
     return {
-      user_query: '',
-      msg: 'PokePare',
+      status: '',
+      cards: '',
       card_name: '',
       card_desc: '',
       card_img: '',
-      status: '',
+      user_query: null,
+      msg: 'PokePare',
       animated: false
     }
   },
@@ -75,6 +79,19 @@ export default {
   },
   components: {
     'rise-loader': RiseLoader
+  },
+  mounted () {
+    var thisVm = this
+    const path = '/api/cards/'
+    loadProgressBar()
+    axios.get(path).then(response => {
+      if (response.data) {
+        console.log(response.status)
+        console.log(response.data)
+        thisVm.cards = response.data
+        thisVm.status = response.status
+      }
+    })
   }
 }
 </script>

@@ -1,14 +1,22 @@
 <template>
   <div id="app">
+    <app-header></app-header>
     <!-- Hey! -->
-    <img src="./assets/logo.png">
     <router-view/>
+    <app-footer></app-footer>
   </div>
 </template>
 
 <script>
+import Header from './components/Shared/Header.vue'
+import Footer from './components/Shared/Footer.vue'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    'app-header': Header,
+    'app-footer': Footer
+  }
 }
 </script>
 

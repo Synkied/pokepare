@@ -2,6 +2,7 @@ from django.views import View
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import CardSerializer
 from .models import Card
@@ -16,7 +17,8 @@ class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    lookup_field = 'name'
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = '__all__'
 
 
 class CardView(View):
@@ -38,7 +40,7 @@ class CardViewDetail(View):
 
     template_name = "cards.html"
 
-    def get(self, request, pk):
+    def get(self, request, name):
 
         context = {
         }
