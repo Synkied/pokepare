@@ -1,5 +1,5 @@
 <template>
-  <div id="cards">
+  <div id="pokemons">
     <h1>{{ msg }}</h1>
           <fieldset>
           <input :class="{'bounce animated': animated}" @animationend="animated = false"
@@ -9,7 +9,7 @@
       </fieldset>
     <div>
       <template v-if="!user_query">
-        <p>{{ cards }}</p>
+        <p>{{ pokemons }}</p>
       </template>
       <template v-else-if="user_query && data > 0">
         <ul>
@@ -45,7 +45,7 @@ export default {
     return {
       data: null,
       status: '',
-      cards: '',
+      pokemons: '',
       pokemon_names: [],
       pokemon_imgs: [],
       user_query: null,
@@ -110,13 +110,13 @@ export default {
   },
   mounted () {
     var thisVm = this
-    const path = '/api/cards/'
+    const path = '/api/pokemons/'
     loadProgressBar()
     axios.get(path).then(response => {
       if (response.data) {
         console.log(response.status)
         console.log(response.data)
-        thisVm.cards = response.data
+        thisVm.pokemons = response.data
         thisVm.status = response.status
       }
     })

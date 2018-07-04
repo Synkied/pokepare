@@ -31,21 +31,19 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('All pokemons deleted!'))
 
     def import_pokemons(self):
-        url = 'http://pokeapi.co/api/v2/pokemon?limit=1'
+        url = 'http://pokeapi.co/api/v2/pokemon?limit=10'
 
         res = requests.get(url)
 
         print(res.json())
+        for index, pokemon in enumerate(res.json()["results"]):
+            pokemon = requests.get(res.json()["results"][index]['url'])
+            name = pokemon.json()['name'].title()
+            pokemon_id = pokemon.json()['id']
+            front_image = pokemon.json()['sprites']['front_default']
 
-        pokemon = requests.get(res.json()["results"][0]['url'])
-        name = pokemon.json()['name'].title()
-        pokemon_id = pokemon.json()['id']
-        front_image = pokemon.json()['sprites']['front_default']
-
-        my_pokemon = Pokemon.objects.create(
-            name=name,
-            id=pokemon_id,
-            front_image=front_image
-        )
-
-        print(name, pokemon_id, front_image)
+            my_pokemon = Pokemon.objects.create(
+                name=name,
+                id=pokemon_id,
+                front_image=front_image
+            )
