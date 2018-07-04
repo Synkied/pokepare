@@ -20,7 +20,13 @@ class Card(models.Model):
     language = models.CharField(max_length=5, blank=True, null=True)
     url = models.URLField(blank=True, null=True)
     image = models.URLField(default=settings.CARD_PLACEHOLDER)
-    pokemon = models.ForeignKey(Pokemon, on_delete=models.CASCADE, blank=True, null=True)
+    pokemon = models.ForeignKey(
+        Pokemon,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name='cards',
+    )
 
     created_at = models.DateTimeField(
         default=timezone.now,

@@ -2,6 +2,7 @@ from django.views import View
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import PokemonSerializer
 from .models import Pokemon
@@ -16,7 +17,8 @@ class PokemonViewSet(viewsets.ModelViewSet):
     queryset = Pokemon.objects.all()
     serializer_class = PokemonSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    lookup_field = 'name'
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = '__all__'
 
 
 class PokemonView(View):

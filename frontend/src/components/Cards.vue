@@ -8,16 +8,16 @@
         <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
       </fieldset>
     <div>
-      <template v-if="status === 200 && user_query == null">
+      <template v-if="!user_query">
         <p>{{ cards }}</p>
       </template>
-      <template v-if="status === 200 && user_query != null">
+      <template v-else-if="user_query && data > 0">
         <p v-html="card_name" class="mt-1 card-text text-center"></p>
         <p v-html="card_desc" class="mt-1 card-text text-center"></p>
         <img :src="card_img" alt="card image">
       </template>
-      <template v-else-if="status === 'NO_QUERY'">
-        <p>Please enter a correct query.</p>
+      <template v-else>
+        <p> {{ error_msg }}</p>
       </template>
     </div>
   </div>
@@ -38,6 +38,7 @@ function capitalize (s) {
 export default {
   data () {
     return {
+      data: null,
       status: '',
       cards: '',
       card_name: '',
@@ -45,7 +46,8 @@ export default {
       card_img: '',
       user_query: null,
       msg: 'PokePare',
-      animated: false
+      animated: false,
+      error_msg: null
     }
   },
   methods: {
@@ -53,23 +55,42 @@ export default {
       var thisVm = this
       /* axios to ajax the query */
       if (thisVm.user_query) {
-        const path = '/api/cards/' + capitalize(encodeURI(thisVm.user_query))
+        const path = '/api/cards/?name=' + capitalize(encodeURI(thisVm.user_query))
         loadProgressBar()
         axios.get(path).then(response => {
-          if (response.data) {
+          thisVm.data = response.data.length
+          if (response.data.length > 0) {
             console.log(response.data) // ex.: { user: 'Your User'}
-            console.log(response.status)
-            thisVm.card_name = capitalize(response.data.name)
-            thisVm.card_desc = capitalize(response.data.description)
-            thisVm.card_img = response.data.image
+            console.log(response.status) // ex.: 200
+            thisVm.card_name = capitalize(response.data[0].name)
+            thisVm.card_desc = capitalize(response.data[0].description)
+            thisVm.card_img = response.data[0].image
             thisVm.status = response.status
+          } else {
+            thisVm.error_msg = 'No result found for this query.'
           }
         })
           .catch(function (error) {
-            console.log(error)
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              console.log(error.response.data)
+              console.log(error.response.status)
+              console.log(error.response.headers)
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser
+              // and an instance of http.ClientRequest in node.js
+              console.log(error.request)
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              console.log('Error', error.message)
+            }
+            console.log(error.config)
           })
       } else {
         thisVm.status = 'NO_QUERY'
+        thisVm.error_msg = 'Please enter a correct query.'
       }
     },
     animate () {

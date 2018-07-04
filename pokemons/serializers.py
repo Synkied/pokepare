@@ -1,13 +1,15 @@
 from rest_framework import serializers
 from .models import Pokemon
+from cards.serializers import CardSerializer
 
 
 class PokemonSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
     url = serializers.HyperlinkedIdentityField(
         view_name='pokemons:pokemon_detail',
-        lookup_field='pk',
+        lookup_field='name',
     )
+    cards = CardSerializer(many=True, read_only=True)
 
     class Meta:
         model = Pokemon

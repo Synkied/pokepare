@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cards',
     'pokemons',
+    'pokepare',
     'webpack_loader',
     'rest_framework',
     'corsheaders',

@@ -19,13 +19,13 @@
     margin: auto;
     margin-top: 100px;
     padding: 15px;
-    color: #fff;
+    color: #000;
     text-align: right;
     font-size: 16px;
   }
 
   footer a {
-    color: #fff;
+    color: #000;
     text-decoration: none;
   }
 

@@ -12,9 +12,14 @@
         <p>{{ cards }}</p>
       </template>
       <template v-else-if="user_query && data > 0">
-        <p v-html="card_name" class="mt-1 card-text text-center"></p>
-        <p v-html="card_desc" class="mt-1 card-text text-center"></p>
-        <img :src="card_img" alt="card image">
+        <ul>
+          <li v-for="pokemon_name in pokemon_names" :key="pokemon_name.id">
+            {{ pokemon_name }}
+          </li>
+          <li v-for="pokemon_img in pokemon_imgs" :key="pokemon_img.id">
+            <img :src="pokemon_img" alt="">
+          </li>
+        </ul>
       </template>
       <template v-else>
         <p> {{ error_msg }}</p>
@@ -41,9 +46,8 @@ export default {
       data: null,
       status: '',
       cards: '',
-      card_name: '',
-      card_desc: '',
-      card_img: '',
+      pokemon_names: [],
+      pokemon_imgs: [],
       user_query: null,
       msg: 'PokePare',
       animated: false,
@@ -55,17 +59,20 @@ export default {
       var thisVm = this
       /* axios to ajax the query */
       if (thisVm.user_query) {
-        const path = '/api/cards/?name=' + capitalize(encodeURI(thisVm.user_query))
+        const path = '/api/pokemons/?name=' + capitalize(encodeURI(thisVm.user_query))
         loadProgressBar()
         axios.get(path).then(response => {
           thisVm.data = response.data.length
           if (response.data.length > 0) {
             console.log(response.data) // ex.: { user: 'Your User'}
             console.log(response.status) // ex.: 200
-            thisVm.card_name = capitalize(response.data[0].name)
-            thisVm.card_desc = capitalize(response.data[0].description)
-            thisVm.card_img = response.data[0].image
             thisVm.status = response.status
+            thisVm.pokemon_names = [] // reset lists
+            thisVm.pokemon_imgs = []
+            for (var i = 0; i < response.data.length; i++) {
+              thisVm.pokemon_names.push(capitalize(response.data[i].name))
+              thisVm.pokemon_imgs.push(response.data[i].front_image)
+            }
           } else {
             thisVm.error_msg = 'No result found for this query.'
           }

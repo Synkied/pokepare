@@ -3,7 +3,8 @@ import Router from 'vue-router'
 
 const routerOptions = [
   /* what to render depending on the url passed */
-  { path: '/cards/', component: 'Cards' }
+  { path: '/cards/', component: 'Cards' },
+  { path: '/pokemons/', component: 'Pokemons' }
 ]
 
 const routes = routerOptions.map(route => {
@@ -11,7 +12,6 @@ const routes = routerOptions.map(route => {
     ...route,
     component: () => import(`@/components/${route.component}.vue`)
     /* searches for the component to render depending on the url passed */
-    /* here, our site is a SPA, so every argument passed to the url will render NotFound */
   }
 })
 
