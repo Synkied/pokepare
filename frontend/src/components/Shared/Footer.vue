@@ -4,8 +4,9 @@
 <template>
   <footer>
     <div class="container">
+      <span>This website is not produced, endorsed, supported, or affiliated with Nintendo or The Pokémon Company. </span>
       <span>Quentin Lathière 2018.</span>
-      <a href="https://github.com/Synkied/OC_Projet-7-vue">Github</a>
+      <a href="https://github.com/Synkied/pokepare">Github</a>
     </div>
   </footer>
 </template>
@@ -19,13 +20,13 @@
     margin: auto;
     margin-top: 100px;
     padding: 15px;
-    color: #000;
+    color: #fff;
     text-align: right;
     font-size: 16px;
   }
 
   footer a {
-    color: #000;
+    color: #fff;
     text-decoration: none;
   }
 
