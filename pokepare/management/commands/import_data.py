@@ -50,7 +50,7 @@ class Command(BaseCommand):
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
 
-        url = 'http://pokeapi.co/api/v2/pokemon?limit=1000'
+        url = 'http://pokeapi.co/api/v2/pokemon?limit=151'
         res = requests.get(url)
         count = 0
 
@@ -72,10 +72,13 @@ class Command(BaseCommand):
 
             pokemons.append(pokemon)
 
+            self.stdout.write(self.style.WARNING(name, 'fetched...'))
+
         for pokemon in pokemons:
             my_pokemon = Pokemon.objects.create(
                 **pokemon
             )
+            self.stdout.write(self.style.WARNING(pokemon["name"], 'imported...'))
 
         self.stdout.write(self.style.SUCCESS(str(count) + ' Pokemons imported!'))
 

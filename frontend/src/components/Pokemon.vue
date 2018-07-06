@@ -1,5 +1,5 @@
 <template>
-  <div id="cards" class="container">
+  <div id="pokemons" class="container">
     <h1>{{ msg }}</h1>
       <fieldset>
         <input :class="{'bounce animated': animated}" @animationend="animated = false"
@@ -11,27 +11,22 @@
       <template v-if="!user_query">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-xl-4 col-lg-6 col-md-6 col-xs-1 mt-3"  v-for="card in cards.slice(0, 12)" :key="card.id">
-              <ul>
-                <li class="ns-li mb-2">
-                  <a :href="card.url"><img :src="card.image" alt=""></a>
-                </li>
-                <li class="ns-li">
-                  <p><a :href="card.url">{{ card.name }}</a></p>
-                </li>
-              </ul>
+            <div v-for="pokemon in pokemons" :key="pokemon.id">
+              {{ pokemon }}
+              <li class="ns-li">
+                  <img :src="pokemon.front_image" alt="">
+              </li>
+              <li class="ns-li">
+                <p>{{ pokemon.name }}</p>
+              </li>
+              <li class="ns-li">
+                {{ pokemon.cards }}
+              </li>
             </div>
           </div>
         </div>
       </template>
-      <template v-else-if="user_query && data > 0">
-        <p v-html="card_name" class="mt-1 card-text text-center"></p>
-        <p v-html="card_desc" class="mt-1 card-text text-center"></p>
-        <img :src="card_img" alt="card image">
-      </template>
-      <template v-else>
-        <p> {{ error_msg }}</p>
-      </template>
+
     </div>
   </div>
 </template>
@@ -40,7 +35,6 @@
 /* Imports */
 import axios from 'axios'
 import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
-import SearchBar from './SearchBar'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
@@ -52,14 +46,11 @@ function capitalize (s) {
 export default {
   data () {
     return {
-      data: null,
+      data_count: null,
       status: '',
-      cards: '',
-      card_name: '',
-      card_desc: '',
-      card_img: '',
+      pokemons: '',
       user_query: null,
-      msg: 'Search a pokemon by text or image',
+      msg: 'Search a pokemon or a card',
       animated: false,
       error_msg: null
     }
@@ -69,17 +60,22 @@ export default {
       var thisVm = this
       /* axios to ajax the query */
       if (thisVm.user_query) {
-        const path = '/api/cards/?name=' + capitalize(encodeURI(thisVm.user_query))
+        const path = '/api/pokemons/?name=' + capitalize(encodeURI(thisVm.user_query))
         loadProgressBar()
         axios.get(path).then(response => {
-          thisVm.data = response.data.length
-          if (response.data.length > 0) {
+          thisVm.data_count = response.data.count
+          if (response.data) {
             console.log(response.data) // ex.: { user: 'Your User'}
             console.log(response.status) // ex.: 200
-            thisVm.card_name = capitalize(response.data[0].name)
-            thisVm.card_desc = capitalize(response.data[0].description)
-            thisVm.card_img = response.data[0].image
             thisVm.status = response.status
+            thisVm.pokemon_names = [] // reset lists
+            thisVm.pokemon_imgs = []
+            for (var i = 0; i < response.data.results.length; i++) {
+              thisVm.pokemon_names.push(capitalize(response.data.results[i].name))
+              thisVm.pokemon_imgs.push(response.data.results[i].front_image)
+              thisVm.pokemon_cards.push(response.data.results[i].cards)
+              console.log(this.$route.params)
+            }
           } else {
             thisVm.error_msg = 'No result found for this query.'
           }
@@ -113,18 +109,20 @@ export default {
     }
   },
   components: {
-    'rise-loader': RiseLoader,
-    'search-bar': SearchBar
+    'rise-loader': RiseLoader
   },
   mounted () {
     var thisVm = this
-    const path = '/api/cards/'
+    if (thisVm.$route.params) {
+      thisVm.pokemon_name = thisVm.$route.params.name
+    }
+    const path = '/api/pokemons/?name=' + capitalize(encodeURI(thisVm.pokemon_name))
     loadProgressBar()
     axios.get(path).then(response => {
       if (response.data) {
         console.log(response.status)
-        console.log(response.data)
-        thisVm.cards = response.data.results
+        console.log(response.data.results)
+        thisVm.pokemons = response.data.results
         thisVm.status = response.status
       }
     })
@@ -162,21 +160,21 @@ export default {
   }
 
   .ns-li p {
-    font-size: 2vh;
+    font-size: 1.1rem;
   }
 
   h1{
     text-align: center;
     font-family: 'Oxygen', sans-serif;
     font-weight: bold;
-    font-size: 4vh;
+    font-size: 2rem;
     text-transform: uppercase;
     color: #fff;
   }
 
   h2{
     text-align: center;
-    font-size: 3vh;
+    font-size: 1.5rem;
     color: #fff;
   }
 

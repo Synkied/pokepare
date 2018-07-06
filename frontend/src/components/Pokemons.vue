@@ -1,20 +1,33 @@
 <template>
   <div id="pokemons" class="container">
     <h1>{{ msg }}</h1>
-          <fieldset>
-          <input :class="{'bounce animated': animated}" @animationend="animated = false"
+      <fieldset>
+        <input :class="{'bounce animated': animated}" @animationend="animated = false"
             @keyup.esc="user_query=''" @keyup.enter="[lookupGmapsWikiAPI(), animate()]"
             v-model="user_query" name="user_query" type="text" class="form-control" placeholder="Enter a Pokemon name">
         <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
       </fieldset>
     <div>
       <template v-if="!user_query">
-        <p>{{ pokemons }}</p>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-xl-4 col-lg-6 col-md-6 col-xs-1 mt-3"  v-for="pokemon in pokemons.slice(0, 12)" :key="pokemon.id">
+              <ul>
+                <li class="ns-li">
+                  <a :href="pokemon.url"><img :src="pokemon.front_image" alt=""></a>
+                </li>
+                <li class="ns-li">
+                  <p><a :href="pokemon.url">{{ pokemon.name }}</a></p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </template>
       <template v-else-if="user_query && data_count > 0">
         <ul>
           <li class="ns-li" v-for="pokemon_name in pokemon_names" :key="pokemon_name.id">
-            {{ pokemon_name }}
+            <a :href="pokemon.url">{{ pokemon_name }}</a>
           </li>
           <li class="ns-li" v-for="pokemon_img in pokemon_imgs" :key="pokemon_img.id">
             <img :src="pokemon_img" alt="">
@@ -50,7 +63,7 @@ export default {
       pokemon_imgs: [],
       pokemon_cards: [],
       user_query: null,
-      msg: 'Search a pokemon by text or image.',
+      msg: 'Search a pokemon by text or image',
       animated: false,
       error_msg: null
     }
@@ -118,7 +131,7 @@ export default {
       if (response.data) {
         console.log(response.status)
         console.log(response.data)
-        thisVm.pokemons = response.data
+        thisVm.pokemons = response.data.results
         thisVm.status = response.status
       }
     })
@@ -141,20 +154,36 @@ export default {
 
   .ns-li {
     list-style-type: none;
+    font-family: "Oxygen", sans-serif;
+    font-weight: 700;
+  }
+
+  .ns-li a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .ns-li a:hover {
+    color: #0e5c59;
+    text-decoration: none;
+  }
+
+  .ns-li p {
+    font-size: 1.1rem;
   }
 
   h1{
     text-align: center;
     font-family: 'Oxygen', sans-serif;
     font-weight: bold;
-    font-size: 6vh;
+    font-size: 2rem;
     text-transform: uppercase;
     color: #fff;
   }
 
   h2{
     text-align: center;
-    font-size: 3vh;
+    font-size: 1.5rem;
     color: #fff;
   }
 

@@ -4,7 +4,8 @@ import Router from 'vue-router'
 const routerOptions = [
   /* what to render depending on the url passed */
   { path: '/cards/', component: 'Cards' },
-  { path: '/pokemons/', component: 'Pokemons' }
+  { path: '/pokemons/', component: 'Pokemons' },
+  { path: '/pokemons/:name', component: 'Pokemon' }
 ]
 
 const routes = routerOptions.map(route => {

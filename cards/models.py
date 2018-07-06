@@ -99,6 +99,8 @@ class Card(models.Model):
     condition = models.CharField(max_length=50, blank=True, null=True)
     edition = models.CharField(max_length=50, blank=True, null=True)
 
+    image_hash = models.PositiveIntegerField(blank=True, null=True)
+
     created_at = models.DateTimeField(
         default=timezone.now,
         editable=False,

@@ -30,7 +30,8 @@ export default {
 }
 
 body {
-  background-image: radial-gradient(circle,rgba(58,175,169,.95) 10%,rgba(43,122,120,.95) 130%) !important;
+  background-color: rgb(100,185,220)
+  /* background-image: radial-gradient(circle,rgba(153,211,223,.95) 10%, rgba(136,187,214,.95) 130%) !important; */
 }
 
 </style>
