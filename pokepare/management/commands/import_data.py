@@ -25,6 +25,7 @@ class Command(BaseCommand):
         if import_type == 'all':
             self.clear_pokemons()
             self.import_pokemons()
+            # self.link_cards_pokemons()
         elif import_type == 'pokemons':
             self.clear_pokemons()
             self.import_pokemons()
@@ -50,14 +51,12 @@ class Command(BaseCommand):
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
 
-        url = 'http://pokeapi.co/api/v2/pokemon?limit=151'
+        url = 'http://pokeapi.co/api/v2/pokemon?limit=1000'
         res = requests.get(url)
-        count = 0
 
         pokemons = []
 
         for index, pokemon in enumerate(res.json()["results"]):
-            count += 1
 
             pokemon = requests.get(res.json()["results"][index]['url'])
             name = pokemon.json()['name'].title()
@@ -72,23 +71,24 @@ class Command(BaseCommand):
 
             pokemons.append(pokemon)
 
-            self.stdout.write(self.style.WARNING(name, 'fetched...'))
+            self.stdout.write(self.style.WARNING(str(name) + ' fetched...'))
 
         for pokemon in pokemons:
             my_pokemon = Pokemon.objects.create(
                 **pokemon
             )
-            self.stdout.write(self.style.WARNING(pokemon["name"], 'imported...'))
+            self.stdout.write(self.style.WARNING(pokemon["name"] + ' imported...'))
 
-        self.stdout.write(self.style.SUCCESS(str(count) + ' Pokemons imported!'))
+        self.stdout.write(self.style.SUCCESS(str(len(pokemons)) + ' Pokemons imported!'))
 
     def import_cards(self):
         self.stdout.write(self.style.WARNING('Importing cards...'))
 
         url_tcg = 'https://api.pokemontcg.io/v1/cards?pageSize=1000'
-        count = 0
 
         res_tcg = requests.get(url_tcg)
+
+        cards = []
 
         for page in range(1, ceil(int(res_tcg.headers["Total-Count"]) / int(res_tcg.headers["Count"]) + 1)):
 
@@ -97,58 +97,68 @@ class Command(BaseCommand):
             res_tcg = requests.get(url_tcg)
             res_tcg_json = res_tcg.json()["cards"]
 
-            attributes = ["name", "nationalPokedexNumber", "number", "types", "subtype", "supertype", "hp", "artist", "rarity", "series", "set", "setCode", "imageUrl"]
-
-            cards = []
+            attributes_to_keep = ["name", "nationalPokedexNumber", "number", "types", "subtype", "supertype", "hp", "artist", "rarity", "series", "set", "setCode", "imageUrl"]
+            keys_to_del = ["attacks", "imageUrlHiRes", "text", "weaknesses", "resistances", "retreatCost", "convertedRetreatCost", "ability", "evolvesFrom", "ancientTrait"]
 
             for index, card in enumerate(res_tcg_json):
-                count += 1
 
-                try:
-                    for attribute in attributes:
-                        if attribute in res_tcg_json[index]:
-                            name = res_tcg_json[index]["name"]
-                            nationalPokedexNumber = res_tcg_json[index]["nationalPokedexNumber"]
-                            number_in_set = res_tcg_json[index]["number"]
-                            types = res_tcg_json[index]["types"]
-                            subtype = res_tcg_json[index]["subtype"]
-                            supertype = res_tcg_json[index]["supertype"]
-                            hp = res_tcg_json[index]["hp"]
-                            artist = res_tcg_json[index]["artist"]
-                            rarity = res_tcg_json[index]["rarity"]
-                            series = res_tcg_json[index]["series"]
-                            card_set = res_tcg_json[index]["set"]
-                            card_set_code = res_tcg_json[index]["setCode"]
-                            image = res_tcg_json[index]["imageUrl"]
+                card["national_pokedex_number"] = card.pop("nationalPokedexNumber", None)
+                card["unique_id"] = card.pop("id", None)
+                card["number_in_set"] = card.pop("number", None)
+                card["card_set"] = card.pop("set", None)
+                card["card_set_code"] = card.pop("setCode", None)
+                card["image_url"] = card.pop("imageUrl", None)
 
-                except KeyError as kerr:
-                    print('KeyError:', kerr, ' for', name)
+                if card["supertype"] == "Pokémon":
+                    card["pokemon"] = Pokemon.objects.get(name__icontains=card["name"]).id
 
-                # if pokemon:
-                #     pokemon = Pokemon.objects.get(name__icontains=name)
-
-                card = {
-                    "name": name,
-                    "nationalPokedexNumber": nationalPokedexNumber,
-                    "number_in_set": number_in_set,
-                    "types": types,
-                    "subtype": subtype,
-                    "supertype": supertype,
-                    "hp": hp,
-                    "artist": artist,
-                    "rarity": rarity,
-                    "series": series,
-                    "card_set": card_set,
-                    "card_set_code": card_set_code,
-                    "image": image,
-                    # "pokemon": pokemon,
-                }
+                for arg in keys_to_del:
+                    if arg in card:
+                        card.pop(arg)
 
                 cards.append(card)
 
             for card in cards:
-                my_card = Card.objects.create(
-                    **card
-                )
+                try:
+                    my_card = Card.objects.create(
+                        **card
+                    )
+                except ValueError as verr:
+                    print("ValueError", verr, card["name"])
 
-        self.stdout.write(self.style.SUCCESS(str(count) + ' cards imported!'))
+        self.stdout.write(self.style.SUCCESS(str(len(cards)) + ' cards imported!'))
+
+    # def link_cards_pokemons(self):
+    #     self.stdout.write(self.style.WARNING('Linking cards to pokemons...'))
+    #     pass
+    #     # url_poke = 'http://localhost:8000/api/pokemons/'
+    #     # url_cards = "http://localhost:8000/api/cards/"
+    #     # res_poke = requests.get(url_poke)
+    #     # res_cards = requests.get(url_cards)
+    #     # count = 0
+
+    #     # pokemons = []
+
+    #     # for index, pokemon in enumerate(res.json()["results"]):
+    #     #     count += 1
+
+    #     #     pokemon = requests.get(res.json()["results"][index]['url'])
+    #     #     name = pokemon.json()['name'].title()
+    #     #     pokemon_id = pokemon.json()['id']
+    #     #     front_image = pokemon.json()['sprites']['front_default']
+
+    #     #     pokemon = {
+    #     #         "name": name,
+    #     #         "number": pokemon_id,
+    #     #         "front_image": front_image,
+    #     #     }
+
+    #     #     pokemons.append(pokemon)
+
+    #     #     self.stdout.write(self.style.WARNING(name, 'fetched...'))
+
+    #     # for pokemon in pokemons:
+    #     #     my_pokemon = Pokemon.objects.create(
+    #     #         **pokemon
+    #     #     )
+    #     #     self.stdout.write(self.style.WARNING(pokemon["name"], 'imported...'))

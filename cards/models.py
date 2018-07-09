@@ -8,11 +8,17 @@ from pokemons.models import Pokemon
 
 
 class Card(models.Model):
+    unique_id = models.CharField(
+        help_text='A unique id for this card. It is made up by taking the set code and concatenating the card number to it. (ex. xy1-1)',
+        max_length=100,
+        blank=True,
+        null=True,
+    )
     name = models.CharField(
         help_text='The card name.',
         max_length=500
     )
-    nationalPokedexNumber = models.PositiveIntegerField(
+    national_pokedex_number = models.IntegerField(
         help_text='The national pokedex number for a card that features a Pokémon supertype.',
         blank=True,
         null=True
@@ -41,7 +47,8 @@ class Card(models.Model):
         blank=True,
         null=True
     )
-    hp = models.PositiveIntegerField(
+    hp = models.CharField(
+        max_length=10,
         help_text='The number of the card for the set it was released in. Found on the bottom right side of the card.',
         blank=True,
         null=True
@@ -82,7 +89,7 @@ class Card(models.Model):
         blank=True,
         null=True
     )
-    image = models.URLField(
+    image_url = models.URLField(
         help_text='The front image of the card.',
         default=settings.CARD_PLACEHOLDER
     )
