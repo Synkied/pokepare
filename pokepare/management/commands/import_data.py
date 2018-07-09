@@ -1,6 +1,7 @@
 from math import ceil
 
 from django.core.management.base import BaseCommand
+from django.core.exceptions import ObjectDoesNotExist
 
 import requests
 from pokemons.models import Pokemon
@@ -25,7 +26,6 @@ class Command(BaseCommand):
         if import_type == 'all':
             self.clear_pokemons()
             self.import_pokemons()
-            # self.link_cards_pokemons()
         elif import_type == 'pokemons':
             self.clear_pokemons()
             self.import_pokemons()
@@ -51,35 +51,46 @@ class Command(BaseCommand):
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
 
-        url = 'http://pokeapi.co/api/v2/pokemon?limit=1000'
+        count = 0
+        limit = 20
+
+        url = 'http://pokeapi.co/api/v2/pokemon?limit=' + str(limit)
+
         res = requests.get(url)
 
-        pokemons = []
+        res_json = res.json()
 
-        for index, pokemon in enumerate(res.json()["results"]):
+        for _ in range(limit, ceil(int(res_json["count"]) / limit + 1)):
+            # updating the url for the offset limit each turn
 
-            pokemon = requests.get(res.json()["results"][index]['url'])
-            name = pokemon.json()['name'].title()
-            pokemon_id = pokemon.json()['id']
-            front_image = pokemon.json()['sprites']['front_default']
+            res = requests.get(url)
 
-            pokemon = {
-                "name": name,
-                "number": pokemon_id,
-                "front_image": front_image,
-            }
+            res_json = res.json()
 
-            pokemons.append(pokemon)
+            url = res_json["next"]
+            print(url)
+            res = requests.get(url)
 
-            self.stdout.write(self.style.WARNING(str(name) + ' fetched...'))
+            for index, pokemon in enumerate(res_json["results"]):
+                count += 1
 
-        for pokemon in pokemons:
-            my_pokemon = Pokemon.objects.create(
-                **pokemon
-            )
-            self.stdout.write(self.style.WARNING(pokemon["name"] + ' imported...'))
+                pokemon = requests.get(res_json["results"][index]['url'])
+                name = pokemon.json()['name'].title()
+                pokemon_id = pokemon.json()['id']
+                front_image = pokemon.json()['sprites']['front_default']
 
-        self.stdout.write(self.style.SUCCESS(str(len(pokemons)) + ' Pokemons imported!'))
+                my_pokemon = {
+                    "name": name,
+                    "number": pokemon_id,
+                    "front_image": front_image,
+                }
+
+                pokemon_obj = Pokemon.objects.get_or_create(
+                    **my_pokemon
+                )
+                self.stdout.write(self.style.WARNING(my_pokemon["name"] + ' imported...'))
+
+        self.stdout.write(self.style.SUCCESS(str(count) + ' Pokemons imported!'))
 
     def import_cards(self):
         self.stdout.write(self.style.WARNING('Importing cards...'))
@@ -110,7 +121,10 @@ class Command(BaseCommand):
                 card["image_url"] = card.pop("imageUrl", None)
 
                 if card["supertype"] == "Pokémon":
-                    card["pokemon"] = Pokemon.objects.get(name__icontains=card["name"]).id
+                    try:
+                        card["pokemon"] = Pokemon.objects.get(name__icontains=card["name"]).id
+                    except ObjectDoesNotExist as dneerr:
+                        pass
 
                 for arg in keys_to_del:
                     if arg in card:

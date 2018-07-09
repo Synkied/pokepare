@@ -14,7 +14,7 @@
             <div class="col-xl-4 col-lg-6 col-md-6 col-xs-1 mt-3"  v-for="card in cards.slice(0, 12)" :key="card.id">
               <ul>
                 <li class="ns-li mb-2">
-                  <a :href="card.url"><img :src="card.image_url" alt=""></a>
+                  <a :href="card.url"><img :src="card.image" alt=""></a>
                 </li>
                 <li class="ns-li">
                   <p><a :href="card.url">{{ card.name }}</a></p>
@@ -78,7 +78,7 @@ export default {
             console.log(response.status) // ex.: 200
             thisVm.card_name = capitalize(response.data[0].name)
             thisVm.card_desc = capitalize(response.data[0].description)
-            thisVm.card_img = response.data[0].image_url
+            thisVm.card_img = response.data[0].image
             thisVm.status = response.status
           } else {
             thisVm.error_msg = 'No result found for this query.'
@@ -162,21 +162,21 @@ export default {
   }
 
   .ns-li p {
-    font-size: 1.1rem;
+    font-size: 2vh;
   }
 
   h1{
     text-align: center;
     font-family: 'Oxygen', sans-serif;
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 4vh;
     text-transform: uppercase;
     color: #fff;
   }
 
   h2{
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 3vh;
     color: #fff;
   }
 
