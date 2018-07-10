@@ -30,10 +30,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #fff;
+  background-color: rgb(100,185,220);
 }
 
 body {
-  background-color: rgb(100,185,220)
   /* background-image: radial-gradient(circle,rgba(153,211,223,.95) 10%, rgba(136,187,214,.95) 130%) !important; */
 }
 

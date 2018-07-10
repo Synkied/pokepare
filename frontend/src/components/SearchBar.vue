@@ -35,15 +35,6 @@ export default {
     color: #fff;
   }
 
-  h1{
-    text-align: center;
-    font-family: 'Oxygen', sans-serif;
-    font-weight: bold;
-    font-size: 4vh;
-    text-transform: uppercase;
-    color: #fff;
-  }
-
   .query_btn{
     background-color: #2B7A78;
     color: #fff;

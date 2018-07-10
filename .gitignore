@@ -6,3 +6,4 @@ settings/production.py
 staticfiles
 **/node_modules
 static/media
+static/bundles

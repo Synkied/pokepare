@@ -33,7 +33,7 @@ class CardViewSet(viewsets.ModelViewSet):
 
 class CardView(View):
 
-    template_name = "cards.html"
+    template_name = "index.html"
 
     def get(self, request):
 
@@ -48,7 +48,7 @@ class CardView(View):
 
 class CardViewDetail(View):
 
-    template_name = "cards.html"
+    template_name = "index.html"
 
     def get(self, request, unique_id):
 

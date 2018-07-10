@@ -33,7 +33,7 @@ class PokemonViewSet(viewsets.ModelViewSet):
 
 class PokemonView(View):
 
-    template_name = "pokemons.html"
+    template_name = "index.html"
 
     def get(self, request):
 
@@ -48,7 +48,7 @@ class PokemonView(View):
 
 class PokemonViewDetail(View):
 
-    template_name = "pokemons.html"
+    template_name = "index.html"
 
     def get(self, request, name):
 
