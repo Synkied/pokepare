@@ -54,12 +54,19 @@ class Command(BaseCommand):
         Card.objects.all().delete()
         self.stdout.write(self.style.SUCCESS('All cards deleted!'))
 
-    def get_remote_image(self, url, card):
+    def get_remote_image(self, url, obj):
         request = requests.get(url, stream=True)
 
         if request.status_code == 200:
-            file_name = "-".join((url.split('/')[-2::]))
-            print(file_name)
+            if obj.__class__.__name__ == 'Card':
+                file_name = "-".join((url.split('/')[-2::]))
+
+            elif obj.__class__.__name__ == 'Pokemon':
+                file_name = ".".join([obj.name, url.split('.')[-1]])
+                print(file_name)
+
+            else:
+                return False
 
             lf = tempfile.NamedTemporaryFile()
 
@@ -73,7 +80,7 @@ class Command(BaseCommand):
                 # Write image block to temporary file
                 lf.write(block)
 
-            card.image.save(file_name, files.File(lf))
+            obj.image.save(file_name, files.File(lf))
 
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
@@ -103,7 +110,7 @@ class Command(BaseCommand):
                 new_pokemon = requests.get(res_json["results"][index]['url'])
                 name = new_pokemon.json()['name'].title()
                 pokemon_id = new_pokemon.json()['id']
-                front_image = new_pokemon.json()['sprites']['front_default']
+                image = new_pokemon.json()['sprites']['front_default']
 
                 # try:
                 #     pokemon["cards"] = Card.objects.filter(name__icontains=pokemon["name"])
@@ -114,12 +121,14 @@ class Command(BaseCommand):
                 my_pokemon = {
                     "name": name,
                     "number": pokemon_id,
-                    "front_image": front_image,
+                    "image": image,
                 }
 
                 pokemon_obj = Pokemon.objects.get_or_create(
                     **my_pokemon
                 )
+                self.get_remote_image(image, pokemon_obj[0])
+
                 self.stdout.write(self.style.WARNING(my_pokemon["name"] + ' imported...'))
 
         self.stdout.write(self.style.SUCCESS(str(count) + ' Pokemons imported!'))
@@ -178,17 +187,17 @@ class Command(BaseCommand):
 
                 cards.append(card)
 
-            for card in cards:
-                try:
-                    my_card = Card.objects.get_or_create(
-                        **card
-                    )
-                    self.get_remote_image(card["image_url"], my_card[0])
-                    # [0] to get the first elem of the tuple generated
-                    # by "get_or_create()"
+        for card in cards:
+            try:
+                my_card = Card.objects.get_or_create(
+                    **card
+                )
+                self.get_remote_image(card["image_url"], my_card[0])
+                # [0] to get the first elem of the tuple generated
+                # by "get_or_create()"
 
-                    self.stdout.write(self.style.WARNING(card["name"] + ' imported...'))
-                except ValueError as verr:
-                    print("ValueError", verr, card["name"])
+                self.stdout.write(self.style.WARNING(card["name"] + ' imported...'))
+            except ValueError as verr:
+                print("ValueError", verr, card["name"])
 
         self.stdout.write(self.style.SUCCESS(str(len(cards)) + ' cards imported!'))

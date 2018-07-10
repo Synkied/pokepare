@@ -3,11 +3,21 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 
 from .serializers import PokemonSerializer
 from .models import Pokemon
 
 # Create your views here.
+
+
+class PokemonFilter(filters.FilterSet):
+    # set a filterset to use filters
+    # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut
+    # but it won't let you use "exclude"
+    class Meta:
+        model = Pokemon
+        exclude = ['image']
 
 
 class PokemonViewSet(viewsets.ModelViewSet):
@@ -18,7 +28,7 @@ class PokemonViewSet(viewsets.ModelViewSet):
     serializer_class = PokemonSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = '__all__'
+    filter_class = PokemonFilter
 
 
 class PokemonView(View):

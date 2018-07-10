@@ -6,7 +6,7 @@
           <div v-for="pokemon in pokemons.slice(0, 12)" :key="pokemon.id">
             <ul>
               <li class="ns-li">
-                <img :src="pokemon.front_image" alt="">
+                <img :src="pokemon.image" alt="">
               </li>
               <li class="ns-li">
                 <p>{{ pokemon.name }}</p>
@@ -19,7 +19,7 @@
                   <a :href="card.url">
                     <img :src="card.image" height="250px" :alt="card.name">
                   </a>
-                  <a href="card.url">
+                  <a :href="card.url">
                     <p>{{ card.name }}</p>
                   </a>
                 </li>
