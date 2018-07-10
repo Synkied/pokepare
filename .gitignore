@@ -5,3 +5,4 @@ pokepare.sublime-workspace
 settings/production.py
 staticfiles
 **/node_modules
+static/media
