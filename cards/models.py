@@ -93,6 +93,7 @@ class Card(models.Model):
         help_text='The front image of the card.',
         default=settings.CARD_PLACEHOLDER
     )
+    image = models.ImageField(upload_to="cards/", blank=True, null=True)
     pokemon = models.ForeignKey(
         Pokemon,
         on_delete=models.CASCADE,
@@ -105,6 +106,7 @@ class Card(models.Model):
 
     condition = models.CharField(max_length=50, blank=True, null=True)
     edition = models.CharField(max_length=50, blank=True, null=True)
+    prices = models.CharField(max_length=500, blank=True, null=True)
 
     image_hash = models.PositiveIntegerField(blank=True, null=True)
 

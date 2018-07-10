@@ -1,12 +1,6 @@
 <template>
-  <div id="cards" class="container">
-    <h1>{{ msg }}</h1>
-      <fieldset>
-        <input :class="{'bounce animated': animated}" @animationend="animated = false"
-            @keyup.esc="user_query=''" @keyup.enter="[lookupGmapsWikiAPI(), animate()]"
-            v-model="user_query" name="user_query" type="text" class="form-control" placeholder="Enter a Pokemon name">
-        <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
-      </fieldset>
+  <div id="cards" class="container mt-5">
+    <h2>{{ module_title }}</h2>
     <div>
       <template v-if="!user_query">
         <div class="container-fluid">
@@ -59,9 +53,9 @@ export default {
       card_desc: '',
       card_img: '',
       user_query: null,
-      msg: 'Search a pokemon by text or image',
       animated: false,
-      error_msg: null
+      error_msg: null,
+      module_title: 'Cards'
     }
   },
   methods: {
@@ -142,41 +136,6 @@ export default {
   }
 
   .white-txt {
-    color: #fff;
-  }
-
-  .ns-li {
-    list-style-type: none;
-    font-family: "Oxygen", sans-serif;
-    font-weight: 700;
-  }
-
-  .ns-li a {
-    color: #fff;
-    text-decoration: none;
-  }
-
-  .ns-li a:hover {
-    color: #0e5c59;
-    text-decoration: none;
-  }
-
-  .ns-li p {
-    font-size: 1.1rem;
-  }
-
-  h1{
-    text-align: center;
-    font-family: 'Oxygen', sans-serif;
-    font-weight: bold;
-    font-size: 2rem;
-    text-transform: uppercase;
-    color: #fff;
-  }
-
-  h2{
-    text-align: center;
-    font-size: 1.5rem;
     color: #fff;
   }
 

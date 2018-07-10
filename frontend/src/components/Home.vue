@@ -1,38 +1,7 @@
 <template>
-  <div id="cards" class="container">
-    <h1>{{ msg }}</h1>
-      <fieldset>
-        <input :class="{'bounce animated': animated}" @animationend="animated = false"
-            @keyup.esc="user_query=''" @keyup.enter="[lookupGmapsWikiAPI(), animate()]"
-            v-model="user_query" name="user_query" type="text" class="form-control" placeholder="Enter a Pokemon name">
-        <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
-      </fieldset>
-    <div>
-      <template v-if="!user_query">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-xl-4 col-lg-6 col-md-6 col-xs-1 mt-3"  v-for="card in cards.slice(0, 12)" :key="card.id">
-              <ul>
-                <li class="ns-li mb-2">
-                  <a :href="card.url"><img :src="card.image" alt=""></a>
-                </li>
-                <li class="ns-li">
-                  <p><a :href="card.url">{{ card.name }}</a></p>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </template>
-      <template v-else-if="user_query && data > 0">
-        <p v-html="card_name" class="mt-1 card-text text-center"></p>
-        <p v-html="card_desc" class="mt-1 card-text text-center"></p>
-        <img :src="card_img" alt="card image">
-      </template>
-      <template v-else>
-        <p> {{ error_msg }}</p>
-      </template>
-    </div>
+  <div id="home" class="container">
+      <pokemons></pokemons>
+      <cards></cards>
   </div>
 </template>
 
@@ -41,6 +10,8 @@
 import axios from 'axios'
 import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
 import SearchBar from './SearchBar'
+import Pokemons from './Pokemons'
+import Cards from './Cards'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
@@ -59,7 +30,6 @@ export default {
       card_desc: '',
       card_img: '',
       user_query: null,
-      msg: 'Search a pokemon by text or image',
       animated: false,
       error_msg: null
     }
@@ -114,7 +84,9 @@ export default {
   },
   components: {
     'rise-loader': RiseLoader,
-    'search-bar': SearchBar
+    'search-bar': SearchBar,
+    'pokemons': Pokemons,
+    'cards': Cards
   },
   mounted () {
     var thisVm = this
@@ -162,21 +134,21 @@ export default {
   }
 
   .ns-li p {
-    font-size: 2vh;
+    font-size: 1.1rem;
   }
 
   h1{
     text-align: center;
     font-family: 'Oxygen', sans-serif;
     font-weight: bold;
-    font-size: 4vh;
+    font-size: 2rem;
     text-transform: uppercase;
     color: #fff;
   }
 
   h2{
     text-align: center;
-    font-size: 3vh;
+    font-size: 1.5rem;
     color: #fff;
   }
 

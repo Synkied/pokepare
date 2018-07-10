@@ -1,7 +1,12 @@
 from math import ceil
+import functools
+import operator
+import tempfile
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
+from django.core import files
+from django.db.models import Q
 
 import requests
 from pokemons.models import Pokemon
@@ -26,6 +31,7 @@ class Command(BaseCommand):
         if import_type == 'all':
             self.clear_pokemons()
             self.import_pokemons()
+            self.import_cards()
         elif import_type == 'pokemons':
             self.clear_pokemons()
             self.import_pokemons()
@@ -48,6 +54,27 @@ class Command(BaseCommand):
         Card.objects.all().delete()
         self.stdout.write(self.style.SUCCESS('All cards deleted!'))
 
+    def get_remote_image(self, url, card):
+        request = requests.get(url, stream=True)
+
+        if request.status_code == 200:
+            file_name = "-".join((url.split('/')[-2::]))
+            print(file_name)
+
+            lf = tempfile.NamedTemporaryFile()
+
+            # Read the streamed image in sections
+            for block in request.iter_content(1024 * 8):
+
+                # If no more file then stop
+                if not block:
+                    break
+
+                # Write image block to temporary file
+                lf.write(block)
+
+            card.image.save(file_name, files.File(lf))
+
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
 
@@ -69,15 +96,20 @@ class Command(BaseCommand):
 
             url = res_json["next"]
             print(url)
-            res = requests.get(url)
 
             for index, pokemon in enumerate(res_json["results"]):
                 count += 1
 
-                pokemon = requests.get(res_json["results"][index]['url'])
-                name = pokemon.json()['name'].title()
-                pokemon_id = pokemon.json()['id']
-                front_image = pokemon.json()['sprites']['front_default']
+                new_pokemon = requests.get(res_json["results"][index]['url'])
+                name = new_pokemon.json()['name'].title()
+                pokemon_id = new_pokemon.json()['id']
+                front_image = new_pokemon.json()['sprites']['front_default']
+
+                # try:
+                #     pokemon["cards"] = Card.objects.filter(name__icontains=pokemon["name"])
+                #     print(pokemon["cards"])
+                # except ObjectDoesNotExist as dneerr:
+                #     pass
 
                 my_pokemon = {
                     "name": name,
@@ -121,8 +153,22 @@ class Command(BaseCommand):
                 card["image_url"] = card.pop("imageUrl", None)
 
                 if card["supertype"] == "Pokémon":
+                    # link cards and pokemons together using Q objects
+                    # We split the name of the pokemon's card and
+                    # we then search for each of the terms in the card's name
+                    # the query only links to pokemons, as other terms
+                    # like "EX" are not pokemon objects
                     try:
-                        card["pokemon"] = Pokemon.objects.get(name__icontains=card["name"]).id
+                        q = card["name"].split()
+                        query = functools.reduce(
+                            operator.or_, (
+                                Q(
+                                    name__icontains=item
+                                ) for item in q if len(item) > 1)
+                            # if to not include unown with other cards
+                        )
+                        card["pokemon"] = Pokemon.objects.filter(query).order_by('id').first()
+
                     except ObjectDoesNotExist as dneerr:
                         pass
 
@@ -134,45 +180,15 @@ class Command(BaseCommand):
 
             for card in cards:
                 try:
-                    my_card = Card.objects.create(
+                    my_card = Card.objects.get_or_create(
                         **card
                     )
+                    self.get_remote_image(card["image_url"], my_card[0])
+                    # [0] to get the first elem of the tuple generated
+                    # by "get_or_create()"
+
+                    self.stdout.write(self.style.WARNING(card["name"] + ' imported...'))
                 except ValueError as verr:
                     print("ValueError", verr, card["name"])
 
         self.stdout.write(self.style.SUCCESS(str(len(cards)) + ' cards imported!'))
-
-    # def link_cards_pokemons(self):
-    #     self.stdout.write(self.style.WARNING('Linking cards to pokemons...'))
-    #     pass
-    #     # url_poke = 'http://localhost:8000/api/pokemons/'
-    #     # url_cards = "http://localhost:8000/api/cards/"
-    #     # res_poke = requests.get(url_poke)
-    #     # res_cards = requests.get(url_cards)
-    #     # count = 0
-
-    #     # pokemons = []
-
-    #     # for index, pokemon in enumerate(res.json()["results"]):
-    #     #     count += 1
-
-    #     #     pokemon = requests.get(res.json()["results"][index]['url'])
-    #     #     name = pokemon.json()['name'].title()
-    #     #     pokemon_id = pokemon.json()['id']
-    #     #     front_image = pokemon.json()['sprites']['front_default']
-
-    #     #     pokemon = {
-    #     #         "name": name,
-    #     #         "number": pokemon_id,
-    #     #         "front_image": front_image,
-    #     #     }
-
-    #     #     pokemons.append(pokemon)
-
-    #     #     self.stdout.write(self.style.WARNING(name, 'fetched...'))
-
-    #     # for pokemon in pokemons:
-    #     #     my_pokemon = Pokemon.objects.create(
-    #     #         **pokemon
-    #     #     )
-    #     #     self.stdout.write(self.style.WARNING(pokemon["name"], 'imported...'))

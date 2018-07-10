@@ -7,7 +7,7 @@ class CardSerializer(serializers.HyperlinkedModelSerializer):
     pokemon = serializers.HyperlinkedRelatedField(view_name='pokemons:pokemon_detail', read_only=True, lookup_field='name')
     url = serializers.HyperlinkedIdentityField(
         view_name='cards:card_detail',
-        lookup_field='name',
+        lookup_field='unique_id',
     )
 
     class Meta:

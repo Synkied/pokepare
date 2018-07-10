@@ -1,27 +1,29 @@
 <template>
   <div id="pokemons" class="container">
-    <h1>{{ msg }}</h1>
-      <fieldset>
-        <input :class="{'bounce animated': animated}" @animationend="animated = false"
-            @keyup.esc="user_query=''" @keyup.enter="[lookupGmapsWikiAPI(), animate()]"
-            v-model="user_query" name="user_query" type="text" class="form-control" placeholder="Enter a Pokemon name">
-        <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
-      </fieldset>
     <div>
       <template v-if="!user_query">
         <div class="container-fluid">
-          <div class="row">
-            <div v-for="pokemon in pokemons" :key="pokemon.id">
-              {{ pokemon }}
+          <div v-for="pokemon in pokemons.slice(0, 12)" :key="pokemon.id">
+            <ul>
               <li class="ns-li">
-                  <img :src="pokemon.front_image" alt="">
+                <img :src="pokemon.front_image" alt="">
               </li>
               <li class="ns-li">
                 <p>{{ pokemon.name }}</p>
               </li>
-              <li class="ns-li">
-                {{ pokemon.cards }}
-              </li>
+            </ul>
+            <p class="mt-5">{{ pokemon.cards.length }} card(s) found</p>
+            <div class="row">
+              <div class="col-xl-2 col-lg-3 col-md-4 col-xs-5 mt-3" v-for="card in pokemon.cards" :key="card.id">
+                <li class="ns-li">
+                  <a :href="card.url">
+                    <img :src="card.image" height="250px" :alt="card.name">
+                  </a>
+                  <a href="card.url">
+                    <p>{{ card.name }}</p>
+                  </a>
+                </li>
+              </div>
             </div>
           </div>
         </div>
@@ -50,7 +52,6 @@ export default {
       status: '',
       pokemons: '',
       user_query: null,
-      msg: 'Search a pokemon or a card',
       animated: false,
       error_msg: null
     }
@@ -135,32 +136,8 @@ export default {
   @import url('https://fonts.googleapis.com/css?family=Oxygen');
   @import url('https://fonts.googleapis.com/css?family=Raleway');
 
-  .container {
-    max-width: 960px;
-  }
-
   .white-txt {
     color: #fff;
-  }
-
-  .ns-li {
-    list-style-type: none;
-    font-family: "Oxygen", sans-serif;
-    font-weight: 700;
-  }
-
-  .ns-li a {
-    color: #fff;
-    text-decoration: none;
-  }
-
-  .ns-li a:hover {
-    color: #0e5c59;
-    text-decoration: none;
-  }
-
-  .ns-li p {
-    font-size: 1.1rem;
   }
 
   h1{

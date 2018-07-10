@@ -1,5 +1,6 @@
 <template>
   <div id="cards" class="container">
+    <h1> {{ module_title }}</h1>
     <fieldset>
         <input :class="{'bounce animated': animated}" @animationend="animated = false"
           @keyup.esc="user_query=''" @keyup.enter="[lookupGmapsWikiAPI(), animate()]"
@@ -12,7 +13,15 @@
 <script>
 
 export default {
-  name: 'SearchBar'
+  name: 'SearchBar',
+  data () {
+    return {
+      module_title: 'Search a Pokemon by name or image',
+      user_query: null,
+      animated: false
+    }
+  }
+
 }
 
 </script>
