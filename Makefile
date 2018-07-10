@@ -19,13 +19,13 @@ cov_report:
 build:
 	docker-compose build
 
-build-no-cache:
+build_no_cache:
 	docker-compose build --no-cache
 
 up:
 	docker-compose up -d
 
-up-no-d:
+up_no_d:
 	docker-compose up
 
 restart:
@@ -34,11 +34,11 @@ restart:
 collectstatic:
 	docker exec pokepare_py /bin/sh -c "python manage.py collectstatic --noinput"
 
-shell-nginx:
+bash_nginx:
 	docker exec -ti pokepare_nginx bash
 
-shell-web:
+bash_web:
 	docker exec -ti pokepare_py bash
 
-shell-db:
+bash_db:
 	docker exec -ti pokepare_db bash
