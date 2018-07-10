@@ -29,6 +29,7 @@ ALLOWED_HOSTS = []
 
 CORS_ORIGIN_WHITELIST = (
     'localhost:8080',
+    '188.166.108.19'
 )
 
 
