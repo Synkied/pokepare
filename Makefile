@@ -7,8 +7,8 @@ create_user_db:
 migrate_db:
 	docker exec pokepare_py /bin/sh -c 'python manage.py migrate'
 
-feed_db:
-	docker exec pokepare_py /bin/sh -c 'python db_feeding.py'
+import_data:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data all'
 
 cov_test:
 	docker exec pokepare_py /bin/sh -c 'coverage run manage.py test'
