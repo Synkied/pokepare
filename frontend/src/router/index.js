@@ -13,8 +13,12 @@ const routerOptions = [
 const routes = routerOptions.map(route => {
   return {
     ...route,
-    component: () => import(`@/components/${route.component}.vue`)
+    component: () => import(`@/components/${route.component}.vue`),
     /* searches for the component to render depending on the url passed */
+    meta: {
+      title: 'PokePare',
+    }
+
   }
 })
 

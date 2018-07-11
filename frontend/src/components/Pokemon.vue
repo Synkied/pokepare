@@ -57,57 +57,6 @@ export default {
     }
   },
   methods: {
-    lookupGmapsWikiAPI () {
-      var thisVm = this
-      /* axios to ajax the query */
-      if (thisVm.user_query) {
-        const path = '/api/pokemons/?name=' + capitalize(encodeURI(thisVm.user_query))
-        loadProgressBar()
-        axios.get(path).then(response => {
-          thisVm.data_count = response.data.count
-          if (response.data) {
-            console.log(response.data) // ex.: { user: 'Your User'}
-            console.log(response.status) // ex.: 200
-            thisVm.status = response.status
-            thisVm.pokemon_names = [] // reset lists
-            thisVm.pokemon_imgs = []
-            for (var i = 0; i < response.data.results.length; i++) {
-              thisVm.pokemon_names.push(capitalize(response.data.results[i].name))
-              thisVm.pokemon_imgs.push(response.data.results[i].front_image)
-              thisVm.pokemon_cards.push(response.data.results[i].cards)
-              console.log(this.$route.params)
-            }
-          } else {
-            thisVm.error_msg = 'No result found for this query.'
-          }
-        })
-          .catch(function (error) {
-            if (error.response) {
-              // The request was made and the server responded with a status code
-              // that falls out of the range of 2xx
-              console.log(error.response.data)
-              console.log(error.response.status)
-              console.log(error.response.headers)
-            } else if (error.request) {
-              // The request was made but no response was received
-              // `error.request` is an instance of XMLHttpRequest in the browser
-              // and an instance of http.ClientRequest in node.js
-              console.log(error.request)
-            } else {
-              // Something happened in setting up the request that triggered an Error
-              console.log('Error', error.message)
-            }
-            console.log(error.config)
-          })
-      } else {
-        thisVm.status = 'NO_QUERY'
-        thisVm.error_msg = 'Please enter a correct query.'
-      }
-    },
-    animate () {
-      var thisVm = this
-      thisVm.animated = true
-    }
   },
   components: {
     'rise-loader': RiseLoader

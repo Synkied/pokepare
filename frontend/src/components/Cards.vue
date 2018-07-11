@@ -1,6 +1,7 @@
 <template>
   <div id="cards" class="container mt-5">
     <h2>{{ module_title }}</h2>
+    <h3>{{ cards.length }} cards</h3>
     <div>
       <template v-if="!user_query">
         <div class="container-fluid">
@@ -8,7 +9,7 @@
             <div class="col-xl-4 col-lg-6 col-md-6 col-xs-1 mt-3"  v-for="card in cards.slice(0, 12)" :key="card.id">
               <ul>
                 <li class="ns-li mb-2">
-                  <a :href="card.url"><img :src="card.image_url" alt=""></a>
+                  <a :href="card.url"><img :src="card.image" alt=""></a>
                 </li>
                 <li class="ns-li">
                   <p><a :href="card.url">{{ card.name }}</a></p>
@@ -17,14 +18,6 @@
             </div>
           </div>
         </div>
-      </template>
-      <template v-else-if="user_query && data > 0">
-        <p v-html="card_name" class="mt-1 card-text text-center"></p>
-        <p v-html="card_desc" class="mt-1 card-text text-center"></p>
-        <img :src="card_img" alt="card image">
-      </template>
-      <template v-else>
-        <p> {{ error_msg }}</p>
       </template>
     </div>
   </div>
@@ -49,9 +42,6 @@ export default {
       data: null,
       status: '',
       cards: '',
-      card_name: '',
-      card_desc: '',
-      card_img: '',
       user_query: null,
       animated: false,
       error_msg: null,
