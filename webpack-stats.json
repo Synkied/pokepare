@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-{"status":"done","publicPath":"http://localhost:8080/","chunks":{"null":[{"name":"5.js","publicPath":"http://localhost:8080/5.js","path":"C:\\Users\\PC\\Desktop\\projets_OC\\pokepare_project\\static\\5.js"}],"app":[{"name":"app.js","publicPath":"http://localhost:8080/app.js","path":"C:\\Users\\PC\\Desktop\\projets_OC\\pokepare_project\\static\\app.js"}]}}
-=======
-{"status":"done","publicPath":"http://localhost:8080/","chunks":{"null":[{"name":"5.js","publicPath":"http://localhost:8080/5.js","path":"/Users/quentin/Desktop/pokepare/static/5.js"}],"app":[{"name":"app.js","publicPath":"http://localhost:8080/app.js","path":"/Users/quentin/Desktop/pokepare/static/app.js"}]}}
->>>>>>> 6ead0ac5f229ba89a3bdd5b9d860e63ff1b2e2f0
