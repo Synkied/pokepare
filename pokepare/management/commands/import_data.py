@@ -40,7 +40,7 @@ class Command(BaseCommand):
             self.clear_pokemons()
             self.import_pokemons()
         elif import_type == 'cards':
-            # self.clear_cards()
+            self.clear_cards()
             self.import_cards()
         elif import_type == 'clear':
             self.clear_pokemons()
@@ -59,38 +59,39 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('All cards deleted!'))
 
     def get_remote_image(self, url, obj):
-        media_path = settings.MEDIA_ROOT
-        request = requests.get(url, stream=True)
 
-        if request.status_code == 200:
-            if obj.__class__.__name__ == 'Card':
-                file_name = "-".join((url.split('/')[-2::]))
-                file_path = media_path + "/cards/" + file_name
+        if url:
+            request = requests.get(url, stream=True)
 
-            elif obj.__class__.__name__ == 'Pokemon':
-                file_name = ".".join([obj.name, url.split('.')[-1]])
-                file_path = media_path + "/pokemons/" + file_name
+            if request.status_code == 200:
+                if obj.__class__.__name__ == 'Card':
+                    file_name = "-".join((url.split('/')[-2::]))
 
-            else:
-                return False
+                elif obj.__class__.__name__ == 'Pokemon':
+                    file_name = ".".join([obj.name, url.split('.')[-1]])
 
-            lf = tempfile.NamedTemporaryFile()
+                else:
+                    return False
 
-            # Read the streamed image in sections
-            for block in request.iter_content(1024 * 8):
+                lf = tempfile.NamedTemporaryFile()
 
-                # If no more file then stop
-                if not block:
-                    break
+                # Read the streamed image in sections
+                for block in request.iter_content(1024 * 8):
 
-                # Write image block to temporary file
-                lf.write(block)
+                    # If no more file then stop
+                    if not block:
+                        break
 
-            file_exists = os.path.isfile(file_path)
+                    # Write image block to temporary file
+                    lf.write(block)
 
-            obj.image.save(file_name, files.File(lf))
+                obj.image.save(file_name, files.File(lf))
+        else:
+            return False
 
-
+##############################
+# Importing Pokemons
+##############################
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
 
@@ -103,8 +104,8 @@ class Command(BaseCommand):
 
         res_json = res.json()
 
-        with open("log_import" + ".txt", 'w') as f:
-            f.write("Import started at: " + "{}".format(time.strftime('%Y-%m-%d_%H-%M')) + '\n')
+        with open("log_import_pokemons" + ".txt", 'w') as f:
+            f.write("Import started at: " + "{}".format(time.strftime('%Y-%m-%d_%H:%M')) + '\n')
 
         for _ in range(ceil(int(res_json["count"]) // limit) + 1):
             # updating the url for the offset limit each turn
@@ -138,18 +139,21 @@ class Command(BaseCommand):
 
                 if created:
                     self.stdout.write(my_pokemon["name"] + ' imported...')
-                    with open("log_import" + ".txt", 'a') as f:
+                    with open("log_import_pokemons" + ".txt", 'a') as f:
                         f.write(my_pokemon["name"] + ' imported... \n')
                 else:
                     self.stdout.write(my_pokemon["name"] + ' NOT CREATED...')
-                    with open("log_import" + ".txt", 'a') as f:
+                    with open("log_import_pokemons" + ".txt", 'a') as f:
                         f.write(my_pokemon["name"] + ' imported... \n')
 
-        with open("log_import" + ".txt", 'a') as f:
-            f.write("Import finished at: " + "{}".format(time.strftime('%Y-%m-%d_%H-%M')))
+        with open("log_import_pokemons" + ".txt", 'a') as f:
+            f.write("Import finished at: " + "{}".format(time.strftime('%Y-%m-%d_%H:%M')))
 
         self.stdout.write(self.style.SUCCESS(str(count) + ' Pokemons imported!'))
 
+##############################
+# Importing cards
+##############################
     def import_cards(self):
         self.stdout.write('Importing cards...')
 
@@ -159,14 +163,17 @@ class Command(BaseCommand):
 
         cards = []
 
-        for page in range(1, ceil(int(res_tcg.headers["Total-Count"]) / int(res_tcg.headers["Count"]) + 1)):
+        for _ in range(ceil(int(res_tcg.headers["Total-Count"]) // int(res_tcg.headers["Count"]))):
 
-            url_tcg += ('&page=' + str(page))
+            print("Fetching from: ", url_tcg)
 
             res_tcg = requests.get(url_tcg)
+
             res_tcg_json = res_tcg.json()["cards"]
 
-            attributes_to_keep = ["name", "nationalPokedexNumber", "number", "types", "subtype", "supertype", "hp", "artist", "rarity", "series", "set", "setCode", "imageUrl"]
+            url_tcg = res_tcg.links["next"]["url"]
+
+            # attributes_to_keep = ["name", "nationalPokedexNumber", "number", "types", "subtype", "supertype", "hp", "artist", "rarity", "series", "set", "setCode", "imageUrl"]
             keys_to_del = ["attacks", "imageUrlHiRes", "text", "weaknesses", "resistances", "retreatCost", "convertedRetreatCost", "ability", "evolvesFrom", "ancientTrait"]
 
             for index, card in enumerate(res_tcg_json):
@@ -195,7 +202,7 @@ class Command(BaseCommand):
                         )
                         card["pokemon"] = Pokemon.objects.filter(query).order_by('id').first()
 
-                    except ObjectDoesNotExist as dneerr:
+                    except ObjectDoesNotExist as odneerr:
                         pass
 
                 for arg in keys_to_del:

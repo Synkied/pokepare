@@ -65,17 +65,16 @@ cd {project_folder_name}
 make run
 ```
 
-# MAC OS X Issues
-Remember to navigate to Applications/Python x.x (where x.x is your version) and double click on "Install Certificates.command" to install certificates
-
-
-# frontend
+# Frontend
 
 > A Vue.js project
 
 ## Build Setup
 
 ``` bash
+# change directory
+cd frontend
+
 # install dependencies
 npm install
 
@@ -87,11 +86,19 @@ npm run build
 
 # build for production and view the bundle analyzer report
 npm run build --report
+
+# collect static files
+cd .. # project root
+make collectstatic
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
+# Issues
+## MAC OS X Issues
+Remember to navigate to Applications/Python x.x (where x.x is your version) and double click on "Install Certificates.command" to install certificates
 
-## TODO
+
+# TODO
 
 * Add an API endpoint for sets
