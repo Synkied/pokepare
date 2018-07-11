@@ -42,3 +42,7 @@ bash_web:
 
 bash_db:
 	docker exec -ti pokepare_db bash
+
+npm_build:
+	cd frontend
+	npm run build

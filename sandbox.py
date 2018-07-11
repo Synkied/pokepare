@@ -27,6 +27,3 @@
 # t = get_image("https://images.pokemontcg.io/sm4/30.png")
 
 # print(t)
-
-file_name = ["Bulbasaur", "png"]
-print(file_name)
