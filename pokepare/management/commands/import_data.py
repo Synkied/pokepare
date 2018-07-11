@@ -110,41 +110,45 @@ class Command(BaseCommand):
         for _ in range(ceil(int(res_json["count"]) // limit) + 1):
             # updating the url for the offset limit each turn
 
-            res = requests.get(url)
+            try:
+                res = requests.get(url)
 
-            res_json = res.json()
+                res_json = res.json()
 
-            print(url)
+                print(url)
 
-            url = res_json["next"]
+                url = res_json["next"]
 
-            for index, pokemon in enumerate(res_json["results"]):
-                count += 1
+                for index, pokemon in enumerate(res_json["results"]):
+                    count += 1
 
-                new_pokemon = requests.get(res_json["results"][index]['url'])
-                name = new_pokemon.json()['name'].title()
-                pokemon_id = new_pokemon.json()['id']
-                image = new_pokemon.json()['sprites']['front_default']
+                    new_pokemon = requests.get(res_json["results"][index]['url'])
+                    name = new_pokemon.json()['name'].title()
+                    pokemon_id = new_pokemon.json()['id']
+                    image = new_pokemon.json()['sprites']['front_default']
 
-                my_pokemon = {
-                    "name": name,
-                    "number": pokemon_id,
-                    "image": image,
-                }
+                    my_pokemon = {
+                        "name": name,
+                        "number": pokemon_id,
+                        "image": image,
+                    }
 
-                pokemon_obj, created = Pokemon.objects.get_or_create(
-                    **my_pokemon
-                )
-                self.get_remote_image(image, pokemon_obj)
+                    pokemon_obj, created = Pokemon.objects.get_or_create(
+                        **my_pokemon
+                    )
+                    self.get_remote_image(image, pokemon_obj)
 
-                if created:
-                    self.stdout.write(my_pokemon["name"] + ' imported...')
-                    with open("log_import_pokemons" + ".txt", 'a') as f:
-                        f.write(my_pokemon["name"] + ' imported... \n')
-                else:
-                    self.stdout.write(my_pokemon["name"] + ' NOT CREATED...')
-                    with open("log_import_pokemons" + ".txt", 'a') as f:
-                        f.write(my_pokemon["name"] + ' imported... \n')
+                    if created:
+                        self.stdout.write(my_pokemon["name"] + ' imported...')
+                        with open("log_import_pokemons" + ".txt", 'a') as f:
+                            f.write(my_pokemon["name"] + ' imported... \n')
+                    else:
+                        self.stdout.write(my_pokemon["name"] + ' NOT CREATED...')
+                        with open("log_import_pokemons" + ".txt", 'a') as f:
+                            f.write(my_pokemon["name"] + ' imported... \n')
+
+            except KeyError as kerr:
+                pass
 
         with open("log_import_pokemons" + ".txt", 'a') as f:
             f.write("Import finished at: " + "{}".format(time.strftime('%Y-%m-%d_%H:%M')))
