@@ -1,15 +1,15 @@
 <template>
   <div id="cards" class="container mt-5">
     <h2>{{ module_title }}</h2>
-    <h3>{{ cards.length }} cards</h3>
+    <h4>{{ cards.length }} cards</h4>
     <div>
       <template v-if="!user_query">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-xl-4 col-lg-6 col-md-6 col-xs-1 mt-3"  v-for="card in cards.slice(0, 12)" :key="card.id">
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12 mt-3"  v-for="card in cards.slice(0, 12)" :key="card.id">
               <ul>
                 <li class="ns-li mb-2">
-                  <a :href="card.url"><img :src="card.image" alt=""></a>
+                  <a :href="card.url"><img class="card-img" :src="card.image" alt=""></a>
                 </li>
                 <li class="ns-li">
                   <p><a :href="card.url">{{ card.name }}</a></p>
@@ -124,4 +124,5 @@ export default {
   .container {
     max-width: 960px;
   }
+
 </style>

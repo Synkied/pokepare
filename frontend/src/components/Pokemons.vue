@@ -1,6 +1,7 @@
 <template>
   <div id="pokemons" class="container mt-5">
     <h2>{{ module_title }}</h2>
+    <h4>{{ pokemons.length }} Pokemons</h4>
     <div>
       <template v-if="!user_query">
         <div class="container-fluid">
