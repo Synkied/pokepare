@@ -5,8 +5,8 @@ pokepare.sublime-workspace
 settings/production.py
 staticfiles
 **/node_modules
-static/media
-static/bundles
+public/media
+public/bundles
 webpack-stats.json
 **/.DS_Store
 log_import.txt
