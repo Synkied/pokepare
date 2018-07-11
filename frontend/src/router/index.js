@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 const routerOptions = [
   /* what to render depending on the url passed */
-  { path: '/', component: 'Home' },
+  { path: '/', component: 'Home', meta: {title: 'PokePare'} },
   { path: '/cards/', component: 'Cards' },
   { path: '/cards/:unique_id', component: 'Card' },
   { path: '/pokemons/', component: 'Pokemons' },
@@ -13,12 +13,8 @@ const routerOptions = [
 const routes = routerOptions.map(route => {
   return {
     ...route,
-    component: () => import(`@/components/${route.component}.vue`),
+    component: () => import(`@/components/${route.component}.vue`)
     /* searches for the component to render depending on the url passed */
-    meta: {
-      title: 'PokePare',
-    }
-
   }
 })
 

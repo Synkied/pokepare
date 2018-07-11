@@ -29,10 +29,6 @@ import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
-function capitalize (s) {
-  return s && s[0].toUpperCase() + s.slice(1)
-}
-
 /* data, methods, components... declaration */
 export default {
   data () {
