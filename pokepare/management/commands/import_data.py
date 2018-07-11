@@ -3,11 +3,13 @@ import functools
 import operator
 import tempfile
 import time
+import os
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import files
 from django.db.models import Q
+from django.conf import settings
 
 import requests
 from pokemons.models import Pokemon
@@ -30,15 +32,15 @@ class Command(BaseCommand):
             return False
 
         if import_type == 'all':
-            self.clear_pokemons()
-            self.clear_cards()
+            # self.clear_pokemons()
+            # self.clear_cards()
             self.import_pokemons()
             self.import_cards()
         elif import_type == 'pokemons':
-            self.clear_pokemons()
+            # self.clear_pokemons()
             self.import_pokemons()
         elif import_type == 'cards':
-            self.clear_cards()
+            # self.clear_cards()
             self.import_cards()
         elif import_type == 'clear':
             self.clear_pokemons()
@@ -57,14 +59,17 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('All cards deleted!'))
 
     def get_remote_image(self, url, obj):
+        media_path = settings.MEDIA_ROOT
         request = requests.get(url, stream=True)
 
         if request.status_code == 200:
             if obj.__class__.__name__ == 'Card':
                 file_name = "-".join((url.split('/')[-2::]))
+                file_path = media_path + "/cards/" + file_name
 
             elif obj.__class__.__name__ == 'Pokemon':
                 file_name = ".".join([obj.name, url.split('.')[-1]])
+                file_path = media_path + "/pokemons/" + file_name
 
             else:
                 return False
@@ -81,7 +86,10 @@ class Command(BaseCommand):
                 # Write image block to temporary file
                 lf.write(block)
 
-            obj.image.save(file_name, files.File(lf))
+            file_exists = os.path.isfile(file_path)
+
+            if not file_exists:
+                obj.image.save(file_name, files.File(lf))
 
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
@@ -98,15 +106,16 @@ class Command(BaseCommand):
         with open("log_import" + ".txt", 'w') as f:
             f.write("Import started at: " + "{}".format(time.strftime('%Y-%m-%d_%H-%M')) + '\n')
 
-        for _ in range(ceil(int(res_json["count"]) // limit + 1)):
+        for _ in range(ceil(int(res_json["count"]) // limit) + 1):
             # updating the url for the offset limit each turn
 
             res = requests.get(url)
 
             res_json = res.json()
 
-            url = res_json["next"]
             print(url)
+
+            url = res_json["next"]
 
             for index, pokemon in enumerate(res_json["results"]):
                 count += 1

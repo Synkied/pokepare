@@ -26,14 +26,8 @@
 <script>
 /* Imports */
 import axios from 'axios'
-import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
-import SearchBar from './SearchBar'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
-
-function capitalize (s) {
-  return s && s[0].toUpperCase() + s.slice(1)
-}
 
 /* data, methods, components... declaration */
 export default {
@@ -51,8 +45,6 @@ export default {
   methods: {
   },
   components: {
-    'rise-loader': RiseLoader,
-    'search-bar': SearchBar
   },
   mounted () {
     var thisVm = this

@@ -7,18 +7,29 @@
           v-model="user_query" name="user_query" type="text" class="form-control" placeholder="Enter a Pokemon name">
       <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
     </fieldset>
+    <div>{{ cards }}</div>
   </div>
-</template>
+  </template>
 
 <script>
+import axios from 'axios'
+import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
+import { loadProgressBar } from 'axios-progress-bar'
+import 'axios-progress-bar/dist/nprogress.css'
+
+function capitalize (s) {
+  return s && s[0].toUpperCase() + s.slice(1)
+}
 
 export default {
   name: 'SearchBar',
   data () {
     return {
-      module_title: 'Search a Pokemon by name or image',
+      module_title: 'Search a Card by name or image',
       user_query: null,
-      animated: false
+      animated: false,
+      status: null,
+      cards: ''
     }
   },
   methods: {
@@ -29,13 +40,10 @@ export default {
         const path = '/api/cards/?name=' + capitalize(encodeURI(thisVm.user_query))
         loadProgressBar()
         axios.get(path).then(response => {
-          thisVm.data = response.data.length
           if (response.data.length > 0) {
-            console.log(response.data) // ex.: { user: 'Your User'}
-            console.log(response.status) // ex.: 200
-            thisVm.card_name = capitalize(response.data[0].name)
-            thisVm.card_desc = capitalize(response.data[0].description)
-            thisVm.card_img = response.data[0].image
+            console.log('search_bar', response.data) // ex.: { user: 'Your User'}
+            console.log('search_bar', response.status) // ex.: 200
+            thisVm.cards = response.data.results
             thisVm.status = response.status
           } else {
             thisVm.error_msg = 'No result found for this query.'
@@ -68,8 +76,10 @@ export default {
       var thisVm = this
       thisVm.animated = true
     }
+  },
+  components: {
+    'rise-loader': RiseLoader
   }
-
 }
 
 </script>

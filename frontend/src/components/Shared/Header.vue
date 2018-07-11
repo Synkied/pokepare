@@ -3,7 +3,7 @@
 
 <template>
   <div id="header">
-    <b-navbar toggleable="md" type="light" variant="faded" fixed="top" sticky="true">
+    <b-navbar toggleable="md" type="light" variant="faded">
 
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 

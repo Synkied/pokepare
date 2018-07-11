@@ -6,7 +6,7 @@
           <div v-for="card in cards.slice(0, 12)" :key="card.id">
             <ul>
               <li class="ns-li">
-                <img :src="card.image_url" alt="">
+                <img :src="card.image" :alt="card.name">
               </li>
 
             </ul>
@@ -26,7 +26,6 @@
 <script>
 /* Imports */
 import axios from 'axios'
-import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
@@ -41,7 +40,6 @@ export default {
     }
   },
   components: {
-    'rise-loader': RiseLoader
   },
   mounted () {
     var thisVm = this

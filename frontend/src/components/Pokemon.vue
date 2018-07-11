@@ -36,7 +36,6 @@
 <script>
 /* Imports */
 import axios from 'axios'
-import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
@@ -59,7 +58,6 @@ export default {
   methods: {
   },
   components: {
-    'rise-loader': RiseLoader
   },
   mounted () {
     var thisVm = this
