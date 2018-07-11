@@ -8,3 +8,4 @@ staticfiles
 static/media
 static/bundles
 webpack-stats.json
+**/.DS_Store
