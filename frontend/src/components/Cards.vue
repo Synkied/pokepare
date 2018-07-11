@@ -1,7 +1,7 @@
 <template>
   <div id="cards" class="container mt-5">
     <h2>{{ module_title }}</h2>
-    <h4>{{ cards.length }} cards</h4>
+    <h4>{{ data_count }} cards</h4>
     <div>
       <template v-if="!user_query">
         <div class="container-fluid">
@@ -39,7 +39,7 @@ function capitalize (s) {
 export default {
   data () {
     return {
-      data: null,
+      data_count: null,
       status: '',
       cards: '',
       user_query: null,
@@ -49,52 +49,6 @@ export default {
     }
   },
   methods: {
-    lookupGmapsWikiAPI () {
-      var thisVm = this
-      /* axios to ajax the query */
-      if (thisVm.user_query) {
-        const path = '/api/cards/?name=' + capitalize(encodeURI(thisVm.user_query))
-        loadProgressBar()
-        axios.get(path).then(response => {
-          thisVm.data = response.data.length
-          if (response.data.length > 0) {
-            console.log(response.data) // ex.: { user: 'Your User'}
-            console.log(response.status) // ex.: 200
-            thisVm.card_name = capitalize(response.data[0].name)
-            thisVm.card_desc = capitalize(response.data[0].description)
-            thisVm.card_img = response.data[0].image_url
-            thisVm.status = response.status
-          } else {
-            thisVm.error_msg = 'No result found for this query.'
-          }
-        })
-          .catch(function (error) {
-            if (error.response) {
-              // The request was made and the server responded with a status code
-              // that falls out of the range of 2xx
-              console.log(error.response.data)
-              console.log(error.response.status)
-              console.log(error.response.headers)
-            } else if (error.request) {
-              // The request was made but no response was received
-              // `error.request` is an instance of XMLHttpRequest in the browser
-              // and an instance of http.ClientRequest in node.js
-              console.log(error.request)
-            } else {
-              // Something happened in setting up the request that triggered an Error
-              console.log('Error', error.message)
-            }
-            console.log(error.config)
-          })
-      } else {
-        thisVm.status = 'NO_QUERY'
-        thisVm.error_msg = 'Please enter a correct query.'
-      }
-    },
-    animate () {
-      var thisVm = this
-      thisVm.animated = true
-    }
   },
   components: {
     'rise-loader': RiseLoader,
@@ -110,6 +64,7 @@ export default {
         console.log(response.data)
         thisVm.cards = response.data.results
         thisVm.status = response.status
+        thisVm.data_count = response.data.count
       }
     })
   }

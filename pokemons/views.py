@@ -2,8 +2,8 @@ from django.views import View
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+from rest_framework.filters import OrderingFilter
 
 from .serializers import PokemonSerializer
 from .models import Pokemon
@@ -11,7 +11,7 @@ from .models import Pokemon
 # Create your views here.
 
 
-class PokemonFilter(filters.FilterSet):
+class PokemonFilter(FilterSet):
     # set a filterset to use filters
     # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut
     # but it won't let you use "exclude"
@@ -27,8 +27,10 @@ class PokemonViewSet(viewsets.ModelViewSet):
     queryset = Pokemon.objects.all()
     serializer_class = PokemonSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter,)
     filter_class = PokemonFilter
+    ordering_fields = '__all__'  # what field can be ordered via the API
+    ordering = ['number']  # default ordering
 
 
 class PokemonView(View):

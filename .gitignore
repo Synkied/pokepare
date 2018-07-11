@@ -9,3 +9,4 @@ static/media
 static/bundles
 webpack-stats.json
 **/.DS_Store
+log_import.txt

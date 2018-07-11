@@ -2,6 +2,7 @@ from math import ceil
 import functools
 import operator
 import tempfile
+import time
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
@@ -64,7 +65,6 @@ class Command(BaseCommand):
 
             elif obj.__class__.__name__ == 'Pokemon':
                 file_name = ".".join([obj.name, url.split('.')[-1]])
-                print(file_name)
 
             else:
                 return False
@@ -95,7 +95,10 @@ class Command(BaseCommand):
 
         res_json = res.json()
 
-        for _ in range(limit, ceil(int(res_json["count"]) / limit + 1)):
+        with open("log_import" + ".txt", 'w') as f:
+            f.write("Import started at: " + "{}".format(time.strftime('%Y-%m-%d_%H-%M')) + '\n')
+
+        for _ in range(ceil(int(res_json["count"]) // limit + 1)):
             # updating the url for the offset limit each turn
 
             res = requests.get(url)
@@ -113,24 +116,28 @@ class Command(BaseCommand):
                 pokemon_id = new_pokemon.json()['id']
                 image = new_pokemon.json()['sprites']['front_default']
 
-                # try:
-                #     pokemon["cards"] = Card.objects.filter(name__icontains=pokemon["name"])
-                #     print(pokemon["cards"])
-                # except ObjectDoesNotExist as dneerr:
-                #     pass
-
                 my_pokemon = {
                     "name": name,
                     "number": pokemon_id,
                     "image": image,
                 }
 
-                pokemon_obj = Pokemon.objects.get_or_create(
+                pokemon_obj, created = Pokemon.objects.get_or_create(
                     **my_pokemon
                 )
-                self.get_remote_image(image, pokemon_obj[0])
+                self.get_remote_image(image, pokemon_obj)
 
-                self.stdout.write(self.style.WARNING(my_pokemon["name"] + ' imported...'))
+                if created:
+                    self.stdout.write(self.style.WARNING(my_pokemon["name"] + ' imported...'))
+                    with open("log_import" + ".txt", 'a') as f:
+                        f.write(my_pokemon["name"] + ' imported... \n')
+                else:
+                    self.stdout.write(self.style.WARNING(my_pokemon["name"] + ' NOT CREATED...'))
+                    with open("log_import" + ".txt", 'a') as f:
+                        f.write(my_pokemon["name"] + ' imported... \n')
+
+        with open("log_import" + ".txt", 'a') as f:
+            f.write("Import finished at: " + "{}".format(time.strftime('%Y-%m-%d_%H-%M')))
 
         self.stdout.write(self.style.SUCCESS(str(count) + ' Pokemons imported!'))
 
