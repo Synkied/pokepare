@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from utils import OverwriteStorage
 
 from pokemons.models import Pokemon
 
@@ -93,7 +94,7 @@ class Card(models.Model):
         help_text='The front image of the card.',
         default=settings.CARD_PLACEHOLDER
     )
-    image = models.ImageField(upload_to="cards/", blank=True, null=True)
+    image = models.ImageField(storage=OverwriteStorage(), upload_to="cards/", blank=True, null=True)
     pokemon = models.ForeignKey(
         Pokemon,
         on_delete=models.CASCADE,

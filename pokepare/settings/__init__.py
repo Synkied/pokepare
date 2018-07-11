@@ -140,12 +140,12 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "static/media")
-MEDIA_URL = '/static/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "public/media")
+MEDIA_URL = '/media/'
 
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'public'),
 )
 
 CARD_PLACEHOLDER = STATIC_URL + 'img/pokepare_card.png'
@@ -160,5 +160,5 @@ WEBPACK_LOADER = {
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100,
+    'PAGE_SIZE': 20,
 }

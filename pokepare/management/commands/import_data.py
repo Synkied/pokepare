@@ -37,7 +37,7 @@ class Command(BaseCommand):
             self.import_pokemons()
             self.import_cards()
         elif import_type == 'pokemons':
-            # self.clear_pokemons()
+            self.clear_pokemons()
             self.import_pokemons()
         elif import_type == 'cards':
             # self.clear_cards()
@@ -88,8 +88,8 @@ class Command(BaseCommand):
 
             file_exists = os.path.isfile(file_path)
 
-            if not file_exists:
-                obj.image.save(file_name, files.File(lf))
+            obj.image.save(file_name, files.File(lf))
+
 
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
@@ -137,11 +137,11 @@ class Command(BaseCommand):
                 self.get_remote_image(image, pokemon_obj)
 
                 if created:
-                    self.stdout.write(self.style.WARNING(my_pokemon["name"] + ' imported...'))
+                    self.stdout.write(my_pokemon["name"] + ' imported...')
                     with open("log_import" + ".txt", 'a') as f:
                         f.write(my_pokemon["name"] + ' imported... \n')
                 else:
-                    self.stdout.write(self.style.WARNING(my_pokemon["name"] + ' NOT CREATED...'))
+                    self.stdout.write(my_pokemon["name"] + ' NOT CREATED...')
                     with open("log_import" + ".txt", 'a') as f:
                         f.write(my_pokemon["name"] + ' imported... \n')
 
@@ -151,7 +151,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(str(count) + ' Pokemons imported!'))
 
     def import_cards(self):
-        self.stdout.write(self.style.WARNING('Importing cards...'))
+        self.stdout.write('Importing cards...')
 
         url_tcg = 'https://api.pokemontcg.io/v1/cards?pageSize=1000'
 
@@ -206,14 +206,12 @@ class Command(BaseCommand):
 
         for card in cards:
             try:
-                my_card = Card.objects.get_or_create(
+                my_card, created = Card.objects.get_or_create(
                     **card
                 )
-                self.get_remote_image(card["image_url"], my_card[0])
-                # [0] to get the first elem of the tuple generated
-                # by "get_or_create()"
+                self.get_remote_image(card["image_url"], my_card)
 
-                self.stdout.write(self.style.WARNING(card["name"] + ' imported...'))
+                self.stdout.write(card["name"] + ' imported...')
             except ValueError as verr:
                 print("ValueError", verr, card["name"])
 

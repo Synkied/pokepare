@@ -48,7 +48,7 @@ module.exports = {
     index: path.resolve(__dirname, '../../templates/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../../static'),
+    assetsRoot: path.resolve(__dirname, '../../public'),
     assetsSubDirectory: 'bundles',
     assetsPublicPath: '/static/',
 

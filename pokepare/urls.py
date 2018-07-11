@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.conf.urls.static import static
+
 """pokepare URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -27,4 +30,4 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('cards/', include('cards.urls'), name="cards"),
     path('pokemons/', include('pokemons.urls'), name="pokemons"),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
