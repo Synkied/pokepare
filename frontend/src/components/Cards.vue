@@ -6,7 +6,7 @@
       <template v-if="!user_query">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12 mt-3"  v-for="card in cards.slice(0, 12)" :key="card.id">
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12 mt-3"  v-for="card in cards" :key="card.id">
               <ul>
                 <li class="ns-li mb-2">
                   <a :href="card.url"><img class="card-img" :src="card.image" alt=""></a>
@@ -16,6 +16,9 @@
                 </li>
               </ul>
             </div>
+          </div>
+          <div v-if="next_page">
+            <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
           </div>
         </div>
       </template>
@@ -34,15 +37,26 @@ export default {
   data () {
     return {
       data_count: null,
+      page_count: null,
       status: '',
-      cards: '',
+      cards: [],
       user_query: null,
       animated: false,
       error_msg: null,
-      module_title: 'Cards'
+      module_title: 'Cards',
+      next_page: ''
     }
   },
   methods: {
+    viewMore () {
+      var thisVm = this
+      axios.get(thisVm.next_page).then(response => {
+        for (var i = 0; i < response.data.results.length; i++) {
+          thisVm.cards.push(response.data.results[i])
+        }
+        thisVm.next_page = response.data.next
+      })
+    }
   },
   components: {
   },
@@ -57,6 +71,7 @@ export default {
         thisVm.cards = response.data.results
         thisVm.status = response.status
         thisVm.data_count = response.data.count
+        thisVm.next_page = response.data.next
       }
     })
   }

@@ -4,7 +4,7 @@
 
 # def get_image(url):
 #     request = requests.get(url, stream=True)
-
+import re
 #     if request.status_code == 200:
 #         file_name = "-".join((url.split('/')[-2::]))
 #         print(file_name)
@@ -27,3 +27,9 @@
 # t = get_image("https://images.pokemontcg.io/sm4/30.png")
 
 # print(t)
+
+
+t = ["Charizard-ex", "Charizard ex", "Charizard_ex"]
+
+for i in t:
+    print(re.split(r"[\W+|_']+", i))

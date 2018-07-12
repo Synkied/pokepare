@@ -3,7 +3,7 @@ import functools
 import operator
 import tempfile
 import time
-import os
+import re
 
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
@@ -167,7 +167,7 @@ class Command(BaseCommand):
 
         cards = []
 
-        for _ in range(ceil(int(res_tcg.headers["Total-Count"]) // int(res_tcg.headers["Count"]))):
+        for _ in range(ceil(int(res_tcg.headers["Total-Count"]) // int(res_tcg.headers["Count"])) + 1):
 
             print("Fetching from: ", url_tcg)
 
@@ -175,7 +175,10 @@ class Command(BaseCommand):
 
             res_tcg_json = res_tcg.json()["cards"]
 
-            url_tcg = res_tcg.links["next"]["url"]
+            try:
+                url_tcg = res_tcg.links["next"]["url"]
+            except KeyError as kerr:
+                pass
 
             # attributes_to_keep = ["name", "nationalPokedexNumber", "number", "types", "subtype", "supertype", "hp", "artist", "rarity", "series", "set", "setCode", "imageUrl"]
             keys_to_del = ["attacks", "imageUrlHiRes", "text", "weaknesses", "resistances", "retreatCost", "convertedRetreatCost", "ability", "evolvesFrom", "ancientTrait"]
@@ -196,7 +199,8 @@ class Command(BaseCommand):
                     # the query only links to pokemons, as other terms
                     # like "EX" are not pokemon objects
                     try:
-                        q = card["name"].split()
+                        q = re.split(r"[\W+|_']+", card["name"])
+                        # remove chars between words, including "_"
                         query = functools.reduce(
                             operator.or_, (
                                 Q(
