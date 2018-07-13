@@ -26,7 +26,6 @@
                 </li>
               </div>
             </div>
-            <p>in {{ cardSets.size }} sets</p>
           </div>
         </div>
       </template>
@@ -40,9 +39,14 @@
 import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
+import Sets from './Sets.vue'
 
 function capitalize (s) {
   return s && s[0].toUpperCase() + s.slice(1)
+}
+
+function onlyUnique (value, index, self) {
+  return self.indexOf(value) === index
 }
 
 /* data, methods, components... declaration */
@@ -54,15 +58,17 @@ export default {
       pokemons: '',
       animated: false,
       errorMsg: null,
-      cardSets: new Set()
+      cardSets: []
     }
   },
   methods: {
   },
   components: {
+    'sets': Sets
   },
   mounted () {
     var thisVm = this
+    var cardSetsList = []
     if (thisVm.$route.params) {
       thisVm.pokemon_name = thisVm.$route.params.name
     }
@@ -75,8 +81,10 @@ export default {
         thisVm.pokemons = response.data.results
         thisVm.status = response.status
         for (var i = 0; i < response.data.results[0].cards.length; i++) {
-          thisVm.cardSets.add(response.data.results[0].cards[i].card_set_code)
+          cardSetsList.push(response.data.results[0].cards[i].card_set_code)
         }
+        thisVm.cardSets = cardSetsList.filter(onlyUnique)
+        // filter to get only unique values in array
       }
     })
   }

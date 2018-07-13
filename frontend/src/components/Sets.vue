@@ -34,6 +34,7 @@ import 'axios-progress-bar/dist/nprogress.css'
 
 /* data, methods, components... declaration */
 export default {
+  props: ['setCodes'],
   data () {
     return {
       dataCount: null,
@@ -44,7 +45,8 @@ export default {
       animated: false,
       errorMsg: null,
       moduleTitle: 'Sets',
-      next: ''
+      next: '',
+      setCodesValues: this.setCodes
     }
   },
   methods: {
@@ -56,24 +58,28 @@ export default {
         }
         thisVm.next = response.data.next
       })
+    },
+    viewSets () {
+      var thisVm = this
+      const path = '/api/sets/'
+      loadProgressBar()
+      axios.get(path).then(response => {
+        if (response.data) {
+          console.log(response.status)
+          console.log(response.data)
+          thisVm.sets = response.data.results
+          thisVm.status = response.status
+          thisVm.dataCount = response.data.count
+          thisVm.next = response.data.next
+        }
+      })
     }
   },
   components: {
   },
   mounted () {
     var thisVm = this
-    const path = '/api/sets/'
-    loadProgressBar()
-    axios.get(path).then(response => {
-      if (response.data) {
-        console.log(response.status)
-        console.log(response.data)
-        thisVm.sets = response.data.results
-        thisVm.status = response.status
-        thisVm.dataCount = response.data.count
-        thisVm.next = response.data.next
-      }
-    })
+    thisVm.viewSets()
   }
 }
 </script>
