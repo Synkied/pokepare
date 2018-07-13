@@ -1,9 +1,8 @@
 <template>
   <div id="cards">
     <div>
-      <template v-if="!user_query">
+      <template>
         <div class="container-fluid">
-          <div v-for="card in cards.slice(0, 12)" :key="card.id">
             <ul>
               <li class="ns-li">
                 <img :src="card.image" :alt="card.name">
@@ -13,10 +12,13 @@
             <li class="ns-li">
               <p>{{ card.name }}</p>
             </li>
-            <li class="ns-li">
-              <p>{{ card.pokemon }}</p>
+            <li class="ns-li mt-5">
+              <h4>Related Pokémon</h4>
+              <a :href="pokemon.url">
+                <img :src="pokemon.image" alt="">
+              </a>
+                <p><a :href="pokemon.url">{{ pokemon.name }}</a></p>
             </li>
-          </div>
         </div>
       </template>
     </div>
@@ -35,7 +37,8 @@ export default {
     return {
       data: null,
       status: '',
-      cards: '',
+      card: '',
+      pokemon: '',
       error_msg: null
     }
   },
@@ -51,9 +54,11 @@ export default {
     axios.get(path).then(response => {
       if (response.data) {
         console.log(response.status)
-        console.log(response.data)
-        thisVm.cards = response.data.results
         thisVm.status = response.status
+        thisVm.card = response.data.results[0]
+        axios.get(response.data.results[0].pokemon).then(response => {
+          thisVm.pokemon = response.data
+        })
       }
     })
   }

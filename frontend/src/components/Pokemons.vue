@@ -1,12 +1,14 @@
 <template>
   <div id="pokemons" class="container mt-5">
     <h2>{{ module_title }}</h2>
-    <h4>{{ data_count }} Pokemons</h4>
+    <h4 v-if="data_count">{{ data_count }} Pokémons</h4>
+    <button class="btn btn-info mt-5" :disabled="page_number === 0" @click="prevPage">Prev</button>
+    <button class="btn btn-info mt-5" :disabled="page_number >= pageCount -1" @click="nextPage">Next</button>
     <div>
       <template v-if="!user_query">
         <div class="container-fluid">
-          <div class="row">
-            <div class="col-xl-2 col-lg-6 col-md-6 col-xs-1 mt-3"  v-for="pokemon in paginatedData" :key="pokemon.id">
+          <div class="row" v-if="pokemons">
+            <div class="col-xl-2 col-lg-6 col-md-6 col-6 col-xs-6 mt-3"  v-for="pokemon in paginatedData" :key="pokemon.id">
               <ul>
                 <li class="ns-li">
                   <a :href="pokemon.url"><img :src="pokemon.image" :alt="pokemon.name"></a>
@@ -17,8 +19,6 @@
               </ul>
             </div>
           </div>
-          <button class="btn btn-info mt-5" :disabled="page_number === 0" @click="prevPage">Prev</button>
-          <button class="btn btn-info mt-5" :disabled="page_number >= pageCount -1" @click="nextPage">Next</button>
         </div>
       </template>
     </div>
@@ -35,23 +35,21 @@ import 'axios-progress-bar/dist/nprogress.css'
 export default {
   data () {
     return {
-      data_count: null,
+      data_count: '',
       page_count: null,
       status: '',
       user_query: null,
       animated: false,
       error_msg: null,
-      module_title: 'Pokemons',
+      module_title: 'Pokémons',
       next_page: '',
       previous_page: '',
-      page_number: 0
+      page_number: 0,
+      limit: '',
+      pokemons: ''
     }
   },
   props: {
-    pokemons: {
-      type: Array,
-      required: true
-    },
     size: {
       type: Number,
       required: false,
@@ -60,9 +58,9 @@ export default {
   },
   computed: {
     pageCount () {
-      let l = this.data_count.length
+      let l = this.data_count
       let s = this.size
-      return Math.floor(l / s)
+      return Math.ceil(l / s)
     },
     paginatedData () {
       const start = this.page_number * this.size
@@ -110,7 +108,7 @@ export default {
         this.pokemons = response.data.results
         this.data_count = response.data.count
         this.status = response.status
-        console.log(response.data)
+        this.limit = Number(this.next_page.substring(this.next_page.indexOf('=') + 1, this.next_page.indexOf('&')))
       }
     })
   }

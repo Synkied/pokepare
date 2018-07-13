@@ -32,8 +32,8 @@ class Command(BaseCommand):
             return False
 
         if import_type == 'all':
-            # self.clear_pokemons()
-            # self.clear_cards()
+            self.clear_pokemons()
+            self.clear_cards()
             self.import_pokemons()
             self.import_cards()
         elif import_type == 'pokemons':

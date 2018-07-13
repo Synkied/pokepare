@@ -55,7 +55,6 @@ class PokemonViewDetail(View):
     def get(self, request, name):
 
         context = {
-            "pouet": "pouet",
         }
 
         return render(request, self.template_name, context)

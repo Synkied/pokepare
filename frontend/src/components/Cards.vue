@@ -6,7 +6,7 @@
       <template v-if="!user_query">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12 mt-3"  v-for="card in cards" :key="card.id">
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-6 mt-3"  v-for="card in cards" :key="card.id">
               <ul>
                 <li class="ns-li mb-2">
                   <a :href="card.url"><img class="card-img" :src="card.image" alt=""></a>

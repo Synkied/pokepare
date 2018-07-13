@@ -1,7 +1,5 @@
 <template>
   <div id="home" class="container">
-      <pokemons></pokemons>
-      <cards></cards>
   </div>
 </template>
 
