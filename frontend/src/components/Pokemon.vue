@@ -1,7 +1,7 @@
 <template>
   <div id="pokemons" class="container">
     <div>
-      <template v-if="!user_query">
+      <template>
         <div class="container-fluid">
           <div v-for="pokemon in pokemons.slice(0, 12)" :key="pokemon.id">
             <ul>
@@ -12,7 +12,8 @@
                 <p>{{ pokemon.name }}</p>
               </li>
             </ul>
-            <p class="mt-5">{{ pokemon.cards.length }} card(s) found</p>
+            <p v-if="pokemon.cards.length === 1" class="mt-5">{{ pokemon.cards.length }} card found</p>
+            <p v-else class="mt-5">{{ pokemon.cards.length }} card(s) found</p>
             <div class="row">
               <div class="col-xl-2 col-lg-3 col-md-4 col-xs-5 mt-3" v-for="card in pokemon.cards" :key="card.id">
                 <li class="ns-li">
@@ -25,6 +26,7 @@
                 </li>
               </div>
             </div>
+            <p>in {{ cardSets.size }} sets</p>
           </div>
         </div>
       </template>
@@ -47,12 +49,12 @@ function capitalize (s) {
 export default {
   data () {
     return {
-      data_count: null,
+      dataCount: null,
       status: '',
       pokemons: '',
-      user_query: null,
       animated: false,
-      error_msg: null
+      errorMsg: null,
+      cardSets: new Set()
     }
   },
   methods: {
@@ -72,6 +74,9 @@ export default {
         console.log(response.data.results)
         thisVm.pokemons = response.data.results
         thisVm.status = response.status
+        for (var i = 0; i < response.data.results[0].cards.length; i++) {
+          thisVm.cardSets.add(response.data.results[0].cards[i].card_set_code)
+        }
       }
     })
   }

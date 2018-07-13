@@ -1,10 +1,10 @@
 <template>
   <div id="cards" class="container">
-    <h1> {{ module_title }}</h1>
+    <h1> {{ moduleTitle }}</h1>
     <fieldset>
         <input :class="{'bounce animated': animated}" @animationend="animated = false"
-          @keyup.esc="user_query=''" @keyup.enter="[lookupGmapsWikiAPI(), animate()]"
-          v-model="user_query" name="user_query" type="text" class="form-control" placeholder="Enter a Pokemon name">
+          @keyup.esc="userQuery=''" @keyup.enter="[lookupGmapsWikiAPI(), animate()]"
+          v-model="userQuery" name="userQuery" type="text" class="form-control" placeholder="Enter a Pokemon name">
       <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
     </fieldset>
     <div>{{ cards }}</div>
@@ -25,8 +25,8 @@ export default {
   name: 'SearchBar',
   data () {
     return {
-      module_title: 'Search a Card by name or image',
-      user_query: null,
+      moduleTitle: 'Search a Card by name or image',
+      userQuery: null,
       animated: false,
       status: null,
       cards: ''
@@ -36,8 +36,8 @@ export default {
     lookupGmapsWikiAPI () {
       var thisVm = this
       /* axios to ajax the query */
-      if (thisVm.user_query) {
-        const path = '/api/cards/?name=' + capitalize(encodeURI(thisVm.user_query))
+      if (thisVm.userQuery) {
+        const path = '/api/cards/?name=' + capitalize(encodeURI(thisVm.userQuery))
         loadProgressBar()
         axios.get(path).then(response => {
           if (response.data.length > 0) {

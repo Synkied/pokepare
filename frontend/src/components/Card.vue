@@ -1,16 +1,19 @@
 <template>
   <div id="cards">
     <div>
-      <template>
+      <template v-if="card">
         <div class="container-fluid">
             <ul>
               <li class="ns-li">
                 <img :src="card.image" :alt="card.name">
               </li>
-
             </ul>
             <li class="ns-li">
               <p>{{ card.name }}</p>
+            </li>
+            <li class="ns-li">
+              <h5>Found in this set:</h5>
+              <p><a :href="'/sets/' + card.card_set_code">{{ card.card_set }}</a></p>
             </li>
             <li class="ns-li mt-5">
               <h4>Related Pokémon</h4>
@@ -39,7 +42,7 @@ export default {
       status: '',
       card: '',
       pokemon: '',
-      error_msg: null
+      errorMsg: null
     }
   },
   components: {

@@ -14,6 +14,7 @@ from django.conf import settings
 import requests
 from pokemons.models import Pokemon
 from cards.models import Card
+from sets.models import Set
 
 
 class Command(BaseCommand):
@@ -42,6 +43,9 @@ class Command(BaseCommand):
         elif import_type == 'cards':
             self.clear_cards()
             self.import_cards()
+        elif import_type == 'sets':
+            self.clear_sets()
+            self.import_sets()
         elif import_type == 'clear':
             self.clear_pokemons()
             self.clear_cards()
@@ -58,6 +62,11 @@ class Command(BaseCommand):
         Card.objects.all().delete()
         self.stdout.write(self.style.SUCCESS('All cards deleted!'))
 
+    def clear_sets(self):
+        self.stdout.write(self.style.WARNING('Deleting all cards...'))
+        Set.objects.all().delete()
+        self.stdout.write(self.style.SUCCESS('All cards deleted!'))
+
     def get_remote_image(self, url, obj):
 
         if url:
@@ -69,6 +78,9 @@ class Command(BaseCommand):
 
                 elif obj.__class__.__name__ == 'Pokemon':
                     file_name = ".".join([obj.name, url.split('.')[-1]])
+
+                elif obj.__class__.__name__ == 'Set':
+                    file_name = "-".join((url.split('/')[-2::]))
 
                 else:
                     return False
@@ -231,3 +243,57 @@ class Command(BaseCommand):
                 print("ValueError", verr, card["name"])
 
         self.stdout.write(self.style.SUCCESS(str(len(cards)) + ' cards imported!'))
+
+##############################
+# Importing sets
+##############################
+    def import_sets(self):
+        self.stdout.write('Importing sets...')
+
+        url_tcg = 'https://api.pokemontcg.io/v1/sets?pageSize=100'
+
+        res_tcg = requests.get(url_tcg)
+
+        card_sets = []
+
+        for _ in range(ceil(int(res_tcg.headers["Total-Count"]) // int(res_tcg.headers["Count"]))):
+
+            print("Fetching from: ", url_tcg)
+
+            res_tcg = requests.get(url_tcg)
+
+            res_tcg_json = res_tcg.json()["sets"]
+
+            try:
+                url_tcg = res_tcg.links["next"]["url"]
+            except KeyError as kerr:
+                pass
+
+            # attributes_to_keep = ["name", "nationalPokedexNumber", "number", "types", "subtype", "supertype", "hp", "artist", "rarity", "series", "set", "setCode", "imageUrl"]
+            keys_to_del = ["standardLegal", "expandedLegal", "updatedAt", "updatedSince", "pageSize", "ptcgoCode"]
+
+            for index, card_set in enumerate(res_tcg_json):
+
+                card_set["release_date"] = card_set.pop("releaseDate", None)
+                card_set["total_cards"] = card_set.pop("totalCards", None)
+                card_set["logo_url"] = card_set.pop("logoUrl", None)
+                card_set["symbol_url"] = card_set.pop("symbolUrl", None)
+
+                for arg in keys_to_del:
+                    if arg in card_set:
+                        card_set.pop(arg)
+
+                card_sets.append(card_set)
+
+        for card_set in card_sets:
+            try:
+                my_card_set, created = Set.objects.get_or_create(
+                    **card_set
+                )
+                self.get_remote_image(card_set["logo_url"], my_card_set)
+
+                self.stdout.write(card_set["name"] + ' imported...')
+            except ValueError as verr:
+                print("ValueError", verr, card_set["name"])
+
+        self.stdout.write(self.style.SUCCESS(str(len(card_sets)) + ' sets imported!'))

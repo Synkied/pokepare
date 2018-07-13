@@ -7,7 +7,9 @@ const routerOptions = [
   { path: '/cards/', component: 'Cards' },
   { path: '/cards/:unique_id', component: 'Card' },
   { path: '/pokemons/', component: 'Pokemons' },
-  { path: '/pokemons/:name', component: 'Pokemon' }
+  { path: '/pokemons/:name', component: 'Pokemon' },
+  { path: '/sets/', component: 'Sets' },
+  { path: '/sets/:code', component: 'Set', props: true }
 ]
 
 const routes = routerOptions.map(route => {

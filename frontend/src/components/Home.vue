@@ -14,15 +14,6 @@ import Cards from './Cards'
 export default {
   data () {
     return {
-      data: null,
-      status: '',
-      cards: '',
-      card_name: '',
-      card_desc: '',
-      card_img: '',
-      user_query: null,
-      animated: false,
-      error_msg: null
     }
   },
   methods: {

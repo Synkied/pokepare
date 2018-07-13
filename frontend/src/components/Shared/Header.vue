@@ -14,6 +14,7 @@
         <b-navbar-nav>
           <b-nav-item href="/cards">Cards</b-nav-item>
           <b-nav-item href="/pokemons">Pokémons</b-nav-item>
+          <b-nav-item href="/sets">Sets</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->

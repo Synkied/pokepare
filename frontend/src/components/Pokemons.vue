@@ -1,14 +1,14 @@
 <template>
   <div id="pokemons" class="container mt-5">
-    <h2>{{ module_title }}</h2>
-    <h4 v-if="data_count">{{ data_count }} Pokémons</h4>
-    <button class="btn btn-info mt-5" :disabled="page_number === 0" @click="prevPage">Prev</button>
-    <button class="btn btn-info mt-5" :disabled="page_number >= pageCount -1" @click="nextPage">Next</button>
+    <h2>{{ moduleTitle }}</h2>
+    <h4 v-if="dataCount">{{ dataCount }} Pokémon</h4>
+    <button class="btn btn-info mt-5" :disabled="pageNumber === 0" @click="prevPage">Prev</button>
+    <button class="btn btn-info mt-5" :disabled="pageNumber >= pageCount -1" @click="nextPage">Next</button>
     <div>
-      <template v-if="!user_query">
+      <template v-if="!userQuery">
         <div class="container-fluid">
           <div class="row" v-if="pokemons">
-            <div class="col-xl-2 col-lg-6 col-md-6 col-6 col-xs-6 mt-3"  v-for="pokemon in paginatedData" :key="pokemon.id">
+            <div class="col-xl-2 col-lg-6 col-md-6 col-6 col-xs-6 mt-3" v-for="pokemon in paginatedData" :key="pokemon.id">
               <ul>
                 <li class="ns-li">
                   <a :href="pokemon.url"><img :src="pokemon.image" :alt="pokemon.name"></a>
@@ -35,16 +35,15 @@ import 'axios-progress-bar/dist/nprogress.css'
 export default {
   data () {
     return {
-      data_count: '',
-      page_count: null,
+      dataCount: '',
       status: '',
-      user_query: null,
+      userQuery: null,
       animated: false,
-      error_msg: null,
-      module_title: 'Pokémons',
-      next_page: '',
-      previous_page: '',
-      page_number: 0,
+      errorMsg: null,
+      moduleTitle: 'Pokémons',
+      next: '',
+      previous: '',
+      pageNumber: 0,
       limit: '',
       pokemons: ''
     }
@@ -58,42 +57,42 @@ export default {
   },
   computed: {
     pageCount () {
-      let l = this.data_count
+      let l = this.dataCount
       let s = this.size
       return Math.ceil(l / s)
     },
     paginatedData () {
-      const start = this.page_number * this.size
+      const start = this.pageNumber * this.size
       const end = start + this.size
       return this.pokemons.slice(start, end)
     }
   },
   methods: {
   /* viewMore () {
-      axios.get(this.next_page).then(response => {
+      axios.get(this.next).then(response => {
         for (var i = 0; i < response.data.results.length; i++) {
           this.pokemons.push(response.data.results[i])
         }
-        this.next_page = response.data.next
+        this.next = response.data.next
       })
     }, */
     nextPage () {
-      axios.get(this.next_page).then(response => {
+      axios.get(this.next).then(response => {
         for (var i = 0; i < response.data.results.length; i++) {
           this.pokemons.push(response.data.results[i])
         }
-        this.next_page = response.data.next
+        this.next = response.data.next
       })
-      this.page_number++
+      this.pageNumber++
     },
     prevPage () {
-      axios.get(this.previous_page).then(response => {
+      axios.get(this.previous).then(response => {
         for (var i = 0; i < response.data.results.length; i++) {
           this.pokemons.push(response.data.results[i])
         }
-        this.previous_page = response.data.previous
+        this.previous = response.data.previous
       })
-      this.page_number--
+      this.pageNumber--
     }
   },
   components: {
@@ -104,11 +103,11 @@ export default {
     axios.get(path).then(response => {
       if (response.data) {
         console.log(response.status)
-        this.next_page = response.data.next
+        this.next = response.data.next
         this.pokemons = response.data.results
-        this.data_count = response.data.count
+        this.dataCount = response.data.count
         this.status = response.status
-        this.limit = Number(this.next_page.substring(this.next_page.indexOf('=') + 1, this.next_page.indexOf('&')))
+        this.limit = Number(this.next.substring(this.next.indexOf('=') + 1, this.next.indexOf('&')))
       }
     })
   }

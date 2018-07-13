@@ -30,4 +30,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('cards/', include('cards.urls'), name="cards"),
     path('pokemons/', include('pokemons.urls'), name="pokemons"),
+    path('sets/', include('sets.urls'), name="sets"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,23 +1,23 @@
 <template>
   <div id="cards" class="container mt-5">
-    <h2>{{ module_title }}</h2>
-    <h4>{{ data_count }} cards</h4>
+    <h2>{{ moduleTitle }}</h2>
+    <h4>{{ dataCounter }} cards</h4>
     <div>
-      <template v-if="!user_query">
+      <template v-if="initData">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-6 mt-3"  v-for="card in cards" :key="card.id">
+            <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-6 mt-3" v-for="card in cardsData" :key="card.id">
               <ul>
                 <li class="ns-li mb-2">
                   <a :href="card.url"><img class="card-img" :src="card.image" alt=""></a>
                 </li>
                 <li class="ns-li">
-                  <p><a :href="card.url">{{ card.name }}</a></p>
+                  <p ><a :href="card.url">{{ card.name }}</a></p>
                 </li>
               </ul>
             </div>
           </div>
-          <div v-if="next_page">
+          <div v-if="nextPage">
             <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
           </div>
         </div>
@@ -34,27 +34,43 @@ import 'axios-progress-bar/dist/nprogress.css'
 
 /* data, methods, components... declaration */
 export default {
+  props: ['cards', 'dataCount', 'setCode'],
   data () {
     return {
-      data_count: null,
-      page_count: null,
       status: '',
-      cards: [],
-      user_query: null,
+      userQuery: null,
       animated: false,
-      error_msg: null,
-      module_title: 'Cards',
-      next_page: ''
+      errorMsg: null,
+      moduleTitle: 'Cards',
+      nextPage: '',
+      cardsData: this.cards,
+      dataCounter: this.dataCount,
+      setCodeValue: this.setCode,
+      path: ''
     }
   },
   methods: {
     viewMore () {
       var thisVm = this
-      axios.get(thisVm.next_page).then(response => {
+      axios.get(thisVm.nextPage).then(response => {
         for (var i = 0; i < response.data.results.length; i++) {
-          thisVm.cards.push(response.data.results[i])
+          thisVm.cardsData.push(response.data.results[i])
         }
-        thisVm.next_page = response.data.next
+        thisVm.nextPage = response.data.next
+      })
+    },
+    initData (path) {
+      var thisVm = this
+      loadProgressBar()
+      axios.get(path).then(response => {
+        if (response.data) {
+          console.log('cards status:', response.status)
+          console.log(response.data)
+          thisVm.cardsData = response.data.results
+          thisVm.status = response.status
+          thisVm.dataCounter = response.data.count
+          thisVm.nextPage = response.data.next
+        }
       })
     }
   },
@@ -62,18 +78,13 @@ export default {
   },
   mounted () {
     var thisVm = this
-    const path = '/api/cards/'
-    loadProgressBar()
-    axios.get(path).then(response => {
-      if (response.data) {
-        console.log(response.status)
-        console.log(response.data)
-        thisVm.cards = response.data.results
-        thisVm.status = response.status
-        thisVm.data_count = response.data.count
-        thisVm.next_page = response.data.next
-      }
-    })
+    if (thisVm.setCodeValue) {
+      console.log('pouet')
+      thisVm.path = '/api/cards/?card_set_code=' + thisVm.setCodeValue
+    } else {
+      thisVm.path = '/api/cards/'
+    }
+    thisVm.initData(thisVm.path)
   }
 }
 </script>
