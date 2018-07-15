@@ -1,7 +1,7 @@
 # safelist
-branches:
-  only:
-    - dev
+# branches:
+#   only:
+#     - dev
 
 language: python
 python:
