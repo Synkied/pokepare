@@ -11,14 +11,14 @@ from sets.models import Set
 # Define this after the ModelTestCase
 
 
-class ViewTestCase(TestCase):
-    """Test suite for the api views."""
+class SetTestCase(TestCase):
+    """Test suite for the sets views."""
 
     def setUp(self):
         """Define the test client and other test variables."""
         self.client = APIClient()
         self.user = User.objects.create_superuser('test_user', '', 'test_password')
-        self.card_set_data = {'pk': 1, 'name': "Base", 'code': "base1"}
+        self.card_set_data = {'id': 1, 'name': "Base", 'code': "base1"}
         base_card_set = Set.objects.create(**self.card_set_data)
 
     def test_api_can_get_a_card_set(self):

@@ -3,13 +3,30 @@
     <h1> {{ moduleTitle }}</h1>
     <fieldset>
         <input :class="{'bounce animated': animated}" @animationend="animated = false"
-          @keyup.esc="userQuery=''" @keyup.enter="[lookupGmapsWikiAPI(), animate()]"
-          v-model="userQuery" name="userQuery" type="text" class="form-control" placeholder="Enter a Pokemon name">
-      <button @click="[lookupGmapsWikiAPI(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
+          @keyup.esc="userQuery=''" @keyup.enter="[searchCards(), animate()]"
+          v-model="userQuery" name="userQuery" type="text" class="form-control" placeholder="Enter a Pokémon card name">
+      <button @click="[searchCards(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
     </fieldset>
-    <div>{{ cards }}</div>
+    <div class="container-fluid">
+      <div class="row">
+          <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-6 mt-3" v-if="cards" v-for="card in cards" :key="card.id">
+            <ul>
+              <li class="ns-li mb-2">
+                <a :href="card.url"><img class="card-img" :src="card.image" alt=""></a>
+              </li>
+              <li class="ns-li">
+                <p ><a :href="card.url">{{ card.name }}</a></p>
+              </li>
+            </ul>
+          </div>
+        <!-- Display error message if nothing found -->
+        <div v-else>
+          {{ errorMsg }}
+        </div>
+      </div>
+    </div>
   </div>
-  </template>
+</template>
 
 <script>
 import axios from 'axios'
@@ -17,36 +34,33 @@ import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
-function capitalize (s) {
-  return s && s[0].toUpperCase() + s.slice(1)
-}
-
 export default {
   name: 'SearchBar',
   data () {
     return {
-      moduleTitle: 'Search a Card by name or image',
+      moduleTitle: 'Search a card by name or image',
       userQuery: null,
       animated: false,
       status: null,
-      cards: ''
+      cards: '',
+      errorMsg: ''
     }
   },
   methods: {
-    lookupGmapsWikiAPI () {
+    searchCards () {
       var thisVm = this
       /* axios to ajax the query */
       if (thisVm.userQuery) {
-        const path = '/api/cards/?name=' + capitalize(encodeURI(thisVm.userQuery))
+        const path = '/api/cards/?insensitive_name=' + encodeURI(thisVm.userQuery)
         loadProgressBar()
         axios.get(path).then(response => {
-          if (response.data.length > 0) {
+          if (response.data.count > 0) {
             console.log('search_bar', response.data) // ex.: { user: 'Your User'}
             console.log('search_bar', response.status) // ex.: 200
             thisVm.cards = response.data.results
             thisVm.status = response.status
           } else {
-            thisVm.error_msg = 'No result found for this query.'
+            thisVm.errorMsg = 'No result found for this query.'
           }
         })
           .catch(function (error) {
@@ -69,7 +83,7 @@ export default {
           })
       } else {
         thisVm.status = 'NO_QUERY'
-        thisVm.error_msg = 'Please enter a correct query.'
+        thisVm.errorMsg = 'Please enter a correct query.'
       }
     },
     animate () {

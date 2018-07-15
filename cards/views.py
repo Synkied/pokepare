@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework.filters import OrderingFilter
+from django_filters import rest_framework as filters
 
 from .serializers import CardSerializer
 from .models import Card
@@ -15,9 +16,12 @@ class CardFilter(FilterSet):
     # set a filterset to use filters
     # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut
     # but it won't let you use "exclude"
+    insensitive_name = filters.CharFilter(field_name="name", lookup_expr='icontains')
+
     class Meta:
         model = Card
         exclude = ['image']
+        fields = ['insensitive_name']
 
 
 class CardViewSet(viewsets.ModelViewSet):

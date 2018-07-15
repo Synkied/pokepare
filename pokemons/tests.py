@@ -11,14 +11,14 @@ from pokemons.models import Pokemon
 # Define this after the ModelTestCase
 
 
-class ViewTestCase(TestCase):
-    """Test suite for the api views."""
+class PokemonTestCase(TestCase):
+    """Test suite for the pokemon views."""
 
     def setUp(self):
         """Define the test client and other test variables."""
         self.client = APIClient()
         self.user = User.objects.create_superuser('test_user', '', 'test_password')
-        self.pokemon_data = {'pk': 1, 'name': "Bulbasaur", 'number': 1}
+        self.pokemon_data = {'id': 1, 'name': "Bulbasaur", 'number': 1}
         bulbasaur = Pokemon.objects.create(**self.pokemon_data)
 
     def test_api_can_get_a_pokemon(self):
@@ -43,7 +43,7 @@ class ViewTestCase(TestCase):
 
         pokemon = Pokemon.objects.get(**self.pokemon_data)
 
-        change_pokemon = {'pk': 1, 'name': "Bulbizarre", 'number': 1}
+        change_pokemon = {'id': 1, 'name': "Bulbizarre", 'number': 1}
         response = self.client.put(
             reverse(
                 'pokemon-detail',
@@ -59,7 +59,7 @@ class ViewTestCase(TestCase):
     def test_api_non_auth_user_cant_update_a_pokemon(self):
         """Test the api can get a given pokemon."""
         pokemon = Pokemon.objects.get(**self.pokemon_data)
-        change_pokemon = {'pk': 1, 'name': "Bulbizarre", 'number': 1}
+        change_pokemon = {'id': 1, 'name': "Bulbizarre", 'number': 1}
         response = self.client.put(
             reverse(
                 'pokemon-detail',

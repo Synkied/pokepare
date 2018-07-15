@@ -11,14 +11,14 @@ from cards.models import Card
 # Define this after the ModelTestCase
 
 
-class ViewTestCase(TestCase):
-    """Test suite for the api views."""
+class CardTestCase(TestCase):
+    """Test suite for the cards views."""
 
     def setUp(self):
         """Define the test client and other test variables."""
         self.client = APIClient()
         self.user = User.objects.create_superuser('test_user', '', 'test_password')
-        self.card_data = {'pk': 272, 'name': "Venusaur EX", 'national_pokedex_number': 3, "card_set_code": "xyp"}
+        self.card_data = {'id': 272, 'name': "Venusaur EX", 'national_pokedex_number': 3, "card_set_code": "xyp"}
         venusaur = Card.objects.create(**self.card_data)
 
     def test_api_can_get_a_card(self):
