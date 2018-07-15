@@ -101,4 +101,5 @@ Remember to navigate to Applications/Python x.x (where x.x is your version) and 
 
 # TODO
 
-* Add an API endpoint for sets
+* Add pokémon' names in french
+* Add pokémon' names in japanese

@@ -35,8 +35,10 @@ class Command(BaseCommand):
         if import_type == 'all':
             self.clear_pokemons()
             self.clear_cards()
+            self.clear_sets()
             self.import_pokemons()
             self.import_cards()
+            self.import_sets()
         elif import_type == 'pokemons':
             self.clear_pokemons()
             self.import_pokemons()
@@ -63,9 +65,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('All cards deleted!'))
 
     def clear_sets(self):
-        self.stdout.write(self.style.WARNING('Deleting all cards...'))
+        self.stdout.write(self.style.WARNING('Deleting all sets...'))
         Set.objects.all().delete()
-        self.stdout.write(self.style.SUCCESS('All cards deleted!'))
+        self.stdout.write(self.style.SUCCESS('All sets deleted!'))
 
     def get_remote_image(self, url, obj):
 
@@ -160,6 +162,7 @@ class Command(BaseCommand):
                             f.write(my_pokemon["name"] + ' imported... \n')
 
             except KeyError as kerr:
+                self.stdout.write("KeyError", kerr, ". Check if there was a request throttle.")
                 pass
 
         with open("log_import_pokemons" + ".txt", 'a') as f:
