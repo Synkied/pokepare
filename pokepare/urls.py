@@ -22,6 +22,7 @@ from django.conf.urls import include
 from django.views.generic import TemplateView
 from django.urls import path
 from .routers import router
+from .views import SearchView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html")),
@@ -31,4 +32,5 @@ urlpatterns = [
     path('cards/', include('cards.urls'), name="cards"),
     path('pokemons/', include('pokemons.urls'), name="pokemons"),
     path('sets/', include('sets.urls'), name="sets"),
+    path('search/', SearchView.as_view(), name="search"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

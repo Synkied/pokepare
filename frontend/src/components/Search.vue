@@ -1,41 +1,111 @@
 <template>
-  <div id="search-bar" class="container">
+  <div id="cards" class="container">
     <h1> {{ moduleTitle }}</h1>
-    <fieldset>
-        <input :class="{'bounce animated': animated}" @animationend="animated = false"
-          @keyup.esc="query=''" @keyup.enter="[searchCards(), animate()]"
-          v-model="query" name="query" type="text" class="form-control" placeholder="Enter a Pokémon card name">
-      <button @click="[searchCards(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
-
-    </fieldset>
+    <div class="container-fluid" v-if="cards">
+      <div class="row">
+        <h4 class="col-xl-12 mb-3">{{ dataCount }} cards found</h4>
+          <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-6 mt-3" v-for="card in cards" :key="card.id">
+            <ul>
+              <li class="ns-li mb-2">
+                <a :href="card.url"><img class="card-img" :src="card.image" alt=""></a>
+              </li>
+              <li class="ns-li">
+                <p ><a :href="card.url">{{ card.name }}</a></p>
+              </li>
+            </ul>
+          </div>
+      </div>
+      <div v-if="nextPage">
+        <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
+      </div>
+    </div>
+    <!-- Display error message if nothing found -->
+    <div v-else>
+      {{ errorMsg }}
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
+import { loadProgressBar } from 'axios-progress-bar'
+import 'axios-progress-bar/dist/nprogress.css'
 
 export default {
   name: 'SearchBar',
+  props: ['query'],
   data () {
     return {
-      moduleTitle: 'Search a card by name or image',
-      animated: false,
+      moduleTitle: 'Search',
+      userQuery: '',
       status: null,
-      cards: '',
+      cards: [],
+      nextPage: '',
       dataCount: '',
-      errorMsg: '',
-      query: ''
+      errorMsg: ''
     }
   },
   methods: {
     searchCards () {
       var thisVm = this
-      window.location.href = ('/search/?query=') + thisVm.query
-      /* this.$router.push({ name: 'search', query: { query: thisVm.query } }) */
+      /* axios to ajax the query */
+      thisVm.userQuery = thisVm.$route.query.query
+      if (thisVm.userQuery) {
+        const path = '/api/cards/?insensitive_name=' + encodeURI(thisVm.userQuery)
+        loadProgressBar()
+        axios.get(path).then(response => {
+          if (response.data.count > 0) {
+            console.log('search_bar', response.data) // ex.: { user: 'Your User'}
+            thisVm.cards = response.data.results
+            thisVm.dataCount = response.data.count
+            thisVm.status = response.status
+            thisVm.nextPage = response.data.next
+          } else {
+            thisVm.errorMsg = 'No result found for this query.'
+            thisVm.cards = ''
+            console.log(thisVm.errorMsg)
+          }
+        })
+          .catch(function (error) {
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              console.log(error.response.data)
+              console.log(error.response.status)
+              console.log(error.response.headers)
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser
+              // and an instance of http.ClientRequest in node.js
+              console.log(error.request)
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              console.log('Error', error.message)
+            }
+            console.log(error.config)
+          })
+      } else {
+        thisVm.status = 'NO_QUERY'
+        thisVm.errorMsg = 'Please enter a correct query.'
+      }
     },
-    animate () {
+    viewMore () {
       var thisVm = this
-      thisVm.animated = true
+      axios.get(thisVm.nextPage).then(response => {
+        for (var i = 0; i < response.data.results.length; i++) {
+          thisVm.cards.push(response.data.results[i])
+        }
+        thisVm.nextPage = response.data.next
+      })
     }
+  },
+  mounted () {
+    var thisVm = this
+    thisVm.searchCards()
+  },
+  components: {
+    'rise-loader': RiseLoader
   }
 }
 
