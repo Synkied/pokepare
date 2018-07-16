@@ -79,7 +79,6 @@ export default {
   mounted () {
     var thisVm = this
     if (thisVm.setCodeValue) {
-      console.log('pouet')
       thisVm.path = '/api/cards/?card_set_code=' + thisVm.setCodeValue
     } else {
       thisVm.path = '/api/cards/'
