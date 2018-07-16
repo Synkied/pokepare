@@ -55,16 +55,23 @@ make init
 ```
 
 # Running the app
+## virtualenv
 ```sh
 cd {project_folder_name}
 python manage.py runserver
 ```
-or (Unix only)
+## Docker
 ```sh
-cd {project_folder_name}
-make run
+docker-compose build
+
+docker-compose up -d
+
+make create_user_db
+
+make migrate_db
 ```
 
+```
 # Frontend
 
 > A Vue.js project
