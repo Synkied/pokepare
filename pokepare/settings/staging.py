@@ -9,7 +9,7 @@ DATABASES = {
         'NAME': 'pokepare',
         'USER': 'pokepare',
         'PASSWORD': '',
-        'HOST': '',
+        'HOST': 'database',
         'PORT': '5432',
     }
 }

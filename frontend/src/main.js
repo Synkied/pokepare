@@ -12,6 +12,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import store from './store'
+import titleMixin from './mixins/titleMixin'
+
+Vue.mixin(titleMixin)
 
 library.add(faUser)
 

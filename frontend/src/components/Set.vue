@@ -11,9 +11,9 @@
             <li class="ns-li">
               <p>{{ card_set.name }}</p>
             </li>
-            <li class="ns-li" v-if="set_code">
+            <li class="ns-li" v-if="setCode">
               <h5>Cards in this set:</h5>
-              <cards :setCode="set_code"></cards>
+              <cards :setCode="setCode"></cards>
             </li>
         </div>
       </template>
@@ -37,8 +37,11 @@ export default {
       card_set: '',
       dataCount: null,
       errorMsg: null,
-      set_code: ''
+      setCode: ''
     }
+  },
+  title () {
+    return `PokePare — ${this.setCode}`
   },
   components: {
     'cards': Cards
@@ -47,9 +50,9 @@ export default {
     showCards () {
       var thisVm = this
       if (thisVm.$route.params) {
-        thisVm.set_code = thisVm.$route.params.code
+        thisVm.setCode = thisVm.$route.params.code
       }
-      const setPath = '/api/sets/?code=' + encodeURI(thisVm.set_code)
+      const setPath = '/api/sets/?code=' + encodeURI(thisVm.setCode)
       loadProgressBar()
       axios.get(setPath).then(response => {
         if (response.data) {

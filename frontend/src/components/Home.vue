@@ -14,7 +14,11 @@ import Cards from './Cards'
 export default {
   data () {
     return {
+      moduleTitle: 'Home'
     }
+  },
+  title () {
+    return `PokePare — ${this.moduleTitle}`
   },
   methods: {
   },

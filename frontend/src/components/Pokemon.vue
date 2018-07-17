@@ -1,9 +1,8 @@
 <template>
   <div id="pokemons" class="container">
     <div>
-      <template>
+      <template v-if="pokemon">
         <div class="container-fluid">
-          <div v-for="pokemon in pokemons.slice(0, 12)" :key="pokemon.id">
             <ul>
               <li class="ns-li">
                 <img :src="pokemon.image" :alt="pokemon.name">
@@ -26,8 +25,10 @@
                 </li>
               </div>
             </div>
-          </div>
         </div>
+      </template>
+      <template v-else>
+        {{ errorMsg }}
       </template>
 
     </div>
@@ -55,11 +56,14 @@ export default {
     return {
       dataCount: null,
       status: '',
-      pokemons: '',
+      pokemon: null,
       animated: false,
       errorMsg: null,
       cardSets: []
     }
+  },
+  title () {
+    return `PokePare — ${this.pokemon}`
   },
   methods: {
   },
@@ -75,18 +79,38 @@ export default {
     const path = '/api/pokemons/?name=' + capitalize(encodeURI(thisVm.pokemon_name))
     loadProgressBar()
     axios.get(path).then(response => {
-      if (response.data) {
+      if (response.data.count > 0) {
         console.log(response.status)
-        console.log(response.data.results)
-        thisVm.pokemons = response.data.results
+        console.log(response.data)
+        thisVm.pokemon = response.data.results[0]
         thisVm.status = response.status
         for (var i = 0; i < response.data.results[0].cards.length; i++) {
           cardSetsList.push(response.data.results[0].cards[i].card_set_code)
         }
         thisVm.cardSets = cardSetsList.filter(onlyUnique)
         // filter to get only unique values in array
+      } else {
+        thisVm.errorMsg = 'No Pokémon found.'
       }
     })
+      .catch(function (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser
+          // and an instance of http.ClientRequest in node.js
+          console.log(error.request)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message)
+        }
+        console.log(error.config)
+      })
   }
 }
 </script>

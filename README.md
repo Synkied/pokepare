@@ -62,13 +62,15 @@ python manage.py runserver
 ```
 ## Docker
 ```sh
-docker-compose build
+docker-compose build | make build
 
-docker-compose up -d
+docker-compose up -d | make up
 
 make create_user_db
 
 make migrate_db
+
+make import_data {all|cards|pokemons|sets}
 ```
 
 ```

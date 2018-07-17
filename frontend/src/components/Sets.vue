@@ -49,6 +49,9 @@ export default {
       setCodesValues: this.setCodes
     }
   },
+  title () {
+    return `PokePare — ${this.moduleTitle}`
+  },
   methods: {
     viewMore () {
       var thisVm = this

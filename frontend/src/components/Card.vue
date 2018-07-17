@@ -10,6 +10,8 @@
             </ul>
             <li class="ns-li">
               <p>{{ card.name }}</p>
+              <p>Number in set: {{ uniqueNumInSet }}</p>
+              <p>Unique id: {{ card.unique_id }}</p>
             </li>
             <li class="ns-li">
               <h5>Found in this set:</h5>
@@ -41,29 +43,66 @@ export default {
       data: null,
       status: '',
       card: '',
+      cardId: '',
       pokemon: '',
-      errorMsg: null
+      errorMsg: null,
+      numberInSet: '',
+      totalNoSet: '',
+      uniqueNumInSet: ''
+    }
+  },
+  title () {
+    return `PokePare — ${this.card.name}`
+  },
+  methods: {
+    getCardData () {
+      var thisVm = this
+      if (thisVm.$route.params) {
+        thisVm.cardId = thisVm.$route.params.unique_id
+      }
+      const cardPath = '/api/cards/?unique_id=' + encodeURI(thisVm.cardId)
+      loadProgressBar()
+      axios.get(cardPath).then(response => {
+        if (response.data) {
+          thisVm.status = response.status
+          thisVm.card = response.data.results[0]
+          thisVm.numberInSet = response.data.results[0].number_in_set
+          axios.get(response.data.results[0].pokemon).then(response => {
+            thisVm.pokemon = response.data
+          })
+
+          const setPath = '/api/sets/?code=' + encodeURI(thisVm.card.card_set_code)
+          axios.get(setPath).then(response => {
+            thisVm.totalNoSet = response.data.results[0].total_cards
+            thisVm.uniqueNumInSet = String(thisVm.numberInSet) + '/' + String(thisVm.totalNoSet)
+          })
+        }
+      })
+        .catch(function (error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser
+            // and an instance of http.ClientRequest in node.js
+            console.log(error.request)
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message)
+          }
+          console.log(error.config)
+        })
     }
   },
   components: {
   },
   mounted () {
-    var thisVm = this
-    if (thisVm.$route.params) {
-      thisVm.card_id = thisVm.$route.params.unique_id
-    }
-    const path = '/api/cards/?unique_id=' + encodeURI(thisVm.card_id)
-    loadProgressBar()
-    axios.get(path).then(response => {
-      if (response.data) {
-        console.log(response.status)
-        thisVm.status = response.status
-        thisVm.card = response.data.results[0]
-        axios.get(response.data.results[0].pokemon).then(response => {
-          thisVm.pokemon = response.data
-        })
-      }
-    })
+    this.getCardData()
+    console.log(this.uniqueNumInSet)
   }
 }
 </script>

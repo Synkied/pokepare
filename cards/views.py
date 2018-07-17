@@ -21,7 +21,7 @@ class CardFilter(FilterSet):
     class Meta:
         model = Card
         exclude = ['image']
-        fields = ['insensitive_name', 'card_set_code']
+        fields = ['insensitive_name', 'card_set_code', 'unique_id']
 
 
 class CardViewSet(viewsets.ModelViewSet):
