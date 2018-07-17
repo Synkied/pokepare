@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from utils import OverwriteStorage
 
 from pokemons.models import Pokemon
@@ -107,7 +108,7 @@ class Card(models.Model):
 
     condition = models.CharField(max_length=50, blank=True, null=True)
     edition = models.CharField(max_length=50, blank=True, null=True)
-    prices = models.CharField(max_length=500, blank=True, null=True)
+    prices = JSONField(blank=True, null=True)
 
     image_hash = models.PositiveIntegerField(blank=True, null=True)
 

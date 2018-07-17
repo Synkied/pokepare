@@ -8,6 +8,9 @@ from django_filters import rest_framework as filters
 
 from .serializers import CardSerializer
 from .models import Card
+from sets.models import Set
+
+from ebay_find_item import find_card
 
 # Create your views here.
 
@@ -58,8 +61,20 @@ class CardViewDetail(View):
 
     def get(self, request, unique_id):
 
+        card = Card.objects.get(unique_id=unique_id)
+        if card:
+            card_set = Set.objects.get(code=card.card_set_code)
+
         context = {
-            "pouet": "pouet"
+            "card": card,
         }
+
+        card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
+        ebay_cards = find_card(card.name, card_number_set)
+
+        print(ebay_cards)
+
+        card.prices = {"ebay": ebay_cards}
+        card.save()
 
         return render(request, self.template_name, context)
