@@ -32,7 +32,7 @@ export default {
   background-color: rgb(100,185,220);
 }
 
-#app h1, h2, h3, h4, h5, p {
+h1, h2, h3, h4, h5, p {
   color: #fff;
 }
 
