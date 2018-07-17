@@ -19,7 +19,7 @@ export default {
     'app-header': Header,
     'app-footer': Footer,
     'search-bar': SearchBar
-  }
+  },
 }
 </script>
 

@@ -49,6 +49,9 @@ export default {
       path: ''
     }
   },
+  title () {
+    return `PokePare — ${this.moduleTitle}`
+  },
   methods: {
     viewMore () {
       var thisVm = this

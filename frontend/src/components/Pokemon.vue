@@ -63,7 +63,7 @@ export default {
     }
   },
   title () {
-    return `PokePare — ${this.pokemon}`
+    return `PokePare — ${this.pokemon.name}`
   },
   methods: {
   },

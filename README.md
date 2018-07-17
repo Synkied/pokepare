@@ -10,6 +10,10 @@ This website let's you search for a pokemon card via its name or image and find 
 Install from : https://www.python.org/downloads/  
 This app was built with Python 3.6.3
 
+### Postgresql
+
+Postgresql version >= 9.4
+
 ### Virtualenv and VirtualenvWrapper
 
 ```sh
