@@ -13,6 +13,33 @@
               <p>Number in set: {{ uniqueNumInSet }}</p>
               <p>Unique id: {{ card.unique_id }}</p>
             </li>
+            <template v-if="card.prices.ebay">
+              <div style="overflow-x:auto;">
+                <table>
+                  <thead>
+                    <th>Website</th>
+                    <th>Title</th>
+                    <th>Condition</th>
+                    <th>URL</th>
+                    <th>Ships to</th>
+                    <th>Current Price</th>
+                    <th>Currency</th>
+                  </thead>
+                  <tr v-for="item in orderedPrices" :key="item.id">
+                    <td>eBay</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.condition.conditionDisplayName }}</td>
+                    <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
+                    <td>{{ item.shippingInfo.shipToLocations }}</td>
+                    <td>{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
+                    <td>{{ item.sellingStatus.convertedCurrentPrice._currencyId }}</td>
+                  </tr>
+                </table>
+              </div>
+            </template>
+            <template v-else>
+              <p>No prices found for this card.</p>
+            </template>
             <li class="ns-li">
               <h5>Found in this set:</h5>
               <p><a :href="'/sets/' + card.card_set_code">{{ card.card_set }}</a></p>
@@ -96,6 +123,11 @@ export default {
           }
           console.log(error.config)
         })
+    }
+  },
+  computed: {
+    orderedPrices () {
+      return this.lodash.orderBy(this.card.prices.ebay, 'sellingStatus.convertedCurrentPrice.value')
     }
   },
   components: {

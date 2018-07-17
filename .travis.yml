@@ -15,5 +15,8 @@ env: DJANGO_SETTINGS_MODULE="pokepare.settings.travis"
 services:
   - postgresql
 
+addons:
+  postgresql: "9.4"
+
 script:
   - make cov_test

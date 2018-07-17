@@ -28,31 +28,35 @@ def find_card(name, number_set):
         keywords = ['pokemon', 'card', name, number_set]
         # card.name card.number_in_set + '/' + set.total_number
 
-        api_request = {
-            'keywords': " ".join(keywords),
-            'itemFilter': [
-                # {'name': 'Condition',
-                #  'value': 'Used'},
-                # {'name': 'LocatedIn',
-                #  'value': 'FR'},
-                {'name': 'AvailableTo',
-                 'value': 'FR'},
-            ],
-            # 'affiliate': {'trackingId': 1},
-            'sortOrder': 'CountryDescending',
-        }
+        try:
+            api_request = {
+                'keywords': " ".join(keywords),
+                'itemFilter': [
+                    # {'name': 'Condition',
+                    #  'value': 'Used'},
+                    # {'name': 'LocatedIn',
+                    #  'value': 'FR'},
+                    {'name': 'AvailableTo',
+                     'value': 'FR'},
+                ],
+                # 'affiliate': {'trackingId': 1},
+                'sortOrder': 'CountryDescending',
+            }
 
-        response = api.execute('findItemsAdvanced', api_request)
+            response = api.execute('findItemsAdvanced', api_request)
 
-        # print(response.dict()["searchResult"]["_count"])
+            # print(response.dict()["searchResult"]["_count"])
 
-        items_list = []
+            items_list = []
 
-        for items in response.dict()["searchResult"]["item"]:
-            items_list.append(items)
+            for items in response.dict()["searchResult"]["item"]:
+                items_list.append(items)
 
-        # print(items_list)
-        return items_list
+            # print(items_list)
+            return items_list
+
+        except KeyError as kerr:
+            pass
 
     except ConnectionError as e:
         print(e)
