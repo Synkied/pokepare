@@ -24,12 +24,25 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Avenir');
+@import url('https://fonts.googleapis.com/css?family=Oswald');
+@import url('https://fonts.googleapis.com/css?family=Cabin');
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   background-color: #EEE;
+}
+
+a {
+  text-decoration: none;
+  color: #30415d
+}
+
+a:hover {
+  text-decoration: none;
 }
 
 .navbar {
@@ -40,21 +53,30 @@ nav a, nav a:hover, nav a:active{
   color: #000;
 }
 
+.card-title{
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+}
+
 .card-title a{
-  color: #000;
+  color: #0db4b9;
 }
 
 .card-title a:hover {
   text-decoration: none;
 }
 
-body {
-  /* background-image: radial-gradient(circle,rgba(153,211,223,.95) 10%, rgba(136,187,214,.95) 130%) !important; */
+.related-pokemon-image {
+  margin: -10px 0 0 0;
+}
+
+.pokemon-link p {
+  margin: -10px 0 30px 0;
 }
 
 h1{
   text-align: center;
-  font-family: 'Oxygen', sans-serif;
+  font-family: 'Cabin', sans-serif;
   font-weight: bold;
   font-size: 2.5rem;
   text-transform: uppercase;
@@ -62,7 +84,7 @@ h1{
 }
 
 h2 {
-  font-family: 'Oxygen', sans-serif;
+  font-family: 'Cabin', sans-serif;
   font-size: 2rem;
   font-weight: 700;
 }
@@ -75,8 +97,7 @@ h3 small {
 
 .ns-li {
   list-style-type: none;
-  font-family: "Oxygen", sans-serif;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .ns-li a {

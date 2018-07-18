@@ -1,7 +1,6 @@
 <template>
   <div id="cards" class="container mt-5">
-    <h2>{{ moduleTitle }}</h2>
-    <h4>{{ dataCounter }} cards</h4>
+    <h4>{{ dataCounter }} cards found</h4>
     <div>
       <template v-if="initData">
         <div class="container-fluid">
@@ -9,7 +8,7 @@
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-6 mt-3" v-for="card in cardsData" :key="card.id">
               <ul>
                 <li class="ns-li mb-2">
-                  <a :href="card.url"><img class="card-img" :src="card.image" alt=""></a>
+                  <a :href="card.url"><img class="card-img" :src="card.image" alt="card.name"></a>
                 </li>
                 <li class="ns-li">
                   <p ><a :href="card.url">{{ card.name }}</a></p>
@@ -99,12 +98,15 @@ export default {
   },
   mounted () {
     var thisVm = this
-    if (thisVm.setCodeValue) {
-      thisVm.path = '/api/cards/?card_set_code=' + thisVm.setCodeValue
-    } else {
-      thisVm.path = '/api/cards/'
+    if (!thisVm.cards) {
+      if (thisVm.setCodeValue) {
+        thisVm.path = '/api/cards/?card_set_code=' + thisVm.setCodeValue
+        thisVm.initData(thisVm.path)
+      } else {
+        thisVm.path = '/api/cards/'
+        thisVm.initData(thisVm.path)
+      }
     }
-    thisVm.initData(thisVm.path)
   }
 }
 </script>

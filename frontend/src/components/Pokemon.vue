@@ -8,23 +8,15 @@
                 <img :src="pokemon.image" :alt="pokemon.name">
               </li>
               <li class="ns-li">
+                <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
+                <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
+                <p v-else>#{{ pokemon.number }}</p>
                 <p>{{ pokemon.name }}</p>
               </li>
             </ul>
-            <p v-if="pokemon.cards.length === 1" class="mt-5">{{ pokemon.cards.length }} card found</p>
-            <p v-else class="mt-5">{{ pokemon.cards.length }} card(s) found</p>
-            <div class="row">
-              <div class="col-xl-2 col-lg-3 col-md-4 col-xs-5 mt-3" v-for="card in pokemon.cards" :key="card.id">
-                <li class="ns-li">
-                  <a :href="card.url">
-                    <img :src="card.image" height="250px" :alt="card.name">
-                  </a>
-                  <a :href="card.url">
-                    <p>{{ card.name }}</p>
-                  </a>
-                </li>
-              </div>
-            </div>
+            <li class="ns-li" v-if="cards">
+              <cards :cards="cards" :dataCount="cards.length"></cards>
+            </li>
         </div>
       </template>
       <template v-else>
@@ -41,6 +33,7 @@ import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 import Sets from './Sets.vue'
+import Cards from './Cards.vue'
 
 function capitalize (s) {
   return s && s[0].toUpperCase() + s.slice(1)
@@ -57,6 +50,7 @@ export default {
       dataCount: null,
       status: '',
       pokemon: null,
+      cards: [],
       animated: false,
       errorMsg: null,
       cardSets: []
@@ -68,7 +62,8 @@ export default {
   methods: {
   },
   components: {
-    'sets': Sets
+    'sets': Sets,
+    'cards': Cards
   },
   mounted () {
     var thisVm = this
@@ -83,6 +78,7 @@ export default {
         console.log(response.status)
         console.log(response.data)
         thisVm.pokemon = response.data.results[0]
+        thisVm.cards = response.data.results[0].cards
         thisVm.status = response.status
         for (var i = 0; i < response.data.results[0].cards.length; i++) {
           cardSetsList.push(response.data.results[0].cards[i].card_set_code)

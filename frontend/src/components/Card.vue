@@ -5,39 +5,50 @@
         <div class="container-fluid">
             <ul>
               <h3 class="card-title">{{ card.name }} - <a :href="'/sets/' + card.card_set_code">{{ card.card_set }}</a>
-                <small>{{ uniqueNumInSet }}</small>
+                <small>{{ card.number_in_set }}</small>
               </h3>
               <li class="ns-li">
                 <img :src="card.image" :alt="card.name">
               </li>
             </ul>
-            <small>
-              <a :href="pokemon.url">
+            <div class="related-pokemon-image">
+              <a :href="pokemon.url" class="pokemon-link">
                 <img :src="pokemon.image" alt="">
+                <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
+                <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
+                <p v-else>#{{ pokemon.number }}</p>
               </a>
-            </small>
+            </div>
 
-            <template v-if="card.prices.ebay">
+            <template v-if="card.prices.ebay || card.prices.tcgplayer">
               <div style="overflow-x:auto;">
                 <table>
                   <thead>
                     <th>Website</th>
-                    <th>Title</th>
                     <th>Condition</th>
+                    <th>Edition</th>
                     <th>URL</th>
-                    <th>Ships to</th>
                     <th>Current Price</th>
                     <th>Currency</th>
                   </thead>
                   <tr v-for="item in orderedPrices" :key="item.id">
                     <td>eBay</td>
-                    <td>{{ item.title }}</td>
                     <td>{{ item.condition.conditionDisplayName }}</td>
+                    <td></td>
                     <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-                    <td>{{ item.shippingInfo.shipToLocations }}</td>
                     <td>{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
                     <td>{{ item.sellingStatus.convertedCurrentPrice._currencyId }}</td>
                   </tr>
+                  <tbody v-if="card.prices.tcgplayer" v-for="item in card.prices.tcgplayer" :key="item.id">
+                    <tr v-for="price in item.prices" :key="price.id">
+                      <td>TCGPlayer</td>
+                      <td>N/A</td>
+                      <td>{{ price.subTypeName }}</td>
+                      <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
+                      <td>{{ price.marketPrice }}</td>
+                      <td>USD</td>
+                    </tr>
+                  </tbody>
                 </table>
               </div>
             </template>
@@ -104,7 +115,7 @@ export default {
           const setPath = '/api/sets/?code=' + encodeURI(thisVm.card.card_set_code)
           axios.get(setPath).then(response => {
             thisVm.totalNoSet = response.data.results[0].total_cards
-            thisVm.uniqueNumInSet = String(thisVm.numberInSet) + '/' + String(thisVm.totalNoSet)
+            /* thisVm.uniqueNumInSet = String(thisVm.numberInSet) + '/' + String(thisVm.totalNoSet) */
           })
         }
       })

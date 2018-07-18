@@ -10,7 +10,8 @@ from .serializers import CardSerializer
 from .models import Card
 from sets.models import Set
 
-from ebay_find_item import find_card
+from utils import PriceFinder
+import pprint
 
 # Create your views here.
 
@@ -69,12 +70,26 @@ class CardViewDetail(View):
             "card": card,
         }
 
-        card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
-        ebay_cards = find_card(card.name, card_number_set)
+        # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
+        price_finder = PriceFinder()
+        ebay_cards = price_finder.get_ebay_prices(card.name, card.number_in_set, card_set.name)
 
-        print(ebay_cards)
+        tcgplayer_cards = price_finder.get_tcgplayer_prices(card.name)
 
-        card.prices = {"ebay": ebay_cards}
+        for tcgplayer_card in tcgplayer_cards:
+            if tcgplayer_card["group"]["name"] == card_set.name:
+                tcgplayer_cards = [tcgplayer_card]
+
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(tcgplayer_cards)
+
+        # initial instantiation to avoid TypeError
+        card.prices = {}
+
+        card.prices["ebay"] = ebay_cards
+        card.save()
+
+        card.prices["tcgplayer"] = tcgplayer_cards
         card.save()
 
         return render(request, self.template_name, context)

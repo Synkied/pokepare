@@ -22,6 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'll=xdhy3oj8)e&97)98&wnui(rfn$%^eifqmd*fog#uj_$iw=g'
 
+TCGPLAYER_BEARER_TOKEN = '5JRfsdi6dPfliFKY-rTbcP1puDhEkT65QNT0u1Ep32dEcD2Qd9TPCoOYmS8KWnRknXsxXaomWgurzsqKpvtLnWKr74BuLMP7vnAJPqo41bUwznOAUVqpl17NcalM5NQMWj7jETqlnNvW1lq9ki3nle_RCADq692tAWl_ErBr3UJkIWMrp75sI_E6XKT1d-63cvSKADrRsNNooY0EeFn_M3LxydA4Qbl1dho5-BiFLDUtGAhZaRRJG1f6BaSNCGFQzLkrSdE5xJv4RLu4Iz_DdgUzourCe_xJFAznO2eiWXuAmDW-1jjNUeq_GX7lcuG2LIfcIQ'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

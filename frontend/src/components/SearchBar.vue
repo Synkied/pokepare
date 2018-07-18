@@ -17,7 +17,7 @@ export default {
   name: 'SearchBar',
   data () {
     return {
-      moduleTitle: 'Search a card by name or image',
+      moduleTitle: '',
       animated: false,
       status: null,
       cards: '',

@@ -12,7 +12,6 @@
               <p>{{ card_set.name }}</p>
             </li>
             <li class="ns-li" v-if="setCode">
-              <h5>Cards in this set:</h5>
               <cards :setCode="setCode"></cards>
             </li>
         </div>
