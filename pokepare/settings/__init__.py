@@ -30,6 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '188.166.108.19',
+    'pokepare.com',
+    'www.pokepare.com',
 ]
 
 CORS_ORIGIN_WHITELIST = (

@@ -8,7 +8,7 @@
             <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-6 mt-3" v-for="card in cardsData" :key="card.id">
               <ul>
                 <li class="ns-li mb-2">
-                  <a :href="card.url"><img class="card-img" :src="card.image" alt="card.name"></a>
+                  <a :href="card.url"><img class="card-img" :src="card.image" :alt="card.name"></a>
                 </li>
                 <li class="ns-li">
                   <p ><a :href="card.url">{{ card.name }}</a></p>

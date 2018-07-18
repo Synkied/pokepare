@@ -13,7 +13,7 @@
             </ul>
             <div class="related-pokemon-image">
               <a :href="pokemon.url" class="pokemon-link">
-                <img :src="pokemon.image" alt="">
+                <img :src="pokemon.image" :alt="pokemon.name">
                 <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
                 <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
                 <p v-else>#{{ pokemon.number }}</p>

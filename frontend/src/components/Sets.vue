@@ -9,7 +9,7 @@
             <div class="col-xl-4 col-lg-4 col-md-3 col-sm-4 col-6 mt-5"  v-for="set in sets" :key="set.id">
               <ul>
                 <li class="ns-li mb-2">
-                  <a :href="set.url"><img class="set-img" :src="set.image" height="35px" alt=""></a>
+                  <a :href="set.url"><img class="set-img" :src="set.image" height="35px" :alt="set.name"></a>
                 </li>
                 <li class="ns-li">
                   <p><a :href="set.url">{{ set.name }}</a></p>
