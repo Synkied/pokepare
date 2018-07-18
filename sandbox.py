@@ -1,35 +1,30 @@
-# import requests
-# import tempfile
-
-
-# def get_image(url):
-#     request = requests.get(url, stream=True)
+import os
+import django
 import re
-#     if request.status_code == 200:
-#         file_name = "-".join((url.split('/')[-2::]))
-#         print(file_name)
+import functools
+import operator
 
-#         lf = tempfile.NamedTemporaryFile()
-
-#         # Read the streamed image in sections
-#         for block in request.iter_content(1024 * 8):
-
-#             # If no more file then stop
-#             if not block:
-#                 break
-
-#             # Write image block to temporary file
-#             lf.write(block)
-
-#         print(lf)
+# used to execute this file without django running
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pokepare.settings")
+django.setup()
 
 
-# t = get_image("https://images.pokemontcg.io/sm4/30.png")
+from pokemons.models import Pokemon
+from cards.models import Card
+from django.db.models import Q
 
-# print(t)
 
+card = Card.objects.get(name="Erika's Ivysaur")
 
-t = ["Charizard-ex", "Charizard ex", "Charizard_ex"]
+q = re.split(r"[\W+|_']+", card.name)
+# remove chars between words, including "_"
+query = functools.reduce(
+    operator.or_, (
+        Q(
+            name__iexact=item
+        ) for item in q if len(item) > 1)
+    # if to not include unown with other cards
+)
 
-for i in t:
-    print(re.split(r"[\W+|_']+", i))
+pok = Pokemon.objects.filter(query).order_by('id').first()
+print(pok.name)

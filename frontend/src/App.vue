@@ -29,11 +29,23 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  background-color: rgb(100,185,220);
+  background-color: #EEE;
 }
 
-h1, h2, h3, h4, h5, p {
-  color: #fff;
+.navbar {
+  color: #000;
+}
+
+nav a, nav a:hover, nav a:active{
+  color: #000;
+}
+
+.card-title a{
+  color: #000;
+}
+
+.card-title a:hover {
+  text-decoration: none;
 }
 
 body {
@@ -46,13 +58,19 @@ h1{
   font-weight: bold;
   font-size: 2.5rem;
   text-transform: uppercase;
-  color: #fff;
+  color: #000;
 }
 
 h2 {
   font-family: 'Oxygen', sans-serif;
   font-size: 2rem;
   font-weight: 700;
+}
+
+h3 small {
+  font-size: 60%;
+  color: #6f6f6f;
+  line-height: 0;
 }
 
 .ns-li {
@@ -62,7 +80,7 @@ h2 {
 }
 
 .ns-li a {
-  color: #fff;
+  color: #000;
   text-decoration: none;
 }
 
@@ -83,7 +101,7 @@ ul {
 table {
   border: 2px solid #42b983;
   border-radius: 3px;
-  background-color: #fff;
+  background-color: #000;
 }
 
 th {
@@ -106,7 +124,7 @@ th, td {
 }
 
 th.active {
-  color: #fff;
+  color: #000;
 }
 
 th.active .arrow {
@@ -125,13 +143,13 @@ th.active .arrow {
 .arrow.asc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-bottom: 4px solid #fff;
+  border-bottom: 4px solid #000;
 }
 
 .arrow.dsc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-top: 4px solid #fff;
+  border-top: 4px solid #000;
 }
 
 </style>

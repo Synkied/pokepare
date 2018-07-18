@@ -7,7 +7,7 @@
 
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
-      <b-navbar-brand href="/"><a class="navbar-brand js-scroll-trigger text-light" href="/"><img src="../../assets/pokepare_200.png" height="50" alt="">PokePare</a></b-navbar-brand>
+      <b-navbar-brand href="/"><a class="navbar-brand js-scroll-trigger" href="/"><img src="../../assets/pokepare_200.png" height="50" alt="">PokePare</a></b-navbar-brand>
 
       <b-collapse is-nav id="nav_collapse">
 
@@ -50,14 +50,6 @@ export default {
 
 <style>
   @import url('https://fonts.googleapis.com/css?family=Noto+Sans');
-
-  .navbar {
-    color: #fff;
-  }
-
-  nav a, nav a:hover, nav a:active{
-    color: #fff;
-  }
 
   .logo_txt {
     font-family: 'Noto Sans', sans-serif;

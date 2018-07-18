@@ -219,7 +219,7 @@ class Command(BaseCommand):
                         query = functools.reduce(
                             operator.or_, (
                                 Q(
-                                    name__icontains=item
+                                    name__iexact=item
                                 ) for item in q if len(item) > 1)
                             # if to not include unown with other cards
                         )

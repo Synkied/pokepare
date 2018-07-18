@@ -4,15 +4,19 @@
       <template v-if="card">
         <div class="container-fluid">
             <ul>
+              <h3 class="card-title">{{ card.name }} - <a :href="'/sets/' + card.card_set_code">{{ card.card_set }}</a>
+                <small>{{ uniqueNumInSet }}</small>
+              </h3>
               <li class="ns-li">
                 <img :src="card.image" :alt="card.name">
               </li>
             </ul>
-            <li class="ns-li">
-              <p>{{ card.name }}</p>
-              <p>Number in set: {{ uniqueNumInSet }}</p>
-              <p>Unique id: {{ card.unique_id }}</p>
-            </li>
+            <small>
+              <a :href="pokemon.url">
+                <img :src="pokemon.image" alt="">
+              </a>
+            </small>
+
             <template v-if="card.prices.ebay">
               <div style="overflow-x:auto;">
                 <table>
@@ -40,17 +44,6 @@
             <template v-else>
               <p>No prices found for this card.</p>
             </template>
-            <li class="ns-li">
-              <h5>Found in this set:</h5>
-              <p><a :href="'/sets/' + card.card_set_code">{{ card.card_set }}</a></p>
-            </li>
-            <li class="ns-li mt-5">
-              <h4>Related Pokémon</h4>
-              <a :href="pokemon.url">
-                <img :src="pokemon.image" alt="">
-              </a>
-                <p><a :href="pokemon.url">{{ pokemon.name }}</a></p>
-            </li>
         </div>
       </template>
     </div>
@@ -71,7 +64,10 @@ export default {
       status: '',
       card: '',
       cardId: '',
+      prevPokemon: '',
       pokemon: '',
+      pokemonId: '',
+      nextPokemon: '',
       errorMsg: null,
       numberInSet: '',
       totalNoSet: '',
@@ -89,15 +85,22 @@ export default {
       }
       const cardPath = '/api/cards/?unique_id=' + encodeURI(thisVm.cardId)
       loadProgressBar()
+
+      // get the cards data
       axios.get(cardPath).then(response => {
         if (response.data) {
           thisVm.status = response.status
           thisVm.card = response.data.results[0]
           thisVm.numberInSet = response.data.results[0].number_in_set
+
+          // get the pokemon data linked to the card
           axios.get(response.data.results[0].pokemon).then(response => {
             thisVm.pokemon = response.data
+            thisVm.pokemonId = response.data.id
+            console.log(thisVm.pokemonId)
           })
 
+          // get the card's set data
           const setPath = '/api/sets/?code=' + encodeURI(thisVm.card.card_set_code)
           axios.get(setPath).then(response => {
             thisVm.totalNoSet = response.data.results[0].total_cards
@@ -123,6 +126,14 @@ export default {
           }
           console.log(error.config)
         })
+    },
+    _ToggleNext () {
+      if (this.pokemonId === this.numOfPokemon - 1) {
+        return
+      }
+      this.setState(prevState => ({
+        selectedIndex: prevState.selectedIndex + 1
+      }))
     }
   },
   computed: {
@@ -134,7 +145,6 @@ export default {
   },
   mounted () {
     this.getCardData()
-    console.log(this.uniqueNumInSet)
   }
 }
 </script>
