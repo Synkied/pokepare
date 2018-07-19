@@ -76,10 +76,12 @@ class CardViewDetail(View):
 
             # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
 
-            # initial instantiation to avoid TypeError
+            # initial instantiation to avoid TypeError and empty card.prices
             card.prices = {}
+            card.save()
 
             price_finder = PriceFinder()
+
             ebay_cards = price_finder.get_ebay_prices(card.name, card.number_in_set, card_set.name)
 
             if ebay_cards:

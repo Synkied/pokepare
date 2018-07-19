@@ -77,16 +77,14 @@ class PriceFinder():
                             items[key] = "N/A"
                     items_list.append(items)
 
-                return items_list
-
             except KeyError as kerr:
                 pass
-
-                return items_list
 
         except ConnectionError as e:
             print(e)
             print(e.response.dict())
+
+        return items_list
 
     def get_tcgplayer_prices(self, name):
 
@@ -99,7 +97,8 @@ class PriceFinder():
 
         try:
             # requests response object
-            pokemon_response = requests.get(product_url, headers=headers).json()
+            pokemon_response = requests.get(
+                product_url, headers=headers).json()
 
             # only execute api calls if a product was found (success=true)
             if pokemon_response["success"] == "true":
@@ -143,7 +142,7 @@ class PriceFinder():
 
                     for prices in prices_response["results"]:
                         if (prices["productId"] == result["productId"] and
-                            prices["marketPrice"] is not None):
+                                prices["marketPrice"] is not None):
                             d["prices"].append({**prices})
 
                     results.append(d)
