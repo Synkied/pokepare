@@ -2,6 +2,13 @@ version: '3'
 
 services:
 
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
   pokepare_nginx:
     container_name: pokepare_nginx
     restart: always
