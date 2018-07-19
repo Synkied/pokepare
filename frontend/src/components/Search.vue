@@ -1,6 +1,6 @@
 <template>
   <div id="search" class="container">
-    <h1> {{ moduleTitle }}</h1>
+    <h1> {{ moduleTitle }} <em>'{{ query }}'</em></h1>
     <div v-if="dataCount">
       <li class="ns-li" v-if="cards">
         <cards :cards="cards" :dataCount="dataCount" :next="nextPage"></cards>
@@ -25,7 +25,7 @@ export default {
   props: ['query'],
   data () {
     return {
-      moduleTitle: 'Search',
+      moduleTitle: 'Results for ',
       userQuery: '',
       status: null,
       cards: [],

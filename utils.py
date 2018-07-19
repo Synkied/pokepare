@@ -101,38 +101,58 @@ class PriceFinder():
             # requests response object
             pokemon_response = requests.get(product_url, headers=headers).json()
 
-            # variables instanciation
-            product_ids = [result["productId"] for result in pokemon_response["results"]]
-            group_ids = [result["groupId"] for result in pokemon_response["results"]]
+            # only execute api calls if a product was found (success=true)
+            if pokemon_response["success"] == "true":
 
-            # fetching groups (sets)
-            group_url = "http://api.tcgplayer.com/catalog/groups/" + ",".join(str(id) for id in group_ids)
-            groups_response = requests.get(group_url, headers=headers).json()
+                # variables instanciation
+                product_ids = [
+                    result["productId"]
+                    for result in pokemon_response["results"]
+                ]
+                group_ids = [
+                    result["groupId"]
+                    for result in pokemon_response["results"]
+                ]
 
-            # fetching prices
-            prices_url = "http://api.tcgplayer.com/pricing/product/" + ",".join(str(id) for id in product_ids)
-            prices_response = requests.get(prices_url, headers=headers).json()
+                # fetching groups (sets)
+                group_url = (
+                    "http://api.tcgplayer.com/catalog/groups/" +
+                    ",".join(str(id) for id in group_ids)
+                )
+                groups_response = requests.get(
+                    group_url, headers=headers).json()
 
-            # little algorithm to join the aggregated data
-            for result in pokemon_response["results"]:
-                d = {"prices": []}
-                d["viewItemURL"] = result["url"]
-                d["product_id"] = result["productId"]
-                # group (sets) appending
-                for group in groups_response["results"]:
-                    if group["groupId"] == result["groupId"]:
-                        d["group"] = {**group}
+                # fetching prices
+                prices_url = (
+                    "http://api.tcgplayer.com/pricing/product/" +
+                    ",".join(str(id) for id in product_ids)
+                )
 
-                for prices in prices_response["results"]:
-                    if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
-                        d["prices"].append({**prices})
+                prices_response = requests.get(
+                    prices_url, headers=headers).json()
 
-                results.append(d)
+                # little algorithm to join the aggregated data
+                for result in pokemon_response["results"]:
+                    d = {"prices": []}
+                    d["viewItemURL"] = result["url"]
+                    d["product_id"] = result["productId"]
+                    # group (sets) appending
+                    for group in groups_response["results"]:
+                        if group["groupId"] == result["groupId"]:
+                            d["group"] = {**group}
 
-            # add a count item to the data, to know the number of elems returned
-            d["count"] = len(results)
+                    for prices in prices_response["results"]:
+                        if (prices["productId"] == result["productId"] and
+                            prices["marketPrice"] is not None):
+                            d["prices"].append({**prices})
+
+                    results.append(d)
+
+                # add a count item to the data, to know the number of elems returned
+                d["count"] = len(results)
 
             return results
+
         except KeyError as kerr:
             print("KeyError:", kerr, " Maybe the API key isn't valid anymore? Or a throttle occured?")
 

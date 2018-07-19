@@ -110,7 +110,6 @@ export default {
           axios.get(response.data.results[0].pokemon).then(response => {
             thisVm.pokemon = response.data
             thisVm.pokemonId = response.data.id
-            console.log(thisVm.pokemonId)
           })
 
           // get the card's set data

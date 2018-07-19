@@ -71,7 +71,7 @@ django.setup()
 # walk_dict(d)
 
 token = settings.TCGPLAYER_BEARER_TOKEN
-endpoint = "http://api.tcgplayer.com/catalog/products?categoryId=3&productTypes=Cards&productName='Charizard'&limit=100"
+endpoint = "http://api.tcgplayer.com/catalog/products?categoryId=3&productTypes=Cards&productName='Ash's Pikachu'&limit=100"
 
 headers = {"Authorization": "Bearer " + token}
 

@@ -75,25 +75,25 @@ class CardViewDetail(View):
         def retrieve_prices_data():
 
             # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
+
+            # initial instantiation to avoid TypeError
+            card.prices = {}
+
             price_finder = PriceFinder()
             ebay_cards = price_finder.get_ebay_prices(card.name, card.number_in_set, card_set.name)
+
+            if ebay_cards:
+                card.prices["ebay"] = ebay_cards
+                card.save()
 
             tcgplayer_cards = price_finder.get_tcgplayer_prices(card.name)
 
             for tcgplayer_card in tcgplayer_cards:
                 if tcgplayer_card["group"]["name"] == card_set.name:
                     tcgplayer_cards = [tcgplayer_card]
-                else:
-                    tcgplayer_cards = ''
+                    card.prices["tcgplayer"] = tcgplayer_cards
+                    card.save()
 
-            # initial instantiation to avoid TypeError
-            card.prices = {}
-
-            card.prices["ebay"] = ebay_cards
-            card.save()
-
-            card.prices["tcgplayer"] = tcgplayer_cards
-            card.save()
             print("Prices retrieved.")
 
             # pp = pprint.PrettyPrinter(indent=4)
