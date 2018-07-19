@@ -6,7 +6,7 @@ services:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
     ports:
-      - "8060:80"
+      - "80:80"
     environment:
       - DEFAULT_HOST=pokepare_py.local
     volumes:
