@@ -9,6 +9,8 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - pokepare_net
 
   pokepare_nginx:
     container_name: pokepare_nginx
