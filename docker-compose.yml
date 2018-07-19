@@ -2,15 +2,16 @@ version: '3'
 
 services:
 
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-    environment:
-      - DEFAULT_HOST=pokepare_py.local
+  traefik:
+    container_name: traefik
+    restart: always
+    image: traefik
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./traefik/traefik.toml:/traefik.toml
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - '80:80'
+      - '443:443'
     networks:
       - pokepare_net
 
@@ -23,11 +24,15 @@ services:
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./:/var/www/html
-    environment:
-      - VIRTUAL_HOST=pokepare_nginx.local
-      - VIRTUAL_PORT=8060
+    ports:
+      - '8060:80'
     networks:
       - pokepare_net
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.backend=pokepare_nginx'
+      - 'traefik.port=80'
+      - 'traefik.frontend.rule=Host:pokepare.com,www.pokepare.com'
 
   pokepare_py:
     container_name: pokepare_py
@@ -41,8 +46,6 @@ services:
       - pokepare_db:database
     environment:
       - PYTHONUNBUFFERED=0
-      - VIRTUAL_HOST=pokepare_py.local
-      - VIRTUAL_PORT=8060
     volumes:
       - ./:/usr/src/app
     networks:
