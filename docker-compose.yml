@@ -14,19 +14,20 @@ services:
     networks:
       - pokepare_net
 
-  # pokepare_nginx:
-  #   container_name: pokepare_nginx
-  #   restart: always
-  #   image: nginx
-  #   depends_on:
-  #     - pokepare_py
-  #   volumes:
-  #     - ./config/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-  #     - ./:/var/www/html
-  #   ports:
-  #     - '8060:80'
-  #   networks:
-  #     - pokepare_net
+  pokepare_nginx:
+    container_name: pokepare_nginx
+    restart: always
+    image: nginx
+    depends_on:
+      - pokepare_py
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./:/var/www/html
+    environment:
+      - VIRTUAL_HOST=pokepare_nginx.local
+      - VIRTUAL_PORT=8060
+    networks:
+      - pokepare_net
 
   pokepare_py:
     container_name: pokepare_py
