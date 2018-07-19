@@ -11,7 +11,8 @@
                   <a :href="card.url"><img class="card-img" :src="card.image" :alt="card.name"></a>
                 </li>
                 <li class="ns-li">
-                  <p ><a :href="card.url">{{ card.name }}</a></p>
+                  <p><a :href="card.url">{{ card.name }}</a></p>
+                  <p>{{ card.id }}</p>
                 </li>
               </ul>
             </div>
@@ -33,7 +34,7 @@ import 'axios-progress-bar/dist/nprogress.css'
 
 /* data, methods, components... declaration */
 export default {
-  props: ['cards', 'dataCount', 'setCode'],
+  props: ['cards', 'dataCount', 'setCode', 'next'],
   data () {
     return {
       status: '',
@@ -41,7 +42,7 @@ export default {
       animated: false,
       errorMsg: null,
       moduleTitle: 'Cards',
-      nextPage: '',
+      nextPage: this.next,
       cardsData: this.cards,
       dataCounter: this.dataCount,
       setCodeValue: this.setCode,

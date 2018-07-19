@@ -1,23 +1,10 @@
 <template>
-  <div id="cards" class="container">
+  <div id="search" class="container">
     <h1> {{ moduleTitle }}</h1>
-    <div class="container-fluid" v-if="cards">
-      <div class="row">
-        <h4 class="col-xl-12 mb-3">{{ dataCount }} cards found</h4>
-          <div class="col-xl-2 col-lg-2 col-md-3 col-sm-4 col-6 mt-3" v-for="card in cards" :key="card.id">
-            <ul>
-              <li class="ns-li mb-2">
-                <a :href="card.url"><img class="card-img" :src="card.image" alt=""></a>
-              </li>
-              <li class="ns-li">
-                <p ><a :href="card.url">{{ card.name }}</a></p>
-              </li>
-            </ul>
-          </div>
-      </div>
-      <div v-if="nextPage">
-        <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
-      </div>
+    <div v-if="dataCount">
+      <li class="ns-li" v-if="cards">
+        <cards :cards="cards" :dataCount="dataCount" :next="nextPage"></cards>
+      </li>
     </div>
     <!-- Display error message if nothing found -->
     <div v-else>
@@ -31,13 +18,14 @@ import axios from 'axios'
 import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
+import Cards from './Cards.vue'
 
 export default {
   name: 'SearchBar',
   props: ['query'],
   data () {
     return {
-      moduleTitle: 'Search results',
+      moduleTitle: 'Search',
       userQuery: '',
       status: null,
       cards: [],
@@ -105,7 +93,8 @@ export default {
     thisVm.searchCards()
   },
   components: {
-    'rise-loader': RiseLoader
+    'rise-loader': RiseLoader,
+    'cards': Cards
   }
 }
 
