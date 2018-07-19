@@ -4,6 +4,7 @@ services:
 
   nginx-proxy:
     image: jwilder/nginx-proxy
+    container_name: nginx-proxy
     ports:
       - "80:80"
     volumes:
@@ -19,7 +20,7 @@ services:
       - ./config/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./:/var/www/html
     ports:
-      - '8000:80'
+      - '8060:80'
     networks:
       - pokepare_net
 
@@ -35,6 +36,7 @@ services:
       - pokepare_db:database
     environment:
       - PYTHONUNBUFFERED=0
+      - VIRTUAL_HOST=pokepare_py.local
     volumes:
       - ./:/usr/src/app
     networks:
