@@ -2,6 +2,7 @@ import pprint
 
 from django.views import View
 from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
 from rest_framework import permissions
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet

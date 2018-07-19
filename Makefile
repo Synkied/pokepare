@@ -4,6 +4,9 @@ init:
 create_user_db:
 	docker exec --user postgres pokepare_db /bin/sh -c "createuser pokepare -s && createdb -U pokepare pokepare"
 
+create_cache_table:
+	docker exec pokepare_py /bin/sh -c "python manage.py createcachetable" 
+
 migrate_db:
 	docker exec pokepare_py /bin/sh -c 'python manage.py migrate'
 
