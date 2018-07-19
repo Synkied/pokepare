@@ -36,6 +36,10 @@ export default {
   background-color: #EEE;
 }
 
+.container {
+  max-width: 1200px;
+}
+
 a {
   text-decoration: none;
   color: #30415d

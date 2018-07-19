@@ -37,7 +37,7 @@ export default {
   props: ['query'],
   data () {
     return {
-      moduleTitle: 'Search',
+      moduleTitle: 'Search results',
       userQuery: '',
       status: null,
       cards: [],

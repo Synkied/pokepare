@@ -104,7 +104,7 @@ for result in pokemon_response["results"]:
             d["group"] = {**group}
 
     for prices in prices_response["results"]:
-        if prices["productId"] == result["productId"]:
+        if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
             d["prices"].append({**prices})
 
     results.append(d)

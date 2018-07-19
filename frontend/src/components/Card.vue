@@ -2,7 +2,7 @@
   <div id="cards">
     <div>
       <template v-if="card">
-        <div class="container-fluid">
+        <div class="container">
             <ul>
               <h3 class="card-title">{{ card.name }} - <a :href="'/sets/' + card.card_set_code">{{ card.card_set }}</a>
                 <small>{{ card.number_in_set }}</small>
@@ -22,7 +22,7 @@
 
             <template v-if="card.prices.ebay || card.prices.tcgplayer">
               <div style="overflow-x:auto;">
-                <table>
+                <table width="100%">
                   <thead>
                     <th>Website</th>
                     <th>Condition</th>
