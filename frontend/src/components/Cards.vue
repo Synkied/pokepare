@@ -12,7 +12,6 @@
                 </li>
                 <li class="ns-li">
                   <p><a :href="card.url">{{ card.name }}</a></p>
-                  <p>{{ card.id }}</p>
                 </li>
               </ul>
             </div>
