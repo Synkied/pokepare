@@ -1,3 +1,5 @@
+import pprint
+
 from django.views import View
 from django.shortcuts import render
 from rest_framework import viewsets
@@ -9,9 +11,8 @@ from django_filters import rest_framework as filters
 from .serializers import CardSerializer
 from .models import Card
 from sets.models import Set
-
 from utils import PriceFinder
-import pprint
+
 
 # Create your views here.
 
@@ -70,26 +71,33 @@ class CardViewDetail(View):
             "card": card,
         }
 
-        # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
-        price_finder = PriceFinder()
-        ebay_cards = price_finder.get_ebay_prices(card.name, card.number_in_set, card_set.name)
+        def retrieve_prices_data():
 
-        tcgplayer_cards = price_finder.get_tcgplayer_prices(card.name)
+            # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
+            price_finder = PriceFinder()
+            ebay_cards = price_finder.get_ebay_prices(card.name, card.number_in_set, card_set.name)
 
-        for tcgplayer_card in tcgplayer_cards:
-            if tcgplayer_card["group"]["name"] == card_set.name:
-                tcgplayer_cards = [tcgplayer_card]
+            tcgplayer_cards = price_finder.get_tcgplayer_prices(card.name)
 
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(tcgplayer_cards)
+            for tcgplayer_card in tcgplayer_cards:
+                if tcgplayer_card["group"]["name"] == card_set.name:
+                    tcgplayer_cards = [tcgplayer_card]
+                else:
+                    tcgplayer_cards = ''
 
-        # initial instantiation to avoid TypeError
-        card.prices = {}
+            # initial instantiation to avoid TypeError
+            card.prices = {}
 
-        card.prices["ebay"] = ebay_cards
-        card.save()
+            card.prices["ebay"] = ebay_cards
+            card.save()
 
-        card.prices["tcgplayer"] = tcgplayer_cards
-        card.save()
+            card.prices["tcgplayer"] = tcgplayer_cards
+            card.save()
+            print("Prices retrieved.")
+
+            # pp = pprint.PrettyPrinter(indent=4)
+            # pp.pprint(tcgplayer_cards)
+
+        retrieve_prices_data()
 
         return render(request, self.template_name, context)

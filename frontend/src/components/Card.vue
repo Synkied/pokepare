@@ -31,14 +31,16 @@
                     <th>Current Price</th>
                     <th>Currency</th>
                   </thead>
-                  <tr v-for="item in orderedPrices" :key="item.id">
-                    <td>eBay</td>
-                    <td>{{ item.condition.conditionDisplayName }}</td>
-                    <td></td>
-                    <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-                    <td>{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
-                    <td>{{ item.sellingStatus.convertedCurrentPrice._currencyId }}</td>
-                  </tr>
+                  <tbody>
+                    <tr v-for="item in orderedPrices" :key="item.id">
+                      <td>eBay</td>
+                      <td>{{ item.condition.conditionDisplayName }}</td>
+                      <td></td>
+                      <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
+                      <td>{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
+                      <td>{{ item.sellingStatus.convertedCurrentPrice._currencyId }}</td>
+                    </tr>
+                  </tbody>
                   <tbody v-if="card.prices.tcgplayer" v-for="item in card.prices.tcgplayer" :key="item.id">
                     <tr v-for="price in item.prices" :key="price.id">
                       <td>TCGPlayer</td>

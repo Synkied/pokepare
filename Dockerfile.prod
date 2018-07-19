@@ -12,9 +12,9 @@ RUN pip install -r /requirements.txt
 
 WORKDIR /usr/src/app
 
-EXPOSE 8060
+EXPOSE 8000
 
 # different settings from local dev
 ENV DJANGO_SETTINGS_MODULE=pokepare.settings.staging
 
-CMD [ "gunicorn", "pokepare.wsgi", "-b", "0.0.0.0:8060" ]
+CMD [ "gunicorn", "pokepare.wsgi", "-b", "0.0.0.0:8000" ]
