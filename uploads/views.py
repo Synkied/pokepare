@@ -49,7 +49,7 @@ class UploadFileView(CreateView):
                 res = ''
 
             context = {
-                "pouet": res,
+                "result": res,
             }
 
             # compute from elasticsearch, return card page or error page

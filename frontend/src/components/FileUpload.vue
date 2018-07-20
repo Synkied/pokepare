@@ -2,10 +2,14 @@
   <div class="container">
     <div class="col-xl-12 col-12 cell">
       <label class="btn btn-primary">Browse files...
-        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" style="display: none;"/>
-      </label>  
+        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" hidden/>
+      </label>
+      {{ file.name }}
     </div>
     <button class="btn btn-info" v-on:click="submitFile()">Submit</button>
+    <div class="mt-4" v-if="errorMsg">
+      {{ errorMsg }}
+    </div>
   </div>
 </template>
 
@@ -21,7 +25,8 @@ export default {
   data () {
     return {
       file: '',
-      card_name: ''
+      card_name: '',
+      errorMsg: ''
     }
   },
   methods: {
@@ -44,10 +49,14 @@ export default {
         }
       ).then(response => {
         if (response.data) {
-          console.log(response.data.pouet)
-          thisVm.card_name = response.data.pouet
+          console.log(response.data)
+          thisVm.card_name = response.data.result
         }
-        window.location.href = '/cards/' + thisVm.card_name
+        if (thisVm.card_name) {
+          window.location.href = '/cards/' + thisVm.card_name
+        } else {
+          thisVm.errorMsg = 'No card found for this image.'
+        }
       })
         .catch(function () {
           console.log('FAILURE!!')
