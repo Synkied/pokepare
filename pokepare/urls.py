@@ -23,6 +23,7 @@ from django.views.generic import TemplateView
 from django.urls import path
 from .routers import router
 from .views import SearchView
+from uploads.views import UploadFileView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html")),
@@ -33,4 +34,5 @@ urlpatterns = [
     path('pokemons/', include('pokemons.urls'), name="pokemons"),
     path('sets/', include('sets.urls'), name="sets"),
     path('search/', SearchView.as_view(), name="search"),
+    path('file-upload/', UploadFileView.as_view(), name="file_upload"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

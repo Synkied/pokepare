@@ -1,6 +1,8 @@
 <template>
   <div id="home" class="container">
-    <h2>What's PokePare?</h2>
+    or upload an image file:
+    <file-upload></file-upload>
+    <h2 class="mt-5">What's PokePare?</h2>
     <img class="mb-4" src="../assets/pokepare_200.png" height="40px" alt="">
     <p>PokePare is all about finding the prices for Pokemon cards.</p>
     <p>It's also a bit more, as it has an API built-in to retrieve Pokemons, their cards, and the cards' sets. It is available at: <a href="http://pokepare.com/api/">pokepare.com/api/</a>.</p>
@@ -19,6 +21,7 @@ import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
 import SearchBar from './SearchBar'
 import Pokemons from './Pokemons'
 import Cards from './Cards'
+import FileUpload from './FileUpload.vue'
 
 /* data, methods, components... declaration */
 export default {
@@ -36,7 +39,8 @@ export default {
     'rise-loader': RiseLoader,
     'search-bar': SearchBar,
     'pokemons': Pokemons,
-    'cards': Cards
+    'cards': Cards,
+    'file-upload': FileUpload
   },
   mounted () {
   }

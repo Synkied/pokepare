@@ -39,6 +39,7 @@ CORS_ORIGIN_WHITELIST = (
     '188.166.108.19',
 )
 
+CSRF_COOKIE_NAME = "csrftoken"
 
 # Application definition
 
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_filters',
+    'uploads',
 ]
 
 MIDDLEWARE = [
