@@ -17,6 +17,8 @@
 import axios from 'axios'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 axios.defaults.xsrfCookieName = 'csrftoken'
+import { loadProgressBar } from 'axios-progress-bar'
+import 'axios-progress-bar/dist/nprogress.css'
 
 export default {
   /*
@@ -38,7 +40,7 @@ export default {
 
       /* Add the form data we need to submit */
       formData.append('image', this.file)
-
+      loadProgressBar()
       /* Make the request to the POST /single-file URL */
       axios.post('/file-upload/',
         formData,
