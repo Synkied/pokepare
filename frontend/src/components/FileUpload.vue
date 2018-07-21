@@ -15,10 +15,10 @@
 
 <script>
 import axios from 'axios'
-axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
-axios.defaults.xsrfCookieName = 'csrftoken'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
+axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
+axios.defaults.xsrfCookieName = 'csrftoken'
 
 export default {
   /*
