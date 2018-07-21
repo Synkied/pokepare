@@ -41,6 +41,8 @@ CORS_ORIGIN_WHITELIST = (
 
 CSRF_COOKIE_NAME = "csrftoken"
 
+ELASTICSEARCH_HOST = 'localhost'
+
 # Application definition
 
 INSTALLED_APPS = [

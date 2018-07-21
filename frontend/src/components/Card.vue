@@ -19,40 +19,41 @@
                 <p v-else>#{{ pokemon.number }}</p>
               </a>
             </div>
-
-            <template v-if="card.prices.ebay || card.prices.tcgplayer">
-              <div style="overflow-x:auto;">
-                <table width="100%">
-                  <thead>
-                    <th>Website</th>
-                    <th>Condition</th>
-                    <th>Edition</th>
-                    <th>URL</th>
-                    <th>Current Price</th>
-                    <th>Currency</th>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in orderedPrices" :key="item.id">
-                      <td>eBay</td>
-                      <td>{{ item.condition.conditionDisplayName }}</td>
-                      <td></td>
-                      <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-                      <td>{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
-                      <td>{{ item.sellingStatus.convertedCurrentPrice._currencyId }}</td>
-                    </tr>
-                  </tbody>
-                  <tbody v-if="card.prices.tcgplayer" v-for="item in card.prices.tcgplayer" :key="item.id">
-                    <tr v-for="price in item.prices" :key="price.id">
-                      <td>TCGPlayer</td>
-                      <td>N/A</td>
-                      <td>{{ price.subTypeName }}</td>
-                      <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-                      <td>{{ price.marketPrice }}</td>
-                      <td>USD</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+            <template v-if="card.prices">
+              <template v-if="card.prices.ebay || card.prices.tcgplayer">
+                <div style="overflow-x:auto;">
+                  <table width="100%">
+                    <thead>
+                      <th>Website</th>
+                      <th>Condition</th>
+                      <th>Edition</th>
+                      <th>URL</th>
+                      <th>Current Price</th>
+                      <th>Currency</th>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in orderedPrices" :key="item.id">
+                        <td>eBay</td>
+                        <td>{{ item.condition.conditionDisplayName }}</td>
+                        <td></td>
+                        <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
+                        <td>{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
+                        <td>{{ item.sellingStatus.convertedCurrentPrice._currencyId }}</td>
+                      </tr>
+                    </tbody>
+                    <tbody v-if="card.prices.tcgplayer" v-for="item in card.prices.tcgplayer" :key="item.id">
+                      <tr v-for="price in item.prices" :key="price.id">
+                        <td>TCGPlayer</td>
+                        <td>N/A</td>
+                        <td>{{ price.subTypeName }}</td>
+                        <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
+                        <td>{{ price.marketPrice }}</td>
+                        <td>USD</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </template>
             </template>
             <template v-else>
               <p>No prices found for this card.</p>

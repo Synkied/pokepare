@@ -32,7 +32,7 @@ class Command(BaseCommand):
 
     def add_to_es(self):
 
-        es = Elasticsearch(hosts=[{"host": 'elasticsearch'}])
+        es = Elasticsearch(hosts=[{"host": settings.ELASTICSEARCH_HOST}])
         ses = SignatureES(es, distance_cutoff=0.3)
 
         img_base_dir = settings.MEDIA_ROOT

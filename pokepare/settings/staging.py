@@ -13,3 +13,5 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+ELASTICSEARCH_HOST = 'elasticsearch'

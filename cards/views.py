@@ -64,43 +64,44 @@ class CardViewDetail(View):
 
     def get(self, request, unique_id):
 
-        card = Card.objects.get(unique_id=unique_id)
-        if card:
-            card_set = Set.objects.get(code=card.card_set_code)
+        try:
+            card = Card.objects.get(unique_id=unique_id)
 
-        context = {
-            "card": card,
-        }
+            if card:
+                card_set = Set.objects.get(code=card.card_set_code)
 
-        def retrieve_prices_data():
+            def retrieve_prices_data():
 
-            # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
+                # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
 
-            # initial instantiation to avoid TypeError and empty card.prices
-            card.prices = {}
-            card.save()
-
-            price_finder = PriceFinder()
-
-            ebay_cards = price_finder.get_ebay_prices(card.name, card.number_in_set, card_set.name)
-
-            if ebay_cards:
-                card.prices["ebay"] = ebay_cards
+                # initial instantiation to avoid TypeError and empty card.prices
+                card.prices = {}
                 card.save()
 
-            tcgplayer_cards = price_finder.get_tcgplayer_prices(card.name)
+                price_finder = PriceFinder()
 
-            for tcgplayer_card in tcgplayer_cards:
-                if tcgplayer_card["group"]["name"] == card_set.name:
-                    tcgplayer_cards = [tcgplayer_card]
-                    card.prices["tcgplayer"] = tcgplayer_cards
+                ebay_cards = price_finder.get_ebay_prices(card.name, card.number_in_set, card_set.name)
+
+                if ebay_cards:
+                    card.prices["ebay"] = ebay_cards
                     card.save()
 
-            print("Prices retrieved.")
+                tcgplayer_cards = price_finder.get_tcgplayer_prices(card.name)
 
-            # pp = pprint.PrettyPrinter(indent=4)
-            # pp.pprint(tcgplayer_cards)
+                for tcgplayer_card in tcgplayer_cards:
+                    if tcgplayer_card["group"]["name"] == card_set.name:
+                        tcgplayer_cards = [tcgplayer_card]
+                        card.prices["tcgplayer"] = tcgplayer_cards
+                        card.save()
 
-        retrieve_prices_data()
+                print("Prices retrieved.")
 
-        return render(request, self.template_name, context)
+                # pp = pprint.PrettyPrinter(indent=4)
+                # pp.pprint(tcgplayer_cards)
+
+            retrieve_prices_data()
+
+        except ObjectDoesNotExist:
+            pass
+
+        return render(request, self.template_name)

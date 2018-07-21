@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .forms import ImageForm
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 from .models import Image
 from cards.models import Card
@@ -26,7 +27,7 @@ class UploadFileView(CreateView):
 
         # specifying host for docker container,
         # the host must be the name of the docker container
-        es = Elasticsearch(hosts=[{"host": 'elasticsearch'}])
+        es = Elasticsearch(hosts=[{"host": settings.ELASTICSEARCH_HOST}])
         ses = SignatureES(es, distance_cutoff=0.3)
 
         try:
@@ -53,17 +54,15 @@ class UploadFileView(CreateView):
                 else:
                     res = ''
 
+            else:
+                print("Form not valid.")
+                return render(request, self.template_name, {'form': form})
+
         except ObjectDoesNotExist:
             res = ''
 
-            context = {
-                "result": res,
-            }
+        context = {
+            "result": res,
+        }
 
-            # compute from elasticsearch, return card page or error page
-
-            return(JsonResponse(context))
-
-        else:
-            print("no")
-            return render(request, self.template_name, {'form': form})
+        return(JsonResponse(context))
