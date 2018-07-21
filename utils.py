@@ -1,7 +1,12 @@
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
+import os
 import requests
+
+from elasticsearch import Elasticsearch
+from image_match.elasticsearch_driver import SignatureES
+
 from ebaysdk.finding import Connection as finding
 from ebaysdk.exception import ConnectionError
 
@@ -156,9 +161,3 @@ class PriceFinder():
             print("KeyError:", kerr, " Maybe the API key isn't valid anymore? Or a throttle occured?")
 
             return results
-
-
-if __name__ == "__main__":
-    p = PriceFinder()
-
-    p.get_tcgplayer_prices("Pikachu")

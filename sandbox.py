@@ -120,7 +120,7 @@ from cards.models import Card
 # pp = pprint.PrettyPrinter(indent=4)
 # pp.pprint(results)
 
-es = Elasticsearch()
+es = Elasticsearch(hosts=[{"host": 'elasticsearch'}])
 ses = SignatureES(es, distance_cutoff=0.3)
 
 img_base_dir = settings.MEDIA_ROOT

@@ -2,6 +2,7 @@ from django.views.generic import CreateView
 from django.shortcuts import render
 from .forms import ImageForm
 from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Image
 from cards.models import Card
@@ -23,30 +24,37 @@ class UploadFileView(CreateView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
 
-        es = Elasticsearch()
+        # specifying host for docker container,
+        # the host must be the name of the docker container
+        es = Elasticsearch(hosts=[{"host": 'elasticsearch'}])
         ses = SignatureES(es, distance_cutoff=0.3)
 
-        if form.is_valid():
-            form.save()
+        try:
 
-            image = Image.objects.latest('uploaded_at')
+            if form.is_valid():
+                form.save()
 
-            search = ses.search_image(image.image.path)
+                image = Image.objects.latest('uploaded_at')
 
-            print(search)
+                search = ses.search_image(image.image.path)
 
-            if search:
-                for result in search:
-                    image_name_ext = result['path'].split('/')[-1::]
-                    image_name = "".join(image_name_ext).split('.')[-2::][0]
-                    print(image_name)
+                print(search)
 
-                if image_name:
-                    card = Card.objects.get(unique_id=image_name)
-                    res = card.unique_id
+                if search:
+                    for result in search:
+                        image_name_ext = result['path'].split('/')[-1::]
+                        image_name = "".join(image_name_ext).split('.')[-2::][0]
+                        print(image_name)
 
-            else:
-                res = ''
+                    if image_name:
+                        card = Card.objects.get(unique_id=image_name)
+                        res = card.unique_id
+
+                else:
+                    res = ''
+
+        except ObjectDoesNotExist:
+            res = ''
 
             context = {
                 "result": res,

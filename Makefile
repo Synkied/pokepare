@@ -13,6 +13,9 @@ migrate_db:
 import_data:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data all'
 
+add_images:
+	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all'
+
 cov_test:
 	coverage run manage.py test
 
