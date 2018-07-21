@@ -5,7 +5,7 @@
         <input :class="{'bounce animated': animated}" @animationend="animated = false"
           @keyup.esc="query=''" @keyup.enter="[searchCards(), animate()]"
           v-model="query" name="query" type="text" class="form-control" placeholder="Enter a Pokémon card name">
-      <button @click="[searchCards(), animate()]" class="btn mt-5 mb-5 query_btn">Envoyer</button>
+      <button @click="[searchCards(), animate()]" class="btn mb-5 mt-4 query_btn">Submit</button>
 
     </fieldset>
   </div>

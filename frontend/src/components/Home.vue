@@ -1,6 +1,6 @@
 <template>
   <div id="home" class="container">
-    or upload an image file:
+    <p>Or upload an image file:</p>
     <file-upload></file-upload>
     <h2 class="mt-5">What's PokePare?</h2>
     <img class="mb-4" src="../assets/pokepare_200.png" height="40px" alt="">

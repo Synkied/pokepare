@@ -1,1 +1,19 @@
-<!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PokePare</title><link href=/static/bundles/css/app.f675325c4dba5cc416166b7480eb6836.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=/static/bundles/js/manifest.6da7ecab94931d087df2.js></script><script type=text/javascript src=/static/bundles/js/vendor.1d589d5fdcdf77560f70.js></script><script type=text/javascript src=/static/bundles/js/app.11ca7e314b0957985a11.js></script></body></html>
+<!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PokePare</title><link href=/static/bundles/css/app.f675325c4dba5cc416166b7480eb6836.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=/static/bundles/js/manifest.6da7ecab94931d087df2.js></script><script type=text/javascript src=/static/bundles/js/vendor.1d589d5fdcdf77560f70.js></script><script type=text/javascript src=/static/bundles/js/app.11ca7e314b0957985a11.js></script></body></html>{% load render_bundle from webpack_loader %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PokePare</title>
+
+</head>
+<body>
+    <div id="app">
+
+    </div>
+    {% render_bundle 'app' %}
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>
