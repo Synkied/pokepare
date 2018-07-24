@@ -2,8 +2,8 @@
   <div id="pokemons" class="container mt-5">
     <h2>{{ moduleTitle }}</h2>
     <h4 v-if="dataCount">{{ dataCount }} Pokémon</h4>
-    <button class="btn btn-info mt-5" :disabled="pageNumber === 0" @click="prevPage">Prev</button>
-    <button class="btn btn-info mt-5" :disabled="pageNumber >= pageCount -1" @click="nextPage">Next</button>
+    <button ref="previous" class="btn btn-info mt-5" :disabled="pageNumber === 0 || disable" @click="prevPage">Prev</button>
+    <button ref="next" class="btn btn-info mt-5" :disabled="pageNumber >= pageCount -1 || disable" @click="nextPage">Next</button>
     <div>
       <template v-if="!userQuery">
         <div class="container-fluid">
@@ -45,7 +45,8 @@ export default {
       previous: '',
       pageNumber: 0,
       limit: '',
-      pokemons: ''
+      pokemons: '',
+      disable: false
     }
   },
   title () {
@@ -80,13 +81,19 @@ export default {
       })
     }, */
     nextPage () {
-      axios.get(this.next).then(response => {
-        for (var i = 0; i < response.data.results.length; i++) {
-          this.pokemons.push(response.data.results[i])
-        }
-        this.next = response.data.next
-      })
+      this.disable = true
+      axios.get(this.next)
+        .then(response => {
+          for (var i = 0; i < response.data.results.length; i++) {
+            this.pokemons.push(response.data.results[i])
+            this.disable = false
+          }
+          this.next = response.data.next
+        })
       this.pageNumber++
+      if (this.pokemons.length === this.dataCount) {
+        this.disable = false
+      }
     },
     prevPage () {
       axios.get(this.previous).then(response => {

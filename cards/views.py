@@ -94,6 +94,8 @@ class CardViewDetail(View):
                         card.prices["tcgplayer"] = tcgplayer_cards
                         card.save()
 
+                        print("tcgplayer")
+
                 print("Prices retrieved.")
 
                 # pp = pprint.PrettyPrinter(indent=4)

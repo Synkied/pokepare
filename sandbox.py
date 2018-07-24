@@ -76,73 +76,73 @@ from cards.models import Card
 
 # walk_dict(d)
 
-# token = settings.TCGPLAYER_BEARER_TOKEN
-# endpoint = "http://api.tcgplayer.com/catalog/products?categoryId=3&productTypes=Cards&productName='Ash's Pikachu'&limit=100"
+token = settings.TCGPLAYER_BEARER_TOKEN
+endpoint = "http://api.tcgplayer.com/catalog/products?categoryId=3&productTypes=Cards&productName='Charizard'&limit=100"
 
-# headers = {"Authorization": "Bearer " + token}
+headers = {"Authorization": "Bearer " + token}
 
-# pokemon_response = requests.get(endpoint, headers=headers).json()
+pokemon_response = requests.get(endpoint, headers=headers).json()
 
-# results = []
+results = []
 
-# product_ids = [result["productId"] for result in pokemon_response["results"]]
-# group_ids = [result["groupId"] for result in pokemon_response["results"]]
+product_ids = [result["productId"] for result in pokemon_response["results"]]
+group_ids = [result["groupId"] for result in pokemon_response["results"]]
 
-# group_urls = "http://api.tcgplayer.com/catalog/groups/" + ",".join(str(id) for id in group_ids)
+group_urls = "http://api.tcgplayer.com/catalog/groups/" + ",".join(str(id) for id in group_ids)
 
-# groups_response = requests.get(group_urls, headers=headers).json()
+groups_response = requests.get(group_urls, headers=headers).json()
 
-# market = "http://api.tcgplayer.com/v1.8.1/pricing/product/" + ",".join(str(id) for id in product_ids)
+market = "http://api.tcgplayer.com/v1.8.1/pricing/product/" + ",".join(str(id) for id in product_ids)
 
-# prices_response = requests.get(market, headers=headers).json()
+prices_response = requests.get(market, headers=headers).json()
 
-# print(prices_response)
+print(prices_response)
 
-# results = []
+results = []
 
-# for result in pokemon_response["results"]:
-#     d = {"prices": []}
-#     d["link"] = result["url"]
-#     d["product_id"] = result["productId"]
-#     # group (sets) appending
-#     for group in groups_response["results"]:
-#         if group["groupId"] == result["groupId"]:
-#             d["group"] = {**group}
+for result in pokemon_response["results"]:
+    d = {"prices": []}
+    d["link"] = result["url"]
+    d["product_id"] = result["productId"]
+    # group (sets) appending
+    for group in groups_response["results"]:
+        if group["groupId"] == result["groupId"]:
+            d["group"] = {**group}
 
-#     for prices in prices_response["results"]:
-#         if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
-#             d["prices"].append({**prices})
+    for prices in prices_response["results"]:
+        if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
+            d["prices"].append({**prices})
 
-#     results.append(d)
+    results.append(d)
 
-# d["zz"] = len(results)
+d["zz"] = len(results)
 
-# pp = pprint.PrettyPrinter(indent=4)
-# pp.pprint(results)
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(results)
 
-es = Elasticsearch(hosts=[{"host": 'elasticsearch'}])
-ses = SignatureES(es, distance_cutoff=0.3)
+# es = Elasticsearch(hosts=[{"host": 'elasticsearch'}])
+# ses = SignatureES(es, distance_cutoff=0.3)
 
-img_base_dir = settings.MEDIA_ROOT
+# img_base_dir = settings.MEDIA_ROOT
 
-img_dir = img_base_dir + '/cards/'
+# img_dir = img_base_dir + '/cards/'
 
-dirlist = os.listdir(img_dir)
+# dirlist = os.listdir(img_dir)
 
-for file in dirlist:
-    img_path = img_dir + file
-    print(img_path)
-    # t = ses.add_image(img_path)
+# for file in dirlist:
+#     img_path = img_dir + file
+#     print(img_path)
+#     # t = ses.add_image(img_path)
 
-search = ses.search_image("https://images-na.ssl-images-amazon.com/images/I/71FkBOAGixL._SY450_.jpg")
+# search = ses.search_image("https://images-na.ssl-images-amazon.com/images/I/71FkBOAGixL._SY450_.jpg")
 
-print(search)
+# print(search)
 
-for result in search:
-    image_name_ext = result['path'].split('/')[-1::]
-    image_name = "".join(image_name_ext).split('.')[-2::][0]
-    print(image_name)
+# for result in search:
+#     image_name_ext = result['path'].split('/')[-1::]
+#     image_name = "".join(image_name_ext).split('.')[-2::][0]
+#     print(image_name)
 
-p = Card.objects.get(unique_id=image_name)
+# p = Card.objects.get(unique_id=image_name)
 
-print(p)
+# print(p)
