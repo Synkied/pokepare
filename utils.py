@@ -3,6 +3,7 @@ from django.conf import settings
 
 import os
 import requests
+import pprint
 
 from elasticsearch import Elasticsearch
 from image_match.elasticsearch_driver import SignatureES
@@ -76,11 +77,23 @@ class PriceFinder():
                 #     'currentPrice',
                 # ]
 
-                for items in response.dict()["searchResult"]["item"]:
-                    for key in needed_keys:
-                        if key not in items.keys():
-                            items[key] = "N/A"
-                    items_list.append(items)
+                res = response.dict()["searchResult"]["item"]
+
+                for item in response.dict()["searchResult"]["item"]:
+                    # for key in needed_keys:
+                    #     if key not in items.keys():
+                    #         items[key] = "N/A"
+                    # items_list.append(items)
+
+                    item_dict = {"prices": []}
+
+                    item_dict["link"] = item["viewItemURL"]
+                    item_dict["prices"].append({"market_price": item["sellingStatus"]["convertedCurrentPrice"]["value"], "edition": "N/A"})
+                    item_dict["currency"] = item["sellingStatus"]["convertedCurrentPrice"]["_currencyId"]
+                    item_dict["product_id"] = item["itemId"]
+                    item_dict["condition"] = item["condition"]["conditionDisplayName"]
+
+                    items_list.append(item_dict)
 
             except KeyError as kerr:
                 pass
@@ -159,3 +172,12 @@ class PriceFinder():
             print("KeyError:", kerr, " Maybe the API key isn't valid anymore? Or a throttle occured?")
 
         return results
+
+
+if __name__ == "__main__":
+    pp = PriceFinder()
+
+    result = pp.get_ebay_prices("Bulbasaur", '1', 'Shining Legends')
+
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(result)

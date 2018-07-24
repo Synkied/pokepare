@@ -102,18 +102,18 @@ for result in pokemon_response["results"]:
     d = {"prices": []}
     d["link"] = result["url"]
     d["product_id"] = result["productId"]
+    d["condition"] = "N/A"
+    d["currency"] = "USD"
     # group (sets) appending
     for group in groups_response["results"]:
         if group["groupId"] == result["groupId"]:
-            d["group"] = {**group}
+            d["set_name"] = group["name"]
 
     for prices in prices_response["results"]:
         if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
-            d["prices"].append({**prices})
+            d["prices"].append({"market_price": prices["marketPrice"], "edition": prices["subTypeName"]})
 
     results.append(d)
-
-d["zz"] = len(results)
 
 pp = pprint.PrettyPrinter(indent=4)
 pp.pprint(results)

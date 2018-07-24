@@ -35,9 +35,9 @@
                       <tr v-for="item in orderedPrices" :key="item.id">
                         <td>eBay</td>
                         <td>{{ item.condition.conditionDisplayName }}</td>
-                        <td></td>
+                        <td>N/A</td>
                         <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-                        <td>{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
+                        <td id="price">{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
                         <td>{{ item.sellingStatus.convertedCurrentPrice._currencyId }}</td>
                       </tr>
                     </tbody>
@@ -47,7 +47,7 @@
                         <td>N/A</td>
                         <td>{{ price.subTypeName }}</td>
                         <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-                        <td>{{ price.marketPrice }}</td>
+                        <td id="price">{{ price.marketPrice }}</td>
                         <td>USD</td>
                       </tr>
                     </tbody>
@@ -85,7 +85,7 @@ export default {
       errorMsg: null,
       numberInSet: '',
       totalNoSet: '',
-      uniqueNumInSet: ''
+      uniqueNumInSet: '',
     }
   },
   title () {
