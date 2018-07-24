@@ -1,12 +1,19 @@
 # api/tests.py
 
-# Add these imports at the top
+import json
+from unittest.mock import Mock, patch
+
+from io import BytesIO
+
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.urls import reverse
 from django.test import TestCase
 from django.contrib.auth.models import User
 from cards.models import Card
+from django.conf import settings
+
+from utils import PriceFinder
 
 # Define this after the ModelTestCase
 
@@ -73,4 +80,27 @@ class CardDRFTestCase(TestCase):
 
 
 class CardPricesDataTestCase(TestCase):
-    pass
+
+    def setUp(self):
+        self.token = settings.TCGPLAYER_BEARER_TOKEN
+        self.price_finder = PriceFinder()
+        self.name = "Charizard G"
+
+        with open(
+            "mock_data/tcgplayer_mock.json", "r", encoding="utf8"
+        ) as mockfile:
+            self.tcgplayer_mock_data = json.load(mockfile)
+
+    def test_instance(self):
+        """
+        :Test success conditions:
+        The data returned is a valid GMapsRequest object
+        """
+        assert(isinstance(self.price_finder, PriceFinder))
+
+    def test_retrieve_prices_from_tcg_player(self):
+
+        # Replace requests return by a json mock stored locally
+        json_mock = json.dumps(self.tcgplayer_mock_data).encode()
+
+        self.assertEqual(json_mock, self.price_finder.get_tcgplayer_prices(self.name))

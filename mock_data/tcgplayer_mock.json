@@ -1,0 +1,78 @@
+{
+    "totalItems": 1,
+    "success": true,
+    "errors": [],
+    "results": [
+        {
+            "productId": 84200,
+            "productName": "Charizard G",
+            "image": "https://6d4be195623157e28848-7697ece4918e0a73861de0eb37d08968.ssl.cf1.rackcdn.com/84200_200w.jpg",
+            "categoryId": 3,
+            "groupId": 1384,
+            "url": "http://store.tcgplayer.com/pokemon/supreme-victors/charizard-g",
+            "modifiedOn": "2015-02-25T17:42:37.083",
+            "productConditions": [
+                {
+                    "productConditionId": 1190169,
+                    "name": "Near Mint",
+                    "language": "English",
+                    "isFoil": false
+                },
+                {
+                    "productConditionId": 1219553,
+                    "name": "Damaged",
+                    "language": "English",
+                    "isFoil": false
+                },
+                {
+                    "productConditionId": 1204861,
+                    "name": "Moderately Played",
+                    "language": "English",
+                    "isFoil": false
+                },
+                {
+                    "productConditionId": 1212207,
+                    "name": "Heavily Played",
+                    "language": "English",
+                    "isFoil": false
+                },
+                {
+                    "productConditionId": 1197515,
+                    "name": "Lightly Played",
+                    "language": "English",
+                    "isFoil": false
+                },
+                {
+                    "productConditionId": 2733923,
+                    "name": "Reverse Holofoil - Near Mint",
+                    "language": "English",
+                    "isFoil": true
+                },
+                {
+                    "productConditionId": 2733924,
+                    "name": "Reverse Holofoil - Lightly Played",
+                    "language": "English",
+                    "isFoil": true
+                },
+                {
+                    "productConditionId": 2733925,
+                    "name": "Reverse Holofoil - Moderately Played",
+                    "language": "English",
+                    "isFoil": true
+                },
+                {
+                    "productConditionId": 2733926,
+                    "name": "Reverse Holofoil - Heavily Played",
+                    "language": "English",
+                    "isFoil": true
+                },
+                {
+                    "productConditionId": 2733927,
+                    "name": "Reverse Holofoil - Damaged",
+                    "language": "English",
+                    "isFoil": true
+                }
+            ]
+        }
+    ]
+}
