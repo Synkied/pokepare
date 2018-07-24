@@ -11,7 +11,7 @@ from pokemons.models import Pokemon
 # Define this after the ModelTestCase
 
 
-class PokemonTestCase(TestCase):
+class PokemonDRFTestCase(TestCase):
     """Test suite for the pokemon views."""
 
     def setUp(self):

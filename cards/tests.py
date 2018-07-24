@@ -11,7 +11,7 @@ from cards.models import Card
 # Define this after the ModelTestCase
 
 
-class CardTestCase(TestCase):
+class CardDRFTestCase(TestCase):
     """Test suite for the cards views."""
 
     def setUp(self):
@@ -70,3 +70,7 @@ class CardTestCase(TestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class CardPricesDataTestCase(TestCase):
+    pass

@@ -11,7 +11,7 @@ from sets.models import Set
 # Define this after the ModelTestCase
 
 
-class SetTestCase(TestCase):
+class SetDRFTestCase(TestCase):
     """Test suite for the sets views."""
 
     def setUp(self):

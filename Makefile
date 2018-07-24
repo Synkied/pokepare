@@ -52,3 +52,6 @@ bash_db:
 npm_build:
 	cd frontend
 	npm run build
+
+freeze:
+	pip freeze > requirements.txt

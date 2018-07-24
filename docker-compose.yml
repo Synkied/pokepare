@@ -7,7 +7,7 @@ services:
     restart: always
     image: traefik
     volumes:
-      - ./traefik/traefik.toml:/traefik.toml
+      - ./config/traefik/traefik.toml:/traefik.toml
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - '80:80'
