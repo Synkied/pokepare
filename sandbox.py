@@ -96,8 +96,6 @@ market = "http://api.tcgplayer.com/v1.8.1/pricing/product/" + ",".join(str(id) f
 
 prices_response = requests.get(market, headers=headers).json()
 
-print(prices_response)
-
 results = []
 
 for result in pokemon_response["results"]:

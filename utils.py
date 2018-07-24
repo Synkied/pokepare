@@ -106,7 +106,7 @@ class PriceFinder():
                 product_url, headers=headers).json()
 
             # only execute api calls if a product was found (success=true)
-            if pokemon_response["success"] == "true":
+            if pokemon_response["success"] is True:
 
                 # variables instanciation
                 product_ids = [
@@ -137,27 +137,27 @@ class PriceFinder():
 
                 # little algorithm to join the aggregated data
                 for result in pokemon_response["results"]:
-                    d = {"prices": []}
-                    d["viewItemURL"] = result["url"]
-                    d["product_id"] = result["productId"]
+                    prices_dict = {"prices": []}
+                    prices_dict["viewItemURL"] = result["url"]
+                    prices_dict["product_id"] = result["productId"]
                     # group (sets) appending
                     for group in groups_response["results"]:
                         if group["groupId"] == result["groupId"]:
-                            d["group"] = {**group}
+                            prices_dict["group"] = {**group}
 
                     for prices in prices_response["results"]:
                         if (prices["productId"] == result["productId"] and
                                 prices["marketPrice"] is not None):
-                            d["prices"].append({**prices})
+                            prices_dict["prices"].append({**prices})
 
-                    results.append(d)
+                    results.append(prices_dict)
 
                 # add a count item to the data, to know the number of elems returned
-                d["count"] = len(results)
-
-            return results
+                prices_dict["count"] = len(results)
 
         except KeyError as kerr:
             print("KeyError:", kerr, " Maybe the API key isn't valid anymore? Or a throttle occured?")
 
-            return results
+        print("results", results)
+
+        return results
