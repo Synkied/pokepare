@@ -158,6 +158,4 @@ class PriceFinder():
         except KeyError as kerr:
             print("KeyError:", kerr, " Maybe the API key isn't valid anymore? Or a throttle occured?")
 
-        print("results", results)
-
         return results
