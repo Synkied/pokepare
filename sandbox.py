@@ -10,6 +10,7 @@ from django.conf import settings
 
 from elasticsearch import Elasticsearch
 from image_match.elasticsearch_driver import SignatureES
+from image_match.goldberg import ImageSignature
 
 
 # used to execute this file without django running
@@ -126,29 +127,32 @@ for result in pokemon_response["results"]:
 pp = pprint.PrettyPrinter(indent=4)
 pp.pprint(results)
 
-# es = Elasticsearch(hosts=[{"host": 'elasticsearch'}])
-# ses = SignatureES(es, distance_cutoff=0.3)
+es = Elasticsearch(hosts=[{"host": 'localhost'}])
+ses = SignatureES(es, distance_cutoff=0.3)
 
-# img_base_dir = settings.MEDIA_ROOT
+img_base_dir = settings.MEDIA_ROOT
 
-# img_dir = img_base_dir + '/cards/'
+img_dir = img_base_dir + '/cards/'
 
-# dirlist = os.listdir(img_dir)
+dirlist = os.listdir(img_dir)
 
-# for file in dirlist:
-#     img_path = img_dir + file
-#     print(img_path)
-#     # t = ses.add_image(img_path)
+for file in dirlist:
+    img_path = img_dir + file
+    print(img_path)
+    # t = ses.add_image(img_path)
 
-# search = ses.search_image("https://images-na.ssl-images-amazon.com/images/I/71FkBOAGixL._SY450_.jpg")
+gis = ImageSignature()
+a = gis.generate_signature('C:/Users/PC/Pictures/XYP_FR_XY89.png')
+print(a)
+search = ses.search_image("C:/Users/PC/Pictures/XYP_FR_XY89.png")
 
-# print(search)
+print(search)
 
-# for result in search:
-#     image_name_ext = result['path'].split('/')[-1::]
-#     image_name = "".join(image_name_ext).split('.')[-2::][0]
-#     print(image_name)
+for result in search:
+    image_name_ext = result['path'].split('/')[-1::]
+    image_name = "".join(image_name_ext).split('.')[-2::][0]
+    print(image_name)
 
-# p = Card.objects.get(unique_id=image_name)
+p = Card.objects.get(unique_id=image_name)
 
-# print(p)
+print(p)
