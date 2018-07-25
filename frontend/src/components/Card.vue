@@ -19,7 +19,7 @@
                 <p v-else>#{{ pokemon.number }}</p>
               </a>
             </div>
-            <template v-if="card.prices">
+            <template v-if="card.prices.length > 0">
                 <div style="overflow-x:auto;">
                   <table width="100%">
                     <thead>
