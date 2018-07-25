@@ -20,7 +20,6 @@
               </a>
             </div>
             <template v-if="card.prices">
-              <template v-if="card.prices.ebay || card.prices.tcgplayer">
                 <div style="overflow-x:auto;">
                   <table width="100%">
                     <thead>
@@ -33,28 +32,27 @@
                     </thead>
                     <tbody>
                       <tr v-for="item in orderedPrices" :key="item.id">
-                        <td>eBay</td>
-                        <td>{{ item.condition.conditionDisplayName }}</td>
-                        <td>N/A</td>
-                        <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-                        <td id="price">{{ item.sellingStatus.convertedCurrentPrice.value }}</td>
-                        <td>{{ item.sellingStatus.convertedCurrentPrice._currencyId }}</td>
+                        <td>{{ item.website }}</td>
+                        <td>{{ item.condition }}</td>
+                        <td>{{ item.edition }}</td>
+                        <td><a :href="item.link">{{ item.link }}</a></td>
+                        <td id="price">{{ item.market_price }}</td>
+                        <td>{{ item.currency }}</td>
                       </tr>
                     </tbody>
-                    <tbody v-if="card.prices.tcgplayer" v-for="item in card.prices.tcgplayer" :key="item.id">
-                      <tr v-for="price in item.prices" :key="price.id">
-                        <td>TCGPlayer</td>
-                        <td>N/A</td>
-                        <td>{{ price.subTypeName }}</td>
-                        <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-                        <td id="price">{{ price.marketPrice }}</td>
-                        <td>USD</td>
-                      </tr>
-                    </tbody>
+<!--                     <tbody v-if="card.prices.tcgplayer" v-for="item in card.prices.tcgplayer" :key="item.id">
+  <tr v-for="price in item.prices" :key="price.id">
+    <td>TCGPlayer</td>
+    <td>N/A</td>
+    <td>{{ price.subTypeName }}</td>
+    <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
+    <td id="price">{{ price.marketPrice }}</td>
+    <td>USD</td>
+  </tr>
+</tbody> -->
                   </table>
                 </div>
               </template>
-            </template>
             <template v-else>
               <p>No prices found for this card.</p>
             </template>
@@ -85,7 +83,7 @@ export default {
       errorMsg: null,
       numberInSet: '',
       totalNoSet: '',
-      uniqueNumInSet: '',
+      uniqueNumInSet: ''
     }
   },
   title () {
@@ -151,7 +149,7 @@ export default {
   },
   computed: {
     orderedPrices () {
-      return this.lodash.orderBy(this.card.prices.ebay, 'sellingStatus.convertedCurrentPrice.value')
+      return this.lodash.orderBy(this.card.prices, 'market_price')
     }
   },
   components: {

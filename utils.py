@@ -62,13 +62,13 @@ class PriceFinder():
 
                 # print(response.dict()["searchResult"]["_count"])
 
-                needed_keys = [
-                    'condition',
-                    'shippingInfo',
-                    'sellingStatus',
-                    'title',
-                    'viewItemURL',
-                ]
+                # needed_keys = [
+                #     'condition',
+                #     'shippingInfo',
+                #     'sellingStatus',
+                #     'title',
+                #     'viewItemURL',
+                # ]
 
                 # needed_sub_keys = [
                 #     'conditionDisplayName',
@@ -77,7 +77,7 @@ class PriceFinder():
                 #     'currentPrice',
                 # ]
 
-                res = response.dict()["searchResult"]["item"]
+                # res = response.dict()["searchResult"]["item"]
 
                 for item in response.dict()["searchResult"]["item"]:
                     # for key in needed_keys:
@@ -85,13 +85,16 @@ class PriceFinder():
                     #         items[key] = "N/A"
                     # items_list.append(items)
 
-                    item_dict = {"prices": []}
+                    item_dict = {}
 
+                    item_dict["website"] = "eBay"
                     item_dict["link"] = item["viewItemURL"]
-                    item_dict["prices"].append({"market_price": item["sellingStatus"]["convertedCurrentPrice"]["value"], "edition": "N/A"})
+                    item_dict["market_price"] = float(item["sellingStatus"]["convertedCurrentPrice"]["value"])
+                    item_dict["edition"] = "N/A"
                     item_dict["currency"] = item["sellingStatus"]["convertedCurrentPrice"]["_currencyId"]
-                    item_dict["product_id"] = item["itemId"]
+                    item_dict["product_id"] = int(item["itemId"])
                     item_dict["condition"] = item["condition"]["conditionDisplayName"]
+                    item_dict["set_name"] = 'N/A'
 
                     items_list.append(item_dict)
 
@@ -150,18 +153,21 @@ class PriceFinder():
 
                 # little algorithm to join the aggregated data
                 for result in pokemon_response["results"]:
-                    prices_dict = {"prices": []}
-                    prices_dict["viewItemURL"] = result["url"]
+                    prices_dict = {}
+                    prices_dict["website"] = "TCGPlayer"
+                    prices_dict["link"] = result["url"]
                     prices_dict["product_id"] = result["productId"]
+                    prices_dict["condition"] = "N/A"
+                    prices_dict["currency"] = "USD"
                     # group (sets) appending
                     for group in groups_response["results"]:
                         if group["groupId"] == result["groupId"]:
-                            prices_dict["group"] = {**group}
+                            prices_dict["set_name"] = group["name"]
 
                     for prices in prices_response["results"]:
-                        if (prices["productId"] == result["productId"] and
-                                prices["marketPrice"] is not None):
-                            prices_dict["prices"].append({**prices})
+                        if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
+                            prices_dict["market_price"] = prices["marketPrice"]
+                            prices_dict["edition"] = prices["subTypeName"]
 
                     results.append(prices_dict)
 

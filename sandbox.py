@@ -99,19 +99,27 @@ prices_response = requests.get(market, headers=headers).json()
 results = []
 
 for result in pokemon_response["results"]:
-    d = {"prices": []}
-    d["link"] = result["url"]
-    d["product_id"] = result["productId"]
-    d["condition"] = "N/A"
-    d["currency"] = "USD"
+    e = {"current_prices": []}
+    for prices in prices_response["results"]:
+        if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
+            for price in prices:
+                d = {}
+                d["market_price"] = prices["marketPrice"]
+                d["edition"] = prices["subTypeName"]
+
+                d["website"] = "TCGPlayer"
+                d["link"] = result["url"]
+                d["product_id"] = result["productId"]
+                d["condition"] = "N/A"
+                d["currency"] = "USD"
+            e["current_prices"].append({"market_price": prices["marketPrice"], "edition": prices["subTypeName"]})
+
     # group (sets) appending
     for group in groups_response["results"]:
         if group["groupId"] == result["groupId"]:
             d["set_name"] = group["name"]
 
-    for prices in prices_response["results"]:
-        if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
-            d["prices"].append({"market_price": prices["marketPrice"], "edition": prices["subTypeName"]})
+
 
     results.append(d)
 
