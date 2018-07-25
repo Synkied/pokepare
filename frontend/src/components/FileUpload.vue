@@ -8,7 +8,7 @@
     </div>
     <button class="btn btn-info" v-on:click="submitFile()">Submit</button>
     <div class="mt-4" v-if="errorMsg">
-      {{ errorMsg }}
+      <b-alert show variant="danger">{{ errorMsg }}</b-alert>
     </div>
   </div>
 </template>
