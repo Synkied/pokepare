@@ -2,8 +2,7 @@
 
 import json
 from unittest.mock import Mock, patch
-
-from io import BytesIO
+import requests
 
 from rest_framework.test import APIClient
 from rest_framework import status
@@ -85,6 +84,8 @@ class CardPricesDataTestCase(TestCase):
         self.token = settings.TCGPLAYER_BEARER_TOKEN
         self.price_finder = PriceFinder()
         self.name = "Charizard G"
+        self.number_in_set = "20"
+        self.set_name = "Supreme Victors"
 
         with open(
             "mock_data/tcgplayer_mock.json", "r", encoding="utf8"
@@ -98,9 +99,19 @@ class CardPricesDataTestCase(TestCase):
         """
         assert(isinstance(self.price_finder, PriceFinder))
 
-    def test_retrieve_prices_from_tcg_player(self):
+    @patch('utils.PriceFinder.get_ebay_prices')
+    def test_status_code_from_ebay(self, mock_get):
+        """Mocking using a decorator"""
 
-        # Replace requests return by a json mock stored locally
-        json_mock = json.dumps(self.tcgplayer_mock_data).encode()
+        mock_get.return_value.status_code = 200  # Mock status code of response.
+        response = self.price_finder.get_ebay_prices(self.name, self.number_in_set, self.set_name)
 
-        self.assertEqual(json_mock, self.price_finder.get_tcgplayer_prices(self.name))
+        # Assert that the request-response cycle completed successfully.
+        self.assertEqual(response.status_code, 200)
+
+    @patch('utils.PriceFinder.get_tcgplayer_prices')
+    def test_retrieve_prices_from_tcgplayer(self, mock_get_data):
+        mock_get_data.return_value = Mock()
+        mock_get_data.return_value.json.return_value = self.tcgplayer_mock_data
+        data = self.price_finder.get_tcgplayer_prices(self.name)
+        self.assertEqual(data.json.return_value, self.tcgplayer_mock_data)
