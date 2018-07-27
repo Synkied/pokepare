@@ -23,4 +23,5 @@ before_script:
   - sleep 15
 
 script:
+  - make add_images
   - make cov_test
