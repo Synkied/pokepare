@@ -20,6 +20,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         import_type = options.get('import_type', None)
+        imgs_dir = options.get('dir', None)
 
         if import_type:
             self.stdout.write(self.style.WARNING('Starting import'))
@@ -29,13 +30,13 @@ class Command(BaseCommand):
 
         if import_type == 'all':
             # self.clear_es()
-            self.add_to_es()
+            self.add_to_es(img_dir=imgs_dir)
         elif import_type == 'clear':
             self.clear_es()
         else:
             self.stdout.write(self.style.ERROR('Import argument not recognized! :('))
 
-    def add_to_es(self, img_dir=img_dir):
+    def add_to_es(self, img_dir=""):
 
         es = Elasticsearch(hosts=[{"host": settings.ELASTICSEARCH_HOST}])
         ses = SignatureES(es, distance_cutoff=0.3)

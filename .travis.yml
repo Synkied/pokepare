@@ -23,5 +23,5 @@ before_script:
   - sleep 15
 
 script:
-  - python manage.py add_images -dir /home/travis/build/Synkied/pokepare/mock_data -import_type all
+  - python manage.py add_images -dir /home/travis/build/Synkied/pokepare/mock_data/ -import_type all
   - make cov_test
