@@ -51,7 +51,6 @@ export default {
         }
       ).then(response => {
         if (response.data) {
-          console.log(response.data)
           thisVm.card_name = response.data.result
         }
         if (thisVm.card_name) {
