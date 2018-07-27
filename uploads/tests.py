@@ -24,7 +24,7 @@ class UploadFileTest(TestCase):
         response = myClient.post(reverse('file_upload'), form_data, follow=True)
 
         # get the json response and verify it succeeds.
-        self.assertJSONEqual(response.content, {"success": True, "result": ""})
+        self.assertEqual(response.content, b'{"success": true, "result": ""}')
 
     def test_upload_invalid_file(self):
         """
