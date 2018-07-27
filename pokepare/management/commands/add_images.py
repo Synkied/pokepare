@@ -10,13 +10,13 @@ from image_match.elasticsearch_driver import SignatureES
 class Command(BaseCommand):
     help = 'Put images in elasticsearch'
 
-    img_base_dir = settings.MEDIA_ROOT
-    img_dir = img_base_dir + '/cards/'
-    dirlist = os.listdir(img_dir)
+    # img_base_dir = settings.MEDIA_ROOT
+    # img_dir = img_base_dir + '/cards/'
+    # dirlist = os.listdir(img_dir)
 
     def add_arguments(self, parser):
         parser.add_argument('-import_type', type=str, nargs='?', default='all')
-        parser.add_argument('-dir', type=str, nargs='?', default=self.img_dir)
+        parser.add_argument('-dir', type=str, nargs='?', default='')
 
     def handle(self, *args, **options):
         import_type = options.get('import_type', None)
@@ -41,7 +41,9 @@ class Command(BaseCommand):
         es = Elasticsearch(hosts=[{"host": settings.ELASTICSEARCH_HOST}])
         ses = SignatureES(es, distance_cutoff=0.3)
 
-        for file in self.dirlist:
+        dirlist = os.listdir(img_dir)
+
+        for file in dirlist:
             file_ext = "".join(file.split('.')[-1::])
             img_path = img_dir + file
             if file_ext in ('png', 'jpg'):
