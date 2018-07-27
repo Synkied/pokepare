@@ -12,3 +12,4 @@ webpack-stats.json
 log_import.txt
 log_import_pokemons.txt
 .coverage
+public/
