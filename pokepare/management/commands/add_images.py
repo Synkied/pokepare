@@ -10,8 +10,13 @@ from image_match.elasticsearch_driver import SignatureES
 class Command(BaseCommand):
     help = 'Put images in elasticsearch'
 
+    img_base_dir = settings.MEDIA_ROOT
+    img_dir = img_base_dir + '/cards/'
+    dirlist = os.listdir(img_dir)
+
     def add_arguments(self, parser):
-        parser.add_argument('import_type', type=str, nargs='?', default='all')
+        parser.add_argument('-import_type', type=str, nargs='?', default='all')
+        parser.add_argument('-dir', type=str, nargs='?', default=self.img_dir)
 
     def handle(self, *args, **options):
         import_type = options.get('import_type', None)
@@ -30,18 +35,14 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.ERROR('Import argument not recognized! :('))
 
-    def add_to_es(self):
+    def add_to_es(self, img_dir=img_dir):
 
         es = Elasticsearch(hosts=[{"host": settings.ELASTICSEARCH_HOST}])
         ses = SignatureES(es, distance_cutoff=0.3)
 
-        img_base_dir = settings.MEDIA_ROOT
-
-        img_dir = img_base_dir + '/cards/'
-
-        dirlist = os.listdir(img_dir)
-
-        for file in dirlist:
+        for file in self.dirlist:
+            file_ext = "".join(file.split('.')[-1::])
             img_path = img_dir + file
-            print(img_path, 'added.')
-            ses.add_image(img_path)
+            if file_ext in ('png', 'jpg'):
+                print(img_path, 'added.')
+                ses.add_image(img_path)
