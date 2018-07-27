@@ -14,9 +14,13 @@ env: DJANGO_SETTINGS_MODULE="pokepare.settings.travis"
 
 services:
   - postgresql
+  - elasticsearch
 
 addons:
   postgresql: "9.4"
+
+before_script:
+  - sleep 15
 
 script:
   - make cov_test

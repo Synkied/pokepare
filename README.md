@@ -74,7 +74,9 @@ make create_user_db
 
 make migrate_db
 
-make import_data {all|cards|pokemons|sets}
+make import_data
+# adds images to ElasticSearch
+make add_images
 ```
 
 ```
