@@ -2,8 +2,8 @@ version: '3'
 
 services:
 
-  traefik:
-    container_name: traefik
+  pokepare_traefik:
+    container_name: pokepare_traefik
     restart: always
     image: traefik
     volumes:
