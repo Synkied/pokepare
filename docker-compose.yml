@@ -14,7 +14,7 @@ services:
     ports:
       - '8060:80'
     networks:
-      - pokepare_net
+      - traefik
     labels:
       - 'traefik.enable=true'
       - 'traefik.backend=pokepare_nginx'
@@ -38,14 +38,14 @@ services:
     volumes:
       - ./:/usr/src/app
     networks:
-      - pokepare_net
+      - traefik
 
   pokepare_db:
     container_name: pokepare_db
     restart: always
     image: postgres
     networks:
-      - pokepare_net
+      - traefik
 
   elasticsearch:
     container_name: elasticsearch
@@ -62,8 +62,9 @@ services:
       - '9200:9200'
       - '9300:9300'
     networks:
-      - pokepare_net
+      - traefik
 
 networks:
-  pokepare_net:
-    driver: bridge
+  traefik:
+    external:
+      name: traefik_default
