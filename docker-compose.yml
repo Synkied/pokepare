@@ -2,19 +2,6 @@ version: '3'
 
 services:
 
-  pokepare_traefik:
-    container_name: pokepare_traefik
-    restart: always
-    image: traefik
-    volumes:
-      - ./config/traefik/traefik.toml:/traefik.toml
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - '80:80'
-      - '443:443'
-    networks:
-      - pokepare_net
-
   pokepare_nginx:
     container_name: pokepare_nginx
     restart: always
@@ -33,6 +20,7 @@ services:
       - 'traefik.backend=pokepare_nginx'
       - 'traefik.port=80'
       - 'traefik.frontend.rule=Host:pokepare.com,www.pokepare.com'
+      - 'traefik.docker.network=traefik'
 
   pokepare_py:
     container_name: pokepare_py
