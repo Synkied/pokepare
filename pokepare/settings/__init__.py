@@ -154,7 +154,7 @@ MEDIA_URL = '/media/'
 
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'public'),
+    os.path.join(BASE_DIR, 'dist'),
 )
 
 CARD_PLACEHOLDER = STATIC_URL + 'img/pokepare_card.png'
