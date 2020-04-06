@@ -1,17 +1,18 @@
-from django.db import models
-from django.utils import timezone
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
-from utils import OverwriteStorage
+from django.db import models
+from django.utils import timezone
 
 from pokemons.models import Pokemon
+
+from utils import OverwriteStorage
 
 # Create your models here.
 
 
 class Card(models.Model):
     unique_id = models.CharField(
-        help_text='A unique id for this card. It is made up by taking the set code and concatenating the card number to it. (ex. xy1-1)',
+        help_text='A unique id for this card. It is made up by taking the set code and concatenating the card number to it. (ex. xy1-1)',  # noqa
         max_length=100,
         blank=True,
         null=True,
@@ -21,18 +22,18 @@ class Card(models.Model):
         max_length=500
     )
     national_pokedex_number = models.IntegerField(
-        help_text='The national pokedex number for a card that features a Pokémon supertype.',
+        help_text='The national pokedex number for a card that features a Pokémon supertype.',  # noqa
         blank=True,
         null=True
     )
     number_in_set = models.CharField(
-        help_text='The number of the card for the set it was released in. Found on the bottom right side of the card.',
+        help_text='The number of the card for the set it was released in. Found on the bottom right side of the card.',  # noqa
         max_length=20,
         blank=True,
         null=True
     )
     types = models.CharField(
-        help_text='The types of the card. These typically appear in the top right of card, and are denoted by energy symbol (ex. Fire, Fighting, Psychic, etc.)',
+        help_text='The types of the card. These typically appear in the top right of card, and are denoted by energy symbol (ex. Fire, Fighting, Psychic, etc.)',  # noqa
         max_length=100,
         blank=True,
         null=True
@@ -51,7 +52,7 @@ class Card(models.Model):
     )
     hp = models.CharField(
         max_length=10,
-        help_text='The number of the card for the set it was released in. Found on the bottom right side of the card.',
+        help_text='The number of the card for the set it was released in. Found on the bottom right side of the card.',  # noqa
         blank=True,
         null=True
     )
@@ -74,7 +75,7 @@ class Card(models.Model):
         null=True
     )
     card_set = models.CharField(
-        help_text='The set the card appears in (ex. BREAKthrough, Phantom Forces, Jungle, etc.)',
+        help_text='The set the card appears in (ex. BREAKthrough, Phantom Forces, Jungle, etc.)',  # noqa
         max_length=100,
         blank=True,
         null=True
@@ -95,7 +96,8 @@ class Card(models.Model):
         help_text='The front image of the card.',
         default=settings.CARD_PLACEHOLDER
     )
-    image = models.ImageField(storage=OverwriteStorage(), upload_to="cards/", blank=True, null=True)
+    image = models.ImageField(storage=OverwriteStorage(), upload_to="cards/",
+                              blank=True, null=True)
     pokemon = models.ForeignKey(
         Pokemon,
         on_delete=models.CASCADE,

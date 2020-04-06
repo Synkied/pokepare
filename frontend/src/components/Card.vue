@@ -81,8 +81,8 @@ export default {
       pokemonId: '',
       nextPokemon: '',
       errorMsg: null,
-      numberInSet: '',
-      totalNoSet: '',
+      numberInCardSet: '',
+      totalNoCardSet: '',
       uniqueNumInSet: ''
     }
   },
@@ -103,7 +103,7 @@ export default {
         if (response.data) {
           thisVm.status = response.status
           thisVm.card = response.data.results[0]
-          thisVm.numberInSet = response.data.results[0].number_in_set
+          thisVm.numberInCardSet = response.data.results[0].number_in_set
 
           // get the pokemon data linked to the card
           axios.get(response.data.results[0].pokemon).then(response => {
@@ -112,10 +112,10 @@ export default {
           })
 
           // get the card's set data
-          const setPath = '/api/sets/?code=' + encodeURI(thisVm.card.card_set_code)
-          axios.get(setPath).then(response => {
-            thisVm.totalNoSet = response.data.results[0].total_cards
-            /* thisVm.uniqueNumInSet = String(thisVm.numberInSet) + '/' + String(thisVm.totalNoSet) */
+          const cardSetPath = '/api/cardsets/?code=' + encodeURI(thisVm.card.card_set_code)
+          axios.get(cardSetPath).then(response => {
+            thisVm.totalNoCardSet = response.data.results[0].total_cards
+            /* thisVm.uniqueNumInSet = String(thisVm.numberInCardSet) + '/' + String(thisVm.totalNoCardSet) */
           })
         }
       })
@@ -123,19 +123,19 @@ export default {
           if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
-            console.log(error.response.data)
-            console.log(error.response.status)
-            console.log(error.response.headers)
+            console.error(error.response.data)
+            console.error(error.response.status)
+            console.error(error.response.headers)
           } else if (error.request) {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser
             // and an instance of http.ClientRequest in node.js
-            console.log(error.request)
+            console.error(error.request)
           } else {
             // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message)
+            console.error('Error', error.message)
           }
-          console.log(error.config)
+          console.error(error.config)
         })
     },
     _ToggleNext () {
@@ -149,10 +149,11 @@ export default {
   },
   computed: {
     orderedPrices () {
-      return this.lodash.orderBy(this.card.prices, 'market_price')
+      let sortedCardPrices = JSON.parse(JSON.stringify(this.card.prices))
+      return sortedCardPrices.sort((a, b) => {
+        return a.market_price - b.market_price
+      })
     }
-  },
-  components: {
   },
   mounted () {
     this.getCardData()

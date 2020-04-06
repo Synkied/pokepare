@@ -1,6 +1,6 @@
-from django.test import TestCase
-from django.test import Client
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client
+from django.test import TestCase
 from django.urls import reverse
 
 # Create your tests here.
@@ -12,7 +12,7 @@ class UploadFileTest(TestCase):
         """
         Test that an image file uploaded returns a JSONResponse
         """
-        myClient = Client()
+        client = Client()
         # mock the image upload
         image = SimpleUploadedFile(name='test_image.png', content=open(
             'mock_data/XYP_FR_XY89.png', 'rb'
@@ -21,7 +21,7 @@ class UploadFileTest(TestCase):
         # set up form data
         form_data = {'image': image}
 
-        response = myClient.post(reverse('file_upload'), form_data, follow=True)
+        response = client.post(reverse('file_upload'), form_data, follow=True)
 
         # get the json response and verify it succeeds.
         self.assertJSONEqual(str(response.content, encoding='utf8'), {"success": True, "result": ""})
@@ -30,7 +30,7 @@ class UploadFileTest(TestCase):
         """
         Test that a file other than an image can't be uploaded.
         """
-        myClient = Client()
+        client = Client()
         # mock the image upload
         image = SimpleUploadedFile(name='test_image.png', content=open(
             'mock_data/bad_file.PDF', 'rb'
@@ -39,7 +39,7 @@ class UploadFileTest(TestCase):
         # set up form data
         form_data = {'image': image}
 
-        response = myClient.post(reverse('file_upload'), form_data, follow=True)
+        response = client.post(reverse('file_upload'), form_data, follow=True)
 
         # assert that "upload a valid image" is in the httpresponse
         self.assertIn(b"Upload a valid image.", response.content)

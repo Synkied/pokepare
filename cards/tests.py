@@ -1,20 +1,19 @@
 # api/tests.py
-
 import json
-from unittest.mock import Mock, patch
-import requests
+from unittest.mock import Mock
+from unittest.mock import patch
 
-from rest_framework.test import APIClient
-from rest_framework import status
-from django.urls import reverse
-from django.test import TestCase
-from django.contrib.auth.models import User
 from cards.models import Card
+
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.test import TestCase
+from django.urls import reverse
+
+from rest_framework import status
+from rest_framework.test import APIClient
 
 from utils import PriceFinder
-
-# Define this after the ModelTestCase
 
 
 class CardDRFTestCase(TestCase):
@@ -23,9 +22,16 @@ class CardDRFTestCase(TestCase):
     def setUp(self):
         """Define the test client and other test variables."""
         self.client = APIClient()
-        self.user = User.objects.create_superuser('test_user', '', 'test_password')
-        self.card_data = {'id': 272, 'name': "Venusaur EX", 'national_pokedex_number': 3, "card_set_code": "xyp"}
-        venusaur = Card.objects.create(**self.card_data)
+        self.user = User.objects.create_superuser(
+            'test_user', '', 'test_password'
+        )
+        self.card_data = {
+            'id': 272,
+            'name': "Venusaur EX",
+            'national_pokedex_number': 3,
+            "card_set_code": "xyp"
+        }
+        _ = Card.objects.create(**self.card_data)
 
     def test_api_can_get_a_card(self):
         """Test the api can get a given card."""
@@ -90,7 +96,7 @@ class CardPricesDataTestCase(TestCase):
         with open(
             "mock_data/tcgplayer_mock.json", "r", encoding="utf8"
         ) as mockfile:
-            self.tcgplayer_mock_data = json.load(mockfile)
+            self.tcg_mock_data = json.load(mockfile)
 
     def test_instance(self):
         """
@@ -103,8 +109,13 @@ class CardPricesDataTestCase(TestCase):
     def test_status_code_from_ebay(self, mock_get):
         """Mocking using a decorator"""
 
-        mock_get.return_value.status_code = 200  # Mock status code of response.
-        response = self.price_finder.get_ebay_prices(self.name, self.number_in_set, self.set_name)
+        # Mock status code of response.
+        mock_get.return_value.status_code = 200
+        response = self.price_finder.get_ebay_prices(
+            self.name,
+            self.number_in_set,
+            self.set_name
+        )
 
         # Assert that the request-response cycle completed successfully.
         self.assertEqual(response.status_code, 200)
@@ -112,6 +123,6 @@ class CardPricesDataTestCase(TestCase):
     @patch('utils.PriceFinder.get_tcgplayer_prices')
     def test_retrieve_prices_from_tcgplayer(self, mock_get_data):
         mock_get_data.return_value = Mock()
-        mock_get_data.return_value.json.return_value = self.tcgplayer_mock_data
+        mock_get_data.return_value.json.return_value = self.tcg_mock_data
         data = self.price_finder.get_tcgplayer_prices(self.name)
-        self.assertEqual(data.json.return_value, self.tcgplayer_mock_data)
+        self.assertEqual(data.json.return_value, self.tcg_mock_data)

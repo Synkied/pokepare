@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils import timezone
+
 from utils import OverwriteStorage
 
 # Create your models here.
 
 
-class Set(models.Model):
+class CardSet(models.Model):
     name = models.CharField(
         help_text='The set name.',
         max_length=500,
@@ -29,7 +30,12 @@ class Set(models.Model):
     total_cards = models.PositiveIntegerField(blank=True, null=True)
     symbol_url = models.URLField(blank=True, null=True)
     logo_url = models.URLField(blank=True, null=True)
-    image = models.ImageField(storage=OverwriteStorage(), upload_to="sets/logos/", blank=True, null=True)
+    image = models.ImageField(
+        storage=OverwriteStorage(),
+        upload_to="cardsets/logos/",
+        blank=True,
+        null=True
+    )
 
     created_at = models.DateTimeField(
         default=timezone.now,

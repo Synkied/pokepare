@@ -7,7 +7,7 @@ import utils
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sets', '0002_auto_20180713_1433'),
+        ('cardsets', '0002_auto_20180713_1433'),
     ]
 
     operations = [

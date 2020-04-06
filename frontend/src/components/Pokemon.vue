@@ -32,7 +32,7 @@
 import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
-import Sets from './Sets.vue'
+import CardSets from './CardSets.vue'
 import Cards from './Cards.vue'
 
 function capitalize (s) {
@@ -62,7 +62,7 @@ export default {
   methods: {
   },
   components: {
-    'sets': Sets,
+    'cardsets': CardSets,
     'cards': Cards
   },
   mounted () {
@@ -73,22 +73,23 @@ export default {
     }
     const path = '/api/pokemons/?name=' + capitalize(encodeURI(thisVm.pokemon_name))
     loadProgressBar()
-    axios.get(path).then(response => {
-      if (response.data.count > 0) {
-        console.log(response.status)
-        console.log(response.data)
-        thisVm.pokemon = response.data.results[0]
-        thisVm.cards = response.data.results[0].cards
-        thisVm.status = response.status
-        for (var i = 0; i < response.data.results[0].cards.length; i++) {
-          cardSetsList.push(response.data.results[0].cards[i].card_set_code)
+    axios.get(path)
+      .then(response => {
+        if (response.data.count > 0) {
+          console.log(response.status)
+          console.log(response.data)
+          thisVm.pokemon = response.data.results[0]
+          thisVm.cards = response.data.results[0].cards
+          thisVm.status = response.status
+          for (var i = 0; i < response.data.results[0].cards.length; i++) {
+            cardSetsList.push(response.data.results[0].cards[i].card_set_code)
+          }
+          thisVm.cardSets = cardSetsList.filter(onlyUnique)
+          // filter to get only unique values in array
+        } else {
+          thisVm.errorMsg = 'No Pokémon found.'
         }
-        thisVm.cardSets = cardSetsList.filter(onlyUnique)
-        // filter to get only unique values in array
-      } else {
-        thisVm.errorMsg = 'No Pokémon found.'
-      }
-    })
+      })
       .catch(function (error) {
         if (error.response) {
           // The request was made and the server responded with a status code
