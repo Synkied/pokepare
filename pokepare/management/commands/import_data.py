@@ -1,20 +1,22 @@
-from math import ceil
 import functools
 import operator
+import re
 import tempfile
 import time
-import re
+from math import ceil
 
-from django.core.management.base import BaseCommand
-from django.core.exceptions import ObjectDoesNotExist
+from cards.models import Card
+
+from cardsets.models import CardSet
+
 from django.core import files
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.management.base import BaseCommand
 from django.db.models import Q
-from django.conf import settings
+
+from pokemons.models import Pokemon
 
 import requests
-from pokemons.models import Pokemon
-from cards.models import Card
-from sets.models import CardSet
 
 
 class Command(BaseCommand):
@@ -29,7 +31,8 @@ class Command(BaseCommand):
         if import_type:
             self.stdout.write(self.style.WARNING('Starting import'))
         else:
-            self.stdout.write(self.style.ERROR('Importing failed. Check arguments.'))
+            self.stdout.write(
+                self.style.ERROR('Importing failed. Check arguments.'))
             return False
 
         if import_type == 'all':
@@ -52,7 +55,8 @@ class Command(BaseCommand):
             self.clear_pokemons()
             self.clear_cards()
         else:
-            self.stdout.write(self.style.ERROR('Import argument not recognized! :('))
+            self.stdout.write(
+                self.style.ERROR('Import argument not recognized! :('))
 
     def clear_pokemons(self):
         self.stdout.write(self.style.WARNING('Deleting all pokemons...'))
@@ -111,6 +115,7 @@ class Command(BaseCommand):
 
         count = 0
         limit = 20
+        date_format = time.strftime('%Y-%m-%d_%H:%M')
 
         url = 'http://pokeapi.co/api/v2/pokemon?limit=' + str(limit)
 
@@ -119,7 +124,7 @@ class Command(BaseCommand):
         res_json = res.json()
 
         with open("log_import_pokemons" + ".txt", 'w') as f:
-            f.write("Import started at: " + "{}".format(time.strftime('%Y-%m-%d_%H:%M')) + '\n')
+            f.write("Import started at: " + "{}".format(date_format) + '\n')
 
         for _ in range(ceil(int(res_json["count"]) // limit) + 1):
             # updating the url for the offset limit each turn
@@ -136,7 +141,8 @@ class Command(BaseCommand):
                 for index, pokemon in enumerate(res_json["results"]):
                     count += 1
 
-                    new_pokemon = requests.get(res_json["results"][index]['url'])
+                    new_pokemon = requests.get(
+                        res_json["results"][index]['url'])
                     name = new_pokemon.json()['name'].title()
                     pokemon_id = new_pokemon.json()['id']
                     image = new_pokemon.json()['sprites']['front_default']
@@ -157,18 +163,24 @@ class Command(BaseCommand):
                         with open("log_import_pokemons" + ".txt", 'a') as f:
                             f.write(my_pokemon["name"] + ' imported... \n')
                     else:
-                        self.stdout.write(my_pokemon["name"] + ' NOT CREATED...')
+                        self.stdout.write(
+                            my_pokemon["name"] + ' NOT CREATED...')
                         with open("log_import_pokemons" + ".txt", 'a') as f:
                             f.write(my_pokemon["name"] + ' imported... \n')
 
             except KeyError as kerr:
-                self.stdout.write("KeyError", kerr, ". Check if there was a request throttle.")
+                self.stdout.write(
+                    "KeyError",
+                    kerr,
+                    ". Check if there was a request throttle."
+                )
                 pass
 
         with open("log_import_pokemons" + ".txt", 'a') as f:
-            f.write("Import finished at: " + "{}".format(time.strftime('%Y-%m-%d_%H:%M')))
+            f.write("Import finished at: " + "{}".format(date_format))
 
-        self.stdout.write(self.style.SUCCESS(str(count) + ' Pokemons imported!'))
+        self.stdout.write(
+            self.style.SUCCESS(str(count) + ' Pokemons imported!'))
 
 ##############################
 # Importing cards
@@ -181,8 +193,11 @@ class Command(BaseCommand):
         res_tcg = requests.get(url_tcg)
 
         cards = []
+        total_count = res_tcg.headers["Total-Count"]
+        current_count = res_tcg.headers["Count"]
+        count = ceil(int(total_count) // int(current_count)) + 1
 
-        for _ in range(ceil(int(res_tcg.headers["Total-Count"]) // int(res_tcg.headers["Count"])) + 1):
+        for _ in range(count):
 
             print("Fetching from: ", url_tcg)
 
@@ -192,15 +207,27 @@ class Command(BaseCommand):
 
             try:
                 url_tcg = res_tcg.links["next"]["url"]
-            except KeyError as kerr:
+            except KeyError:
                 pass
 
             # attributes_to_keep = ["name", "nationalPokedexNumber", "number", "types", "subtype", "supertype", "hp", "artist", "rarity", "series", "set", "setCode", "imageUrl"]
-            keys_to_del = ["attacks", "imageUrlHiRes", "text", "weaknesses", "resistances", "retreatCost", "convertedRetreatCost", "ability", "evolvesFrom", "ancientTrait"]
+            keys_to_del = [
+                "attacks",
+                "imageUrlHiRes",
+                "text",
+                "weaknesses",
+                "resistances",
+                "retreatCost",
+                "convertedRetreatCost",
+                "ability",
+                "evolvesFrom",
+                "ancientTrait",
+            ]
 
             for index, card in enumerate(res_tcg_json):
 
-                card["national_pokedex_number"] = card.pop("nationalPokedexNumber", None)
+                card["national_pokedex_number"] = card.pop(
+                    "nationalPokedexNumber", None)
                 card["unique_id"] = card.pop("id", None)
                 card["number_in_set"] = card.pop("number", None)
                 card["card_set"] = card.pop("set", None)
@@ -223,9 +250,10 @@ class Command(BaseCommand):
                                 ) for item in q if len(item) > 1)
                             # if to not include unown with other cards
                         )
-                        card["pokemon"] = Pokemon.objects.filter(query).order_by('id').first()
+                        card["pokemon"] = Pokemon.objects.filter(
+                            query).order_by('id').first()
 
-                    except ObjectDoesNotExist as odneerr:
+                    except ObjectDoesNotExist:
                         pass
 
                 for arg in keys_to_del:
@@ -245,7 +273,9 @@ class Command(BaseCommand):
             except ValueError as verr:
                 print("ValueError", verr, card["name"])
 
-        self.stdout.write(self.style.SUCCESS(str(len(cards)) + ' cards imported!'))
+        self.stdout.write(
+            self.style.SUCCESS(str(len(cards)) + ' cards imported!')
+        )
 
 ##############################
 # Importing sets
@@ -258,8 +288,11 @@ class Command(BaseCommand):
         res_tcg = requests.get(url_tcg)
 
         card_sets = []
+        total_count = res_tcg.headers["Total-Count"]
+        current_count = res_tcg.headers["Count"]
+        count = ceil(int(total_count) // int(current_count)) + 1
 
-        for _ in range(ceil(int(res_tcg.headers["Total-Count"]) // int(res_tcg.headers["Count"]))):
+        for _ in range(count):
 
             print("Fetching from: ", url_tcg)
 
@@ -269,11 +302,18 @@ class Command(BaseCommand):
 
             try:
                 url_tcg = res_tcg.links["next"]["url"]
-            except KeyError as kerr:
+            except KeyError:
                 pass
 
             # attributes_to_keep = ["name", "nationalPokedexNumber", "number", "types", "subtype", "supertype", "hp", "artist", "rarity", "series", "set", "setCode", "imageUrl"]
-            keys_to_del = ["standardLegal", "expandedLegal", "updatedAt", "updatedSince", "pageSize", "ptcgoCode"]
+            keys_to_del = [
+                "standardLegal",
+                "expandedLegal",
+                "updatedAt",
+                "updatedSince",
+                "pageSize",
+                "ptcgoCode",
+            ]
 
             for index, card_set in enumerate(res_tcg_json):
 
@@ -299,4 +339,5 @@ class Command(BaseCommand):
             except ValueError as verr:
                 print("ValueError", verr, card_set["name"])
 
-        self.stdout.write(self.style.SUCCESS(str(len(card_sets)) + ' sets imported!'))
+        self.stdout.write(
+            self.style.SUCCESS(str(len(card_sets)) + ' sets imported!'))
