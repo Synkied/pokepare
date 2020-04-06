@@ -6,7 +6,7 @@ from .models import CardSet
 class CardSetSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
     url = serializers.HyperlinkedIdentityField(
-        view_name='cardsets:set_detail',
+        view_name='cardsets:cardset_detail',
         lookup_field='code',
     )
 

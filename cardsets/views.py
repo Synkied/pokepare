@@ -15,7 +15,7 @@ from .serializers import CardSetSerializer
 
 class CardSetFilter(FilterSet):
     # set a filterset to use filters
-    # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut
+    # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut  # noqa
     # but it won't let you use "exclude"
     class Meta:
         model = CardSet
@@ -41,10 +41,10 @@ class CardSetView(View):
 
     def get(self, request):
 
-        sets = CardSet.objects.all()
+        cardsets = CardSet.objects.all()
 
         context = {
-            "sets": sets,
+            "cardsets": cardsets,
         }
 
         return render(request, self.template_name, context)

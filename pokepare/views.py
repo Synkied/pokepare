@@ -10,7 +10,6 @@ class SearchView(View):
 
     def get(self, request):
 
-        context = {
-        }
+        context = {}
 
         return render(request, self.template_name, context)

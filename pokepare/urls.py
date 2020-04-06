@@ -15,10 +15,17 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html")),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path(
+        'api-auth/',
+        include('rest_framework.urls', namespace='rest_framework')
+    ),
     path('cards/', include('cards.urls'), name="cards"),
     path('pokemons/', include('pokemons.urls'), name="pokemons"),
     path('cardsets/', include('cardsets.urls'), name="cardsets"),
     path('search/', SearchView.as_view(), name="search"),
-    path('file-upload/', csrf_exempt(UploadFileView.as_view()), name="file_upload"),
+    path(
+        'file-upload/',
+        csrf_exempt(UploadFileView.as_view()),
+        name="file_upload"
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

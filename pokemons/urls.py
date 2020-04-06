@@ -6,5 +6,9 @@ app_name = "pokemons"
 
 urlpatterns = [
     path('', views.PokemonView.as_view(), name="pokemon_list"),
-    path('<str:name>', views.PokemonViewDetail.as_view(), name="pokemon_detail"),
+    path(
+        '<str:name>',
+        views.PokemonViewDetail.as_view(),
+        name="pokemon_detail"
+    ),
 ]

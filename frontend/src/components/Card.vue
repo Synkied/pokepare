@@ -149,10 +149,11 @@ export default {
   },
   computed: {
     orderedPrices () {
-      return this.lodash.orderBy(this.card.prices, 'market_price')
+      let sortedCardPrices = JSON.parse(JSON.stringify(this.card.prices))
+      return sortedCardPrices.sort((a, b) => {
+        return a.market_price - b.market_price
+      })
     }
-  },
-  components: {
   },
   mounted () {
     this.getCardData()
