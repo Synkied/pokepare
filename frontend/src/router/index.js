@@ -8,8 +8,8 @@ const routerOptions = [
   { path: '/cards/:unique_id', component: 'Card', name: 'cardDetail' },
   { path: '/pokemons/', component: 'Pokemons', name: 'allPokemons' },
   { path: '/pokemons/:name', component: 'Pokemon', name: 'pokemonDetail' },
-  { path: '/sets/', component: 'Sets', name: 'allSets' },
-  { path: '/sets/:code', component: 'Set', props: true, name: 'setDetail' },
+  { path: '/cardsets/', component: 'CardSets', name: 'allCardSets' },
+  { path: '/cardsets/:code', component: 'CardSet', props: true, name: 'cardSetDetail' },
   { path: '/search/', component: 'Search', props: (route) => ({ query: route.query.query }), name: 'search' }
 ]
 

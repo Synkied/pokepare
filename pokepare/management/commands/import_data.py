@@ -14,7 +14,7 @@ from django.conf import settings
 import requests
 from pokemons.models import Pokemon
 from cards.models import Card
-from sets.models import Set
+from sets.models import CardSet
 
 
 class Command(BaseCommand):
@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
     def clear_sets(self):
         self.stdout.write(self.style.WARNING('Deleting all sets...'))
-        Set.objects.all().delete()
+        CardSet.objects.all().delete()
         self.stdout.write(self.style.SUCCESS('All sets deleted!'))
 
     def get_remote_image(self, url, obj):
@@ -81,7 +81,7 @@ class Command(BaseCommand):
                 elif obj.__class__.__name__ == 'Pokemon':
                     file_name = ".".join([obj.name, url.split('.')[-1]])
 
-                elif obj.__class__.__name__ == 'Set':
+                elif obj.__class__.__name__ == 'CardSet':
                     file_name = "-".join((url.split('/')[-2::]))
 
                 else:
@@ -290,7 +290,7 @@ class Command(BaseCommand):
 
         for card_set in card_sets:
             try:
-                my_card_set, created = Set.objects.get_or_create(
+                my_card_set, created = CardSet.objects.get_or_create(
                     **card_set
                 )
                 self.get_remote_image(card_set["logo_url"], my_card_set)

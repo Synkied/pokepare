@@ -1,28 +1,34 @@
 import pprint
 
-from django.views import View
-from django.shortcuts import render
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import viewsets
-from rest_framework import permissions
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet
-from rest_framework.filters import OrderingFilter
-from django_filters import rest_framework as filters
+from cardsets.models import CardSet
 
-from .serializers import CardSerializer
-from .models import Card
-from sets.models import Set
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import render
+from django.views import View
+
+from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+
+from rest_framework import permissions
+from rest_framework import viewsets
+from rest_framework.filters import OrderingFilter
+
 from utils import PriceFinder
 
+from .models import Card
+from .serializers import CardSerializer
 
 # Create your views here.
 
 
 class CardFilter(FilterSet):
     # set a filterset to use filters
-    # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut
+    # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut  # noqa
     # but it won't let you use "exclude"
-    insensitive_name = filters.CharFilter(field_name="name", lookup_expr='icontains')
+    insensitive_name = filters.CharFilter(
+        field_name="name",
+        lookup_expr='icontains'
+    )
 
     class Meta:
         model = Card
@@ -68,19 +74,23 @@ class CardViewDetail(View):
             card = Card.objects.get(unique_id=unique_id)
 
             if card:
-                card_set = Set.objects.get(code=card.card_set_code)
+                card_set = CardSet.objects.get(code=card.card_set_code)
 
             def retrieve_prices_data():
 
-                # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))
+                # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))  # noqa
 
-                # # initial instantiation to avoid TypeError and empty card.prices
+                # # initial instantiation to avoid TypeError and empty card.prices  # noqa
                 card.prices = []
                 card.save()
 
                 price_finder = PriceFinder()
 
-                ebay_cards = price_finder.get_ebay_prices(card.name, card.number_in_set, card_set.name)
+                ebay_cards = price_finder.get_ebay_prices(
+                    card.name,
+                    card.number_in_set,
+                    card_set.name,
+                )
 
                 if ebay_cards:
                     card.prices.extend(ebay_cards)
@@ -98,8 +108,8 @@ class CardViewDetail(View):
 
                 print("Prices retrieved.")
 
-                # pp = pprint.PrettyPrinter(indent=4)
-                # pp.pprint(tcgplayer_cards)
+                pp = pprint.PrettyPrinter(indent=4)
+                pp.pprint(tcgplayer_cards)
 
             retrieve_prices_data()
 
