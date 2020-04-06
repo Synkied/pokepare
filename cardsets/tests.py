@@ -1,7 +1,7 @@
 # api/tests.py
 
 # Add these imports at the top
-from sets.models import CardSet
+from cardsets.models import CardSet
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -28,7 +28,7 @@ class CardSetDRFTestCase(TestCase):
         card_set = CardSet.objects.get(**self.card_set_data)
         response = self.client.get(
             reverse(
-                'set-detail',
+                'cardset-detail',
                 kwargs={'pk': card_set.id}
             ),
             format="json"
@@ -48,7 +48,7 @@ class CardSetDRFTestCase(TestCase):
         change_card_set = {'name': "Base 1", 'code': "base1"}
         response = self.client.put(
             reverse(
-                'set-detail',
+                'cardset-detail',
                 kwargs={'pk': card_set.id}
             ),
             change_card_set,
@@ -64,7 +64,7 @@ class CardSetDRFTestCase(TestCase):
         change_card_set = {'name': "Base 1"}
         response = self.client.put(
             reverse(
-                'set-detail',
+                'cardset-detail',
                 kwargs={'pk': card_set.id}
             ),
             change_card_set,
