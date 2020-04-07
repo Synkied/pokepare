@@ -17,7 +17,7 @@
             </div>
           </div>
           <div v-if="nextPage">
-            <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
+            <button class="btn btn-info mt-5" @click="viewMore()">View more</button>
           </div>
         </div>
       </template>
@@ -42,7 +42,7 @@ export default {
       errorMsg: null,
       moduleTitle: 'Cards',
       nextPage: this.next,
-      cardsData: this.cards,
+      cardsData: [],
       dataCounter: this.dataCount,
       setCodeValue: this.setCode,
       path: ''
@@ -50,6 +50,11 @@ export default {
   },
   title () {
     return `PokePare — ${this.moduleTitle}`
+  },
+  watch: {
+    cards: function (newVal, oldVal) {
+      this.cardsData = this.cards
+    }
   },
   methods: {
     viewMore () {
@@ -93,8 +98,6 @@ export default {
           console.log(error.config)
         })
     }
-  },
-  components: {
   },
   mounted () {
     var thisVm = this

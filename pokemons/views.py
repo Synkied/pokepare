@@ -1,3 +1,5 @@
+from cards.models import Card
+
 from django.shortcuts import render
 from django.views import View
 
@@ -15,7 +17,7 @@ from .serializers import PokemonSerializer
 
 class PokemonFilter(FilterSet):
     # set a filterset to use filters
-    # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut
+    # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut  # noqa
     # but it won't let you use "exclude"
     class Meta:
         model = Pokemon
@@ -56,7 +58,21 @@ class PokemonViewDetail(View):
 
     def get(self, request, name):
 
+        context = {}
+
+        return render(request, self.template_name, context)
+
+
+class PokemonCardsViewDetail(View):
+
+    template_name = "index.html"
+
+    def get(self, request):
+        # initial instantiation to avoid TypeError and empty card.prices
+        print('test')
+        cards = Card.objects.all()
         context = {
+            "cards": cards,
         }
 
         return render(request, self.template_name, context)

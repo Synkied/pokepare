@@ -1,12 +1,11 @@
 from rest_framework import serializers
+
 from .models import Card
 
 
 class CardSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
-    pokemon = serializers.HyperlinkedRelatedField(
-        view_name='pokemon-detail', read_only=True
-    )
+    pokemon = serializers.PrimaryKeyRelatedField(read_only=True)
     url = serializers.HyperlinkedIdentityField(
         view_name='cards:card_detail',
         lookup_field='unique_id',

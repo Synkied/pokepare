@@ -1,5 +1,3 @@
-from cards.serializers import CardSerializer
-
 from rest_framework import serializers
 
 from .models import Pokemon
@@ -11,7 +9,6 @@ class PokemonSerializer(serializers.HyperlinkedModelSerializer):
         view_name='pokemons:pokemon_detail',
         lookup_field='name',
     )
-    cards = CardSerializer(many=True, read_only=True)
 
     class Meta:
         model = Pokemon

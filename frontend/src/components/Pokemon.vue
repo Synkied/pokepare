@@ -51,6 +51,7 @@ export default {
       status: '',
       pokemon: null,
       cards: [],
+      nextCardsPage: '',
       animated: false,
       errorMsg: null,
       cardSets: []
@@ -71,24 +72,29 @@ export default {
     if (thisVm.$route.params) {
       thisVm.pokemon_name = thisVm.$route.params.name
     }
-    const path = '/api/pokemons/?name=' + capitalize(encodeURI(thisVm.pokemon_name))
+    const pokemonUrl = `/api/pokemons/?name=${capitalize(encodeURI(thisVm.pokemon_name))}`
+    let pokemonId
     loadProgressBar()
-    axios.get(path)
+    axios.get(pokemonUrl)
       .then(response => {
         if (response.data.count > 0) {
-          console.log(response.status)
-          console.log(response.data)
           thisVm.pokemon = response.data.results[0]
-          thisVm.cards = response.data.results[0].cards
           thisVm.status = response.status
-          for (var i = 0; i < response.data.results[0].cards.length; i++) {
-            cardSetsList.push(response.data.results[0].cards[i].card_set_code)
-          }
-          thisVm.cardSets = cardSetsList.filter(onlyUnique)
+          pokemonId = response.data.results[0].id
           // filter to get only unique values in array
         } else {
           thisVm.errorMsg = 'No Pokémon found.'
         }
+        const pokemonCardsUrl = `/api/cards/?pokemon_id=${pokemonId}`
+        return axios.get(pokemonCardsUrl)
+      })
+      .then(response => {
+        console.log(response)
+        thisVm.cards = response.data.results
+        for (var i = 0; i < response.data.results.length; i++) {
+          cardSetsList.push(response.data.results[i].card_set_code)
+        }
+        thisVm.cardSets = cardSetsList.filter(onlyUnique)
       })
       .catch(function (error) {
         if (error.response) {
