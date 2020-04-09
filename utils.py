@@ -1,22 +1,12 @@
-from django.core.files.storage import FileSystemStorage
-from django.conf import settings
-
-import os
-import requests
 import pprint
 
-from elasticsearch import Elasticsearch
-from image_match.elasticsearch_driver import SignatureES
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
-from ebaysdk.finding import Connection as finding
 from ebaysdk.exception import ConnectionError
+from ebaysdk.finding import Connection
 
-# import os
-# import django
-
-# # used to execute this file without django running
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pokepare.settings")
-# django.setup()
+import requests
 
 
 class OverwriteStorage(FileSystemStorage):
@@ -35,10 +25,12 @@ class PriceFinder():
         items_list = []
 
         try:
-            api = finding(
+            api = Connection(
                 config_file='ebay.yaml',
                 domain='svcs.ebay.com',
-                warnings=True)
+                warnings=True,
+                https=True,
+            )
 
             keywords = ['pokemon', 'card', name, number_in_set, set_name]
             # card.name card.number_in_set + '/' + set.total_number
@@ -89,17 +81,19 @@ class PriceFinder():
 
                     item_dict["website"] = "eBay"
                     item_dict["link"] = item["viewItemURL"]
-                    item_dict["market_price"] = float(item["sellingStatus"]["convertedCurrentPrice"]["value"])
+                    item_dict["market_price"] = float(
+                        item["sellingStatus"]["convertedCurrentPrice"]["value"]
+                    )
                     item_dict["edition"] = "N/A"
-                    item_dict["currency"] = item["sellingStatus"]["convertedCurrentPrice"]["_currencyId"]
+                    item_dict["currency"] = item["sellingStatus"]["convertedCurrentPrice"]["_currencyId"]  # noqa
                     item_dict["product_id"] = int(item["itemId"])
-                    item_dict["condition"] = item["condition"]["conditionDisplayName"]
+                    item_dict["condition"] = item["condition"]["conditionDisplayName"]  # noqa
                     item_dict["set_name"] = 'N/A'
 
                     items_list.append(item_dict)
 
             except KeyError as kerr:
-                pass
+                print('%s%s' % ("KeyError:", kerr))
 
         except ConnectionError as e:
             print(e)
@@ -110,7 +104,7 @@ class PriceFinder():
     def get_tcgplayer_prices(self, name):
 
         token = settings.TCGPLAYER_BEARER_TOKEN
-        product_url = ("http://api.tcgplayer.com/catalog/products?categoryId=3&productTypes=Cards&limit=100&productName=" + name)
+        product_url = ("http://api.tcgplayer.com/catalog/products?categoryId=3&productTypes=Cards&limit=100&productName=" + name)  # noqa
         # esetting header for tcgplayer api bearer token
         headers = {"Authorization": "Bearer " + token}
 
@@ -165,17 +159,23 @@ class PriceFinder():
                             prices_dict["set_name"] = group["name"]
 
                     for prices in prices_response["results"]:
-                        if prices["productId"] == result["productId"] and prices["marketPrice"] is not None:
+                        if (prices["productId"] == result["productId"] and
+                                prices["marketPrice"] is not None):
                             prices_dict["market_price"] = prices["marketPrice"]
                             prices_dict["edition"] = prices["subTypeName"]
 
                     results.append(prices_dict)
 
-                # add a count item to the data, to know the number of elems returned
+                # add a count item to the data,
+                # to know the number of elems returned
                 prices_dict["count"] = len(results)
 
         except KeyError as kerr:
-            print("KeyError:", kerr, " Maybe the API key isn't valid anymore? Or a throttle occured?")
+            print(
+                "KeyError:",
+                kerr,
+                " Maybe the API key isn't valid anymore? Or throttle occured?"
+            )
 
         return results
 
