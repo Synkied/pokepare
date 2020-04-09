@@ -1,9 +1,9 @@
 <template>
   <div id="search" class="container">
     <h1> {{ moduleTitle }} <em>'{{ query }}'</em></h1>
-    <div v-if="dataCount">
-      <li class="ns-li" v-if="cards">
-        <cards :cards="cards" :dataCount="dataCount" :next="nextPage"></cards>
+    <div v-if="cards">
+      <li class="ns-li">
+        <cards :cards="cards"></cards>
       </li>
     </div>
     <!-- Display error message if nothing found -->
@@ -28,7 +28,7 @@ export default {
       moduleTitle: 'Results for ',
       userQuery: '',
       status: null,
-      cards: [],
+      cards: {},
       nextPage: '',
       dataCount: '',
       errorMsg: ''
@@ -40,15 +40,12 @@ export default {
       /* axios to ajax the query */
       thisVm.userQuery = thisVm.$route.query.query
       if (thisVm.userQuery) {
-        const path = '/api/cards/?insensitive_name=' + encodeURI(thisVm.userQuery)
+        const path = `${this.$constants('cardsURL')}?insensitive_name=${encodeURI(thisVm.userQuery)}`
         loadProgressBar()
         axios.get(path).then(response => {
           if (response.data.count > 0) {
-            console.log('search_bar', response.data) // ex.: { user: 'Your User'}
-            thisVm.cards = response.data.results
-            thisVm.dataCount = response.data.count
-            thisVm.status = response.status
-            thisVm.nextPage = response.data.next
+            console.log('search_bar', response.data)
+            thisVm.cards = response.data
           } else {
             thisVm.errorMsg = 'No result found for this query.'
             thisVm.cards = ''
@@ -77,15 +74,6 @@ export default {
         thisVm.status = 'NO_QUERY'
         thisVm.errorMsg = 'Please enter a correct query.'
       }
-    },
-    viewMore () {
-      var thisVm = this
-      axios.get(thisVm.nextPage).then(response => {
-        for (var i = 0; i < response.data.results.length; i++) {
-          thisVm.cards.push(response.data.results[i])
-        }
-        thisVm.nextPage = response.data.next
-      })
     }
   },
   mounted () {
