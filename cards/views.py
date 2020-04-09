@@ -29,11 +29,19 @@ class CardFilter(FilterSet):
         field_name="name",
         lookup_expr='icontains'
     )
+    pokemon_id = filters.CharFilter(
+        field_name="pokemon",
+    )
 
     class Meta:
         model = Card
         exclude = ['image']
-        fields = ['insensitive_name', 'card_set_code', 'unique_id']
+        fields = [
+            'insensitive_name',
+            'card_set_code',
+            'unique_id',
+            'pokemon_id'
+        ]
 
 
 class CardViewSet(ReadOnlyModelViewSet):
@@ -44,12 +52,9 @@ class CardViewSet(ReadOnlyModelViewSet):
     serializer_class = CardSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
-    filter_class = CardFilter
     ordering_fields = '__all__'  # what field can be ordered via the API
     ordering = ['national_pokedex_number']  # default ordering
-    filterset_fields = (
-        'pokemon'
-    )
+    filter_class = CardFilter
 
     def get_queryset(self):
         qs = super(CardViewSet, self).get_queryset()
