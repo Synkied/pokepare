@@ -105,7 +105,7 @@ class CardPricesDataTestCase(TestCase):
         """
         assert(isinstance(self.price_finder, PriceFinder))
 
-    @patch('utils.PriceFinder.get_ebay_prices')
+    @patch('pokepare.utils.PriceFinder.get_ebay_prices')
     def test_status_code_from_ebay(self, mock_get):
         """Mocking using a decorator"""
 
@@ -120,7 +120,7 @@ class CardPricesDataTestCase(TestCase):
         # Assert that the request-response cycle completed successfully.
         self.assertEqual(response.status_code, 200)
 
-    @patch('utils.PriceFinder.get_tcgplayer_prices')
+    @patch('pokepare.utils.PriceFinder.get_tcgplayer_prices')
     def test_retrieve_prices_from_tcgplayer(self, mock_get_data):
         mock_get_data.return_value = Mock()
         mock_get_data.return_value.json.return_value = self.tcg_mock_data
