@@ -1,3 +1,4 @@
+import functools
 import pprint
 
 from django.conf import settings
@@ -7,6 +8,41 @@ from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection
 
 import requests
+
+
+def deep_get(source_datas, keys, default=None):
+    """
+    Accessor for getting value into nested dicts
+    mixed with list.
+    """
+    def accessor(datas, key):
+        try:
+            return datas.get(key, default)
+        except AttributeError:
+            try:
+                return datas[int(key)]
+            except (IndexError, ValueError, TypeError):
+                return default
+
+    return functools.reduce(
+        accessor, keys.split('.'), source_datas
+    )
+
+
+def deep_set(source_datas, keys, value):
+    """
+    Accessor for setting value into nested dicts.
+    """
+    keys = keys.split('.')
+    target = source_datas
+
+    for key in keys[:-1]:
+        target.setdefault(key, {})
+        target = target[key]
+
+    target[keys[-1]] = value
+
+    return source_datas
 
 
 class OverwriteStorage(FileSystemStorage):

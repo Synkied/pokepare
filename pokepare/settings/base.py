@@ -37,8 +37,8 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ORIGIN_WHITELIST = (
-    'localhost:8080',
-    '188.166.108.19',
+    'http://localhost:8080',
+    'http://188.166.108.19',
 )
 
 CSRF_COOKIE_NAME = "csrftoken"

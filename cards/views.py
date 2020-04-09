@@ -9,11 +9,11 @@ from django.views import View
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
+from pokepare.utils import PriceFinder
+
 from rest_framework import permissions
 from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import ReadOnlyModelViewSet
-
-from utils import PriceFinder
 
 from .models import Card
 from .serializers import CardSerializer
