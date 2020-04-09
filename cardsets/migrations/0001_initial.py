@@ -2,7 +2,8 @@
 
 from django.db import migrations, models
 import django.utils.timezone
-import utils
+
+from pokepare.utils import OverwriteStorage
 
 
 class Migration(migrations.Migration):
@@ -24,8 +25,8 @@ class Migration(migrations.Migration):
                 ('total_cards', models.PositiveIntegerField(blank=True, null=True)),
                 ('symbol_url', models.URLField(blank=True, null=True)),
                 ('logo_url', models.URLField(blank=True, null=True)),
-                ('symbol', models.ImageField(blank=True, null=True, storage=utils.OverwriteStorage(), upload_to='sets/symbols/')),
-                ('logo', models.ImageField(blank=True, null=True, storage=utils.OverwriteStorage(), upload_to='sets/logos/')),
+                ('symbol', models.ImageField(blank=True, null=True, storage=OverwriteStorage(), upload_to='sets/symbols/')),
+                ('logo', models.ImageField(blank=True, null=True, storage=OverwriteStorage(), upload_to='sets/logos/')),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
             ],
             options={

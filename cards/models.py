@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from pokemons.models import Pokemon
 
-from utils import OverwriteStorage
+from pokepare.utils import OverwriteStorage
 
 # Create your models here.
 

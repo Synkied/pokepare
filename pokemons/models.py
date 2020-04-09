@@ -1,6 +1,6 @@
 from django.db import models
 
-from utils import OverwriteStorage
+from pokepare.utils import OverwriteStorage
 
 # Create your models here.
 

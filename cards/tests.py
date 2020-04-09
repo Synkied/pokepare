@@ -10,10 +10,10 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
+from pokepare.utils import PriceFinder
+
 from rest_framework import status
 from rest_framework.test import APIClient
-
-from utils import PriceFinder
 
 
 class CardDRFTestCase(TestCase):
