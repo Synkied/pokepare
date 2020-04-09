@@ -1,9 +1,10 @@
 import os
 
-from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.core.management.base import BaseCommand
 
 from elasticsearch import Elasticsearch
+
 from image_match.elasticsearch_driver import SignatureES
 
 
@@ -25,7 +26,8 @@ class Command(BaseCommand):
         if import_type:
             self.stdout.write(self.style.WARNING('Starting import'))
         else:
-            self.stdout.write(self.style.ERROR('Importing failed. Check arguments.'))
+            self.stdout.write(
+                self.style.ERROR('Importing failed. Check arguments.'))
             return False
 
         if import_type == 'all':
@@ -34,7 +36,8 @@ class Command(BaseCommand):
         elif import_type == 'clear':
             self.clear_es()
         else:
-            self.stdout.write(self.style.ERROR('Import argument not recognized! :('))
+            self.stdout.write(
+                self.style.ERROR('Import argument not recognized! :('))
 
     def add_to_es(self, img_dir=""):
 

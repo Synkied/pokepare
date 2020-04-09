@@ -13,9 +13,6 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import store from './store'
 import titleMixin from './mixins/titleMixin'
-import VueLodash from 'vue-lodash'
-
-const options = { name: 'lodash' } // customize the way you want to call it
 
 Vue.mixin(titleMixin)
 
@@ -25,7 +22,6 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
-Vue.use(VueLodash, options) // options is optional
 
 require('vue2-animate/dist/vue2-animate.min.css')
 

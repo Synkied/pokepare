@@ -1,6 +1,8 @@
-from rest_framework import serializers
-from .models import Pokemon
 from cards.serializers import CardSerializer
+
+from rest_framework import serializers
+
+from .models import Pokemon
 
 
 class PokemonSerializer(serializers.HyperlinkedModelSerializer):

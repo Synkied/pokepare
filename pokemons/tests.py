@@ -1,12 +1,15 @@
 # api/tests.py
 
 # Add these imports at the top
-from rest_framework.test import APIClient
-from rest_framework import status
-from django.urls import reverse
-from django.test import TestCase
 from django.contrib.auth.models import User
+from django.test import TestCase
+from django.urls import reverse
+
 from pokemons.models import Pokemon
+
+from rest_framework import status
+from rest_framework.test import APIClient
+
 
 # Define this after the ModelTestCase
 
@@ -19,7 +22,7 @@ class PokemonDRFTestCase(TestCase):
         self.client = APIClient()
         self.user = User.objects.create_superuser('test_user', '', 'test_password')
         self.pokemon_data = {'id': 1, 'name': "Bulbasaur", 'number': 1}
-        bulbasaur = Pokemon.objects.create(**self.pokemon_data)
+        _ = Pokemon.objects.create(**self.pokemon_data)
 
     def test_api_can_get_a_pokemon(self):
         """Test the api can get a given pokemon."""

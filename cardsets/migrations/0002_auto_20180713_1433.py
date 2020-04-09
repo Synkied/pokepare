@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sets', '0001_initial'),
+        ('cardsets', '0001_initial'),
     ]
 
     operations = [
