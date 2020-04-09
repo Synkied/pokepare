@@ -95,30 +95,34 @@ export default {
       if (thisVm.$route.params) {
         thisVm.cardId = thisVm.$route.params.unique_id
       }
-      const cardPath = '/api/cards/?unique_id=' + encodeURI(thisVm.cardId)
+      const pokemonURL = this.$constants('pokemonURL')
+      const cardSetsURL = this.$constants('cardSetsURL')
+      const cardsURL = this.$constants('cardsURL')
+      const cardURL = `${cardsURL}?unique_id=${encodeURI(thisVm.cardId)}`
       loadProgressBar()
 
       // get the cards data
-      axios.get(cardPath).then(response => {
-        if (response.data) {
-          thisVm.status = response.status
-          thisVm.card = response.data.results[0]
-          thisVm.numberInCardSet = response.data.results[0].number_in_set
-
+      axios.get(cardURL)
+        .then(response => {
+          if (response.data) {
+            thisVm.status = response.status
+            thisVm.card = response.data.results[0]
+            thisVm.numberInCardSet = response.data.results[0].number_in_set
+          }
           // get the pokemon data linked to the card
-          axios.get(response.data.results[0].pokemon).then(response => {
-            thisVm.pokemon = response.data
-            thisVm.pokemonId = response.data.id
-          })
-
+          let pokemonId = response.data.results[0].pokemon
+          return axios.get(`${pokemonURL}${pokemonId}`)
+        })
+        .then(response => {
+          thisVm.pokemon = response.data
+          thisVm.pokemonId = response.data.id
           // get the card's set data
-          const cardSetPath = '/api/cardsets/?code=' + encodeURI(thisVm.card.card_set_code)
-          axios.get(cardSetPath).then(response => {
-            thisVm.totalNoCardSet = response.data.results[0].total_cards
-            /* thisVm.uniqueNumInSet = String(thisVm.numberInCardSet) + '/' + String(thisVm.totalNoCardSet) */
-          })
-        }
-      })
+          const cardSetPath = `${cardSetsURL}?code=${encodeURI(thisVm.card.card_set_code)}`
+          return axios.get(cardSetPath)
+        })
+        .then(response => {
+          thisVm.totalNoCardSet = response.data.results[0].total_cards
+        })
         .catch(function (error) {
           if (error.response) {
             // The request was made and the server responded with a status code
@@ -137,14 +141,6 @@ export default {
           }
           console.error(error.config)
         })
-    },
-    _ToggleNext () {
-      if (this.pokemonId === this.numOfPokemon - 1) {
-        return
-      }
-      this.setState(prevState => ({
-        selectedIndex: prevState.selectedIndex + 1
-      }))
     }
   },
   computed: {

@@ -7,5 +7,10 @@ from utils import OverwriteStorage
 
 class Pokemon(models.Model):
     name = models.CharField(max_length=500)
-    image = models.ImageField(storage=OverwriteStorage(), upload_to="pokemons/", blank=True, null=True)
+    image = models.ImageField(
+        storage=OverwriteStorage(),
+        upload_to="pokemons/",
+        blank=True,
+        null=True,
+    )
     number = models.PositiveIntegerField()

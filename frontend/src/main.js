@@ -13,6 +13,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import store from './store'
 import titleMixin from './mixins/titleMixin'
+import constants from './plugins/constants.js'
 
 Vue.mixin(titleMixin)
 
@@ -22,6 +23,7 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
+Vue.use(constants)
 
 require('vue2-animate/dist/vue2-animate.min.css')
 

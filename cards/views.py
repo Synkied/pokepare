@@ -10,8 +10,8 @@ from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
 from rest_framework import permissions
-from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from utils import PriceFinder
 
@@ -29,14 +29,22 @@ class CardFilter(FilterSet):
         field_name="name",
         lookup_expr='icontains'
     )
+    pokemon_id = filters.CharFilter(
+        field_name="pokemon",
+    )
 
     class Meta:
         model = Card
         exclude = ['image']
-        fields = ['insensitive_name', 'card_set_code', 'unique_id']
+        fields = [
+            'insensitive_name',
+            'card_set_code',
+            'unique_id',
+            'pokemon_id'
+        ]
 
 
-class CardViewSet(viewsets.ModelViewSet):
+class CardViewSet(ReadOnlyModelViewSet):
     """
     API endpoint that allows cards to be viewed or edited.
     """
@@ -44,9 +52,14 @@ class CardViewSet(viewsets.ModelViewSet):
     serializer_class = CardSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
-    filter_class = CardFilter
     ordering_fields = '__all__'  # what field can be ordered via the API
     ordering = ['national_pokedex_number']  # default ordering
+    filter_class = CardFilter
+
+    def get_queryset(self):
+        qs = super(CardViewSet, self).get_queryset()
+        qs = qs.select_related('pokemon')
+        return qs
 
 
 class CardView(View):
@@ -54,9 +67,7 @@ class CardView(View):
     template_name = "index.html"
 
     def get(self, request):
-
         cards = Card.objects.all()
-
         context = {
             "cards": cards,
         }
@@ -69,51 +80,46 @@ class CardViewDetail(View):
     template_name = "index.html"
 
     def get(self, request, unique_id):
+        # initial instantiation to avoid TypeError and empty card.prices
+        card = Card.objects.get(unique_id=unique_id)
 
+        if card:
+            card_set = CardSet.objects.get(code=card.card_set_code)
+            self.retrieve_prices_data(card, card_set)
+
+        return render(request, self.template_name)
+
+    def retrieve_prices_data(self, card, card_set):
         try:
-            card = Card.objects.get(unique_id=unique_id)
+            card.prices = []
+            card.save()
 
-            if card:
-                card_set = CardSet.objects.get(code=card.card_set_code)
+            price_finder = PriceFinder()
 
-            def retrieve_prices_data():
+            ebay_cards = price_finder.get_ebay_prices(
+                card.name,
+                card.number_in_set,
+                card_set.name,
+            )
 
-                # card_number_set = str(card.number_in_set + '/' + str(card_set.total_cards))  # noqa
+            if ebay_cards:
+                card.prices.extend(ebay_cards)
 
-                # # initial instantiation to avoid TypeError and empty card.prices  # noqa
-                card.prices = []
-                card.save()
+            tcgplayer_cards = price_finder.get_tcgplayer_prices(card.name)
 
-                price_finder = PriceFinder()
+            for tcgplayer_card in tcgplayer_cards:
+                if tcgplayer_card["set_name"] == card_set.name:
+                    tcgplayer_cards = [tcgplayer_card]
+                    card.prices.extend(tcgplayer_cards)
 
-                ebay_cards = price_finder.get_ebay_prices(
-                    card.name,
-                    card.number_in_set,
-                    card_set.name,
-                )
+                    print("tcgplayer")
 
-                if ebay_cards:
-                    card.prices.extend(ebay_cards)
+            card.save()
 
-                tcgplayer_cards = price_finder.get_tcgplayer_prices(card.name)
+            print("Prices retrieved.")
 
-                for tcgplayer_card in tcgplayer_cards:
-                    if tcgplayer_card["set_name"] == card_set.name:
-                        tcgplayer_cards = [tcgplayer_card]
-                        card.prices.extend(tcgplayer_cards)
-
-                        print("tcgplayer")
-
-                card.save()
-
-                print("Prices retrieved.")
-
-                pp = pprint.PrettyPrinter(indent=4)
-                pp.pprint(tcgplayer_cards)
-
-            retrieve_prices_data()
+            pp = pprint.PrettyPrinter(indent=4)
+            pp.pprint(tcgplayer_cards)
 
         except ObjectDoesNotExist:
             pass
-
-        return render(request, self.template_name)

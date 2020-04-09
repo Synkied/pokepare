@@ -5,14 +5,14 @@
         <div class="container-fluid">
             <ul>
               <li class="ns-li">
-                <img :src="card_set.image" height="100px" :alt="card_set.name">
+                <img :src="cardSet.image" height="100px" :alt="cardSet.name">
               </li>
             </ul>
             <li class="ns-li">
-              <p>{{ card_set.name }}</p>
+              <p>{{ cardSet.name }}</p>
             </li>
-            <li class="ns-li" v-if="setCode">
-              <cards :setCode="setCode"></cards>
+            <li class="ns-li" v-if="cardSetCode">
+              <cards :cardSetCode="cardSetCode"></cards>
             </li>
         </div>
       </template>
@@ -33,14 +33,14 @@ export default {
     return {
       data: null,
       status: '',
-      card_set: '',
+      cardSet: '',
       dataCount: null,
       errorMsg: null,
-      setCode: ''
+      cardSetCode: ''
     }
   },
   title () {
-    return `PokePare — ${this.setCode}`
+    return `PokePare — ${this.cardSetCode}`
   },
   components: {
     'cards': Cards
@@ -49,15 +49,16 @@ export default {
     showCards () {
       var thisVm = this
       if (thisVm.$route.params) {
-        thisVm.setCode = thisVm.$route.params.code
+        thisVm.cardSetCode = thisVm.$route.params.code
       }
-      const setPath = '/api/sets/?code=' + encodeURI(thisVm.setCode)
+      const cardSetURL = `${this.$constants('cardSetsURL')}?code=${encodeURI(thisVm.cardSetCode)}`
       loadProgressBar()
-      axios.get(setPath).then(response => {
+      console.log(cardSetURL)
+      axios.get(cardSetURL).then(response => {
+        console.log(response)
         if (response.data) {
-          console.log('sets status:', response.status)
           thisVm.status = response.status
-          thisVm.card_set = response.data.results[0]
+          thisVm.cardSet = response.data.results[0]
         }
       })
     }
