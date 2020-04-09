@@ -47,26 +47,26 @@ class CardDRFTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, card.name)
 
-    def test_api_auth_user_can_update_a_card(self):
-        """Test the api can update a given card."""
+    # def test_api_auth_user_can_update_a_card(self):
+    #     """Test the api can update a given card."""
 
-        # auth the superuser with update rights
-        self.client.login(username='test_user', password='test_password')
+    #     # auth the superuser with update rights
+    #     self.client.login(username='test_user', password='test_password')
 
-        card = Card.objects.get(**self.card_data)
+    #     card = Card.objects.get(**self.card_data)
 
-        change_card = {'name': "Florizarre EX"}
-        response = self.client.put(
-            reverse(
-                'card-detail',
-                kwargs={'pk': card.id}
-            ),
-            change_card,
-            format="json"
-        )
+    #     change_card = {'name': "Florizarre EX"}
+    #     response = self.client.put(
+    #         reverse(
+    #             'card-detail',
+    #             kwargs={'pk': card.id}
+    #         ),
+    #         change_card,
+    #         format="json"
+    #     )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertContains(response, change_card["name"])
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertContains(response, change_card["name"])
 
     def test_api_non_auth_user_cant_update_a_card(self):
         """Test the api can get a given card."""
