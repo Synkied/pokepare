@@ -64,9 +64,9 @@ export default {
     },
     viewSets () {
       var thisVm = this
-      const path = '/api/cardsets/'
       loadProgressBar()
-      axios.get(path).then(response => {
+      let cardSetsURL = this.$constants('cardSetsURL')
+      axios.get(cardSetsURL).then(response => {
         if (response.data) {
           console.log(response.status)
           console.log(response.data)

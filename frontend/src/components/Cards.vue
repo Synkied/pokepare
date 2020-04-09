@@ -1,6 +1,6 @@
 <template>
   <div id="cards" class="container mt-5">
-    <h4>{{ dataCounter }} cards found</h4>
+    <h4>{{ cardsCount }} cards found</h4>
     <div>
       <template v-if="initData">
         <div class="container-fluid">
@@ -33,7 +33,7 @@ import 'axios-progress-bar/dist/nprogress.css'
 
 /* data, methods, components... declaration */
 export default {
-  props: ['cards', 'dataCount', 'setCode', 'next'],
+  props: ['cards', 'cardSetCode'],
   data () {
     return {
       status: '',
@@ -41,10 +41,10 @@ export default {
       animated: false,
       errorMsg: null,
       moduleTitle: 'Cards',
-      nextPage: this.next,
+      nextPage: null,
       cardsData: [],
-      dataCounter: this.dataCount,
-      setCodeValue: this.setCode,
+      cardsCount: 0,
+      cardSetCodeValue: this.cardSetCode,
       path: ''
     }
   },
@@ -53,7 +53,12 @@ export default {
   },
   watch: {
     cards: function (newVal, oldVal) {
-      this.cardsData = this.cards
+      this.cardsData = this.cards.results
+      this.cardsCount = this.cards.count
+      this.nextPage = this.cards.next
+    },
+    cardSetCode: function (newVal, oldVal) {
+      this.cardSetCodeValue = newVal
     }
   },
   methods: {
@@ -75,7 +80,7 @@ export default {
           console.log(response.data)
           thisVm.cardsData = response.data.results
           thisVm.status = response.status
-          thisVm.dataCounter = response.data.count
+          thisVm.cardsCount = response.data.count
           thisVm.nextPage = response.data.next
         }
       })
@@ -102,11 +107,12 @@ export default {
   mounted () {
     var thisVm = this
     if (!thisVm.cards) {
-      if (thisVm.setCodeValue) {
-        thisVm.path = '/api/cards/?card_set_code=' + thisVm.setCodeValue
+      let cardsURL = this.$constants('cardsURL')
+      if (thisVm.cardSetCodeValue) {
+        thisVm.path = `${cardsURL}?card_set_code=${thisVm.cardSetCodeValue}`
         thisVm.initData(thisVm.path)
       } else {
-        thisVm.path = '/api/cards/'
+        thisVm.path = `${cardsURL}`
         thisVm.initData(thisVm.path)
       }
     }

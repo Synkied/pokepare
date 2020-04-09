@@ -95,13 +95,14 @@ export default {
       if (thisVm.$route.params) {
         thisVm.cardId = thisVm.$route.params.unique_id
       }
-      const pokemonURL = '/api/pokemons/'
-      const cardSetsURL = '/api/cardsets/?code='
-      const cardPath = `/api/cards/?unique_id=${encodeURI(thisVm.cardId)}`
+      const pokemonURL = this.$constants('pokemonURL')
+      const cardSetsURL = this.$constants('cardSetsURL')
+      const cardsURL = this.$constants('cardsURL')
+      const cardURL = `${cardsURL}?unique_id=${encodeURI(thisVm.cardId)}`
       loadProgressBar()
 
       // get the cards data
-      axios.get(cardPath)
+      axios.get(cardURL)
         .then(response => {
           if (response.data) {
             thisVm.status = response.status
@@ -116,7 +117,7 @@ export default {
           thisVm.pokemon = response.data
           thisVm.pokemonId = response.data.id
           // get the card's set data
-          const cardSetPath = `${cardSetsURL}${encodeURI(thisVm.card.card_set_code)}`
+          const cardSetPath = `${cardSetsURL}?code=${encodeURI(thisVm.card.card_set_code)}`
           return axios.get(cardSetPath)
         })
         .then(response => {

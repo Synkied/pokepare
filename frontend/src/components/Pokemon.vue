@@ -15,7 +15,7 @@
               </li>
             </ul>
             <li class="ns-li" v-if="cards">
-              <cards :cards="cards" :dataCount="cards.length"></cards>
+              <cards :cards="cards"></cards>
             </li>
         </div>
       </template>
@@ -47,7 +47,6 @@ function onlyUnique (value, index, self) {
 export default {
   data () {
     return {
-      dataCount: null,
       status: '',
       pokemon: null,
       cards: [],
@@ -90,7 +89,7 @@ export default {
       })
       .then(response => {
         console.log(response)
-        thisVm.cards = response.data.results
+        thisVm.cards = response.data
         for (var i = 0; i < response.data.results.length; i++) {
           cardSetsList.push(response.data.results[i].card_set_code)
         }
