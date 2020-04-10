@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import store from './store'
 import titleMixin from './mixins/titleMixin'
 import constants from './plugins/constants.js'
+import vuetify from '@/plugins/vuetify' // path to vuetify export
 
 Vue.mixin(titleMixin)
 
@@ -32,6 +33,7 @@ new Vue({
   el: '#app',
   store,
   router,
+  vuetify,
   components: {
     App,
     BootstrapVue

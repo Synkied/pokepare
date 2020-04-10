@@ -1,11 +1,13 @@
 <template>
-  <div id="app">
-    <app-header></app-header>
-    <!-- Hey! -->
-    <search-bar></search-bar>
-    <router-view/>
-    <app-footer></app-footer>
-  </div>
+  <v-app>
+    <div id="app">
+      <app-header></app-header>
+      <!-- Hey! -->
+      <search-bar></search-bar>
+      <router-view/>
+      <app-footer></app-footer>
+    </div>
+  </v-app>
 </template>
 
 <script>
