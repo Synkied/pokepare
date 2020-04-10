@@ -65,20 +65,6 @@ def local_push_tags():
 
 
 @task
-def local_create_and_push_tags_develop():
-    """
-    Locally creates and push tags to origin/develop.
-    """
-    push_date = '%s' % datetime.now().strftime('%Y-%m-%d-%H-%M')
-    staging_version = 'staging %s' % default_version
-    with settings(warn_only=True):
-        local('git fetch origin -p')
-        local('git checkout develop')
-        local('git tag -a %s -m "%s"' % (push_date, staging_version))
-        local('git push origin develop --tags')
-
-
-@task
 def update_remote_branch(branch, host):
     """
     Remotely pull specified branch and merge it with its origin counterpart.
