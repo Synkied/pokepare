@@ -29,6 +29,9 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Avenir');
 @import url('https://fonts.googleapis.com/css?family=Oswald');
 @import url('https://fonts.googleapis.com/css?family=Cabin');
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+@import url('https://fonts.googleapis.com/css?family=Oxygen');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -73,7 +76,8 @@ nav a, nav a:hover, nav a:active{
 }
 
 .related-pokemon-image {
-  margin: -10px 0 0 0;
+  width: 100px;
+  margin: auto;
 }
 
 .pokemon-link p {

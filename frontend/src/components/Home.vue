@@ -51,9 +51,6 @@ export default {
 
 <!-- scoped styles for this component -->
 <style scoped>
-  @import url('https://fonts.googleapis.com/css?family=Oxygen');
-  @import url('https://fonts.googleapis.com/css?family=Raleway');
-
   .about-us {
     background-color: white;
     padding: 4rem;

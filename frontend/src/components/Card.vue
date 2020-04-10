@@ -19,6 +19,18 @@
                 <p v-else>#{{ pokemon.number }}</p>
               </a>
             </div>
+            <v-data-table
+              dense
+              :headers="headers"
+              :items="orderedPrices"
+            >
+            <template v-slot:item.link="{ item }">
+              <v-icon>
+                link
+                <a :href="item.link">{{ item.link }}</a>
+              </v-icon>
+            </template>
+            </v-data-table>
             <template v-if="card.prices.length > 0">
                 <div style="overflow-x:auto;">
                   <table width="100%">
@@ -35,7 +47,7 @@
                         <td>{{ item.website }}</td>
                         <td>{{ item.condition }}</td>
                         <td>{{ item.edition }}</td>
-                        <td><a :href="item.link">{{ item.link }}</a></td>
+                        <td></td>
                         <td id="price">{{ item.market_price }}</td>
                         <td>{{ item.currency }}</td>
                       </tr>
@@ -72,7 +84,14 @@ import 'axios-progress-bar/dist/nprogress.css'
 export default {
   data () {
     return {
-      data: null,
+      headers: [
+        { text: 'Website', value: 'website' },
+        { text: 'Condition', value: 'condition' },
+        { text: 'Edition', value: 'edition' },
+        { text: 'URL', value: 'link' },
+        { text: 'Current Price', value: 'market_price' },
+        { text: 'Currency', value: 'currency' }
+      ],
       status: '',
       card: '',
       cardId: '',
