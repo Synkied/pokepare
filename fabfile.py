@@ -12,14 +12,11 @@ from datetime import datetime
 from fabric.api import cd
 from fabric.api import env
 from fabric.api import execute
-from fabric.api import lcd
 from fabric.api import local
 from fabric.api import roles
 from fabric.api import run
-from fabric.api import settings
 from fabric.api import shell_env
 from fabric.api import task
-from fabric.contrib.project import rsync_project
 
 
 # Default version to be used for release.
@@ -101,21 +98,15 @@ def remote_pull_production(release=None):
 
 
 @task
-def local_build_production():
+def build_production():
     """
     Locally builds the app to be served on production.
     """
-    with lcd('$HOME/dev/pokepare/'):
+    with cd(REMOTE_SRV_DIR):
         local('make yarn_build')
 
-
-@task
-@roles('production')
-def local_transfer_production_to_remote(release=None):
-    """
-    Rsync transfer local build to remote production machine.
-    """
-    rsync_project(REMOTE_PUBLIC_DIR, local_dir="./dist/", delete=True)
+    with cd(REMOTE_SRV_DIR):
+        local('make collectstatic')
 
 
 @task
@@ -138,8 +129,7 @@ def mep(version=None):
     """
     gitflow_release(version)
     execute(local_push_tags)
-    execute(local_build_production)
-    execute(local_transfer_production_to_remote)
+    execute(build_production)
     execute(remote_pull_production)
     execute(remote_restart_production)
 
@@ -154,8 +144,7 @@ def mep_install(version=None):
     """
     gitflow_release(version)
     execute(local_push_tags)
-    execute(local_build_production)
-    execute(local_transfer_production_to_remote)
+    execute(build_production)
     execute(remote_pull_production)
     execute(remote_install_production)
     execute(remote_restart_production)
@@ -170,7 +159,6 @@ def mep_no_build(version=None):
     """
     gitflow_release(version)
     execute(local_push_tags)
-    execute(local_transfer_production_to_remote)
     execute(remote_pull_production)
     execute(remote_restart_production)
 
@@ -197,6 +185,5 @@ def mep_app(version=None):
     """
     gitflow_release(version)
     execute(local_push_tags)
-    execute(local_build_production)
-    execute(local_transfer_production_to_remote)
+    execute(build_production)
     execute(remote_restart_production)
