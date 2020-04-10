@@ -51,7 +51,7 @@ bash_db:
 
 yarn_build:
 	cd frontend
-	npm run build
+	yarn build
 
 freeze:
 	pip freeze > requirements.txt
