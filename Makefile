@@ -50,8 +50,7 @@ bash_db:
 	docker exec -ti pokepare_db bash
 
 yarn_build:
-	cd frontend
-	yarn build
+	cd frontend && yarn build
 
 freeze:
 	pip freeze > requirements.txt
