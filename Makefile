@@ -49,9 +49,9 @@ bash_web:
 bash_db:
 	docker exec -ti pokepare_db bash
 
-npm_build:
+yarn_build:
 	cd frontend
-	npm run build
+	yarn build
 
 freeze:
 	pip freeze > requirements.txt
