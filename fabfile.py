@@ -98,15 +98,16 @@ def remote_pull_production(release=None):
 
 
 @task
+@roles('production')
 def build_production():
     """
-    Locally builds the app to be served on production.
+    Remotely builds the app to be served on production.
     """
     with cd(REMOTE_SRV_DIR):
-        local('make yarn_build')
+        run('make yarn_build')
 
     with cd(REMOTE_SRV_DIR):
-        local('make collectstatic')
+        run('make collectstatic')
 
 
 @task
