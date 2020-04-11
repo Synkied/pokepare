@@ -43,7 +43,7 @@ export default {
     return {
       links: [
         { label: 'About', link_to: '/about', icon: '' },
-        { label: 'Github', link_to: '/https://github.com/Synkied/pokepare', icon: 'fab fa-github' }
+        { label: 'Github', link_to: 'https://github.com/Synkied/pokepare', icon: 'fab fa-github' }
       ]
     }
   }
