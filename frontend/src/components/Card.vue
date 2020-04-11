@@ -1,75 +1,109 @@
 <template>
   <div id="cards">
     <div>
-      <template v-if="card">
-        <div class="container">
-            <ul>
-              <h3 class="card-title">{{ card.name }} - <a :href="'/sets/' + card.card_set_code">{{ card.card_set }}</a>
-                <small>{{ card.number_in_set }}</small>
-              </h3>
-              <li class="ns-li">
-                <img :src="card.image" :alt="card.name">
-              </li>
-            </ul>
-            <div class="related-pokemon-image">
-              <a :href="pokemon.url" class="pokemon-link">
-                <img :src="pokemon.image" :alt="pokemon.name">
-                <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
-                <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
-                <p v-else>#{{ pokemon.number }}</p>
-              </a>
-            </div>
-            <v-data-table
-              dense
-              :headers="headers"
-              :items="orderedPrices"
-            >
-            <template v-slot:item.link="{ item }">
-              <v-icon>
-                link
-                <a :href="item.link">{{ item.link }}</a>
-              </v-icon>
-            </template>
-            </v-data-table>
-            <template v-if="card.prices.length > 0">
-                <div style="overflow-x:auto;">
-                  <table width="100%">
-                    <thead>
-                      <th>Website</th>
-                      <th>Condition</th>
-                      <th>Edition</th>
-                      <th>URL</th>
-                      <th>Current Price</th>
-                      <th>Currency</th>
-                    </thead>
-                    <tbody>
-                      <tr v-for="item in orderedPrices" :key="item.id">
-                        <td>{{ item.website }}</td>
-                        <td>{{ item.condition }}</td>
-                        <td>{{ item.edition }}</td>
-                        <td></td>
-                        <td id="price">{{ item.market_price }}</td>
-                        <td>{{ item.currency }}</td>
-                      </tr>
-                    </tbody>
-<!--                     <tbody v-if="card.prices.tcgplayer" v-for="item in card.prices.tcgplayer" :key="item.id">
-  <tr v-for="price in item.prices" :key="price.id">
-    <td>TCGPlayer</td>
-    <td>N/A</td>
-    <td>{{ price.subTypeName }}</td>
-    <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-    <td id="price">{{ price.marketPrice }}</td>
-    <td>USD</td>
-  </tr>
-</tbody> -->
-                  </table>
-                </div>
+      <v-container v-if="card">
+        <v-card flat outlined>
+          <ul>
+            <h3 class="card-title">{{ card.name }} - <a :href="'/cardsets/' + card.card_set_code">{{ card.card_set }}</a>
+              <small>{{ card.number_in_set }}</small>
+            </h3>
+            <li class="ns-li">
+              <img :src="card.image" :alt="card.name">
+            </li>
+          </ul>
+          <div class="related-pokemon-image">
+            <a :href="pokemon.url" class="pokemon-link">
+              <img :src="pokemon.image" :alt="pokemon.name">
+              <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
+              <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
+              <p v-else>#{{ pokemon.number }}</p>
+            </a>
+          </div>
+          <v-container fluid>
+            <v-card>
+              <v-data-table
+                dark
+                dense
+                :headers="headers"
+                :items="orderedPrices"
+                :options="tableOptions"
+              >
+              <template v-slot:top>
+                <v-container>
+                  <v-row>
+                    <v-col>
+                      <v-text-field
+                        v-model="searchQuery"
+                        dense
+                        label="Search"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-autocomplete
+                        v-model="values"
+                        :items="items"
+                        dense
+                        chips
+                        small-chips
+                        label="Website"
+                        multiple
+                      ></v-autocomplete>
+                    </v-col>
+                    <v-col>
+                      <v-autocomplete
+                        v-model="values"
+                        :items="items"
+                        dense
+                        chips
+                        small-chips
+                        label="Condition"
+                        multiple
+                      ></v-autocomplete>
+                    </v-col>
+                    <v-col>
+                      <v-autocomplete
+                        v-model="values"
+                        :items="items"
+                        dense
+                        chips
+                        small-chips
+                        label="Edition"
+                        multiple
+                      ></v-autocomplete>
+                    </v-col>
+                    <v-col>
+                      <v-autocomplete
+                        v-model="values"
+                        :items="items"
+                        dense
+                        chips
+                        small-chips
+                        label="Currency"
+                        multiple
+                      ></v-autocomplete>
+                    </v-col>
+                  </v-row>
+                </v-container>
               </template>
-            <template v-else>
-              <p>No prices found for this card.</p>
-            </template>
-        </div>
-      </template>
+              <template v-slot:item.link="{ item }">
+                <v-btn icon color="primary" :to="item.link">
+                  <v-icon small>
+                    launch
+                  </v-icon>
+                </v-btn>
+              </template>
+              <template v-slot:item.copy_row="{ item }">
+                <v-btn icon color="secondary" @click="copyRow(item.product_id)">
+                  <v-icon small>
+                    file_copy
+                  </v-icon>
+                </v-btn>
+              </template>
+              </v-data-table>
+            </v-card>
+          </v-container>
+        </v-card>
+      </v-container>
     </div>
   </div>
 </template>
@@ -90,8 +124,12 @@ export default {
         { text: 'Edition', value: 'edition' },
         { text: 'URL', value: 'link' },
         { text: 'Current Price', value: 'market_price' },
-        { text: 'Currency', value: 'currency' }
+        { text: 'Currency', value: 'currency' },
+        { text: '', value: 'copy_row', sortable: false, align: 'end', width: '1%' }
       ],
+      tableOptions: {
+        itemsPerPage: 25
+      },
       status: '',
       card: '',
       cardId: '',
@@ -102,7 +140,10 @@ export default {
       errorMsg: null,
       numberInCardSet: '',
       totalNoCardSet: '',
-      uniqueNumInSet: ''
+      uniqueNumInSet: '',
+      items: [],
+      searchQuery: '',
+      values: ''
     }
   },
   title () {
@@ -160,6 +201,13 @@ export default {
           }
           console.error(error.config)
         })
+    },
+    copyRow (productId) {
+      for (var i = this.card.prices.length - 1; i >= 0; i--) {
+        if (this.card.prices[i].product_id === productId) {
+          this.$clipboard(this.card.prices[i])
+        }
+      }
     }
   },
   computed: {

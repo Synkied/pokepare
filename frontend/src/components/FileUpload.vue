@@ -1,16 +1,30 @@
 <template>
-  <div class="container">
-    <div class="col-xl-12 col-12 cell">
-      <label class="btn btn-primary">Browse files...
-        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" hidden/>
-      </label>
-      {{ file.name }}
+  <v-container>
+    <div>
+      <v-file-input
+        show-size
+        accept="image/*"
+        label="Upload a Pokémon card..."
+        id="file"
+        ref="file"
+        v-model="userUploadedFile"
+        @change="handleFileUpload()"
+      />
     </div>
-    <button class="btn btn-info" v-on:click="submitFile()">Submit</button>
-    <div class="mt-4" v-if="errorMsg">
-      <b-alert show variant="danger">{{ errorMsg }}</b-alert>
+    <v-btn
+      tile
+      outlined
+      color="primary"
+      @click="submitFile()"
+    >
+      Submit
+    </v-btn>
+    <div v-if="errorMsg">
+      <v-alert class="mt-5" dense outlined type="error">
+        {{ errorMsg }}
+      </v-alert>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -26,9 +40,9 @@ export default {
   */
   data () {
     return {
-      file: '',
       card_name: '',
-      errorMsg: ''
+      errorMsg: '',
+      userUploadedFile: null
     }
   },
   methods: {
@@ -39,7 +53,7 @@ export default {
       let formData = new FormData()
 
       /* Add the form data we need to submit */
-      formData.append('image', this.file)
+      formData.append('image', this.userUploadedFile)
       loadProgressBar()
       /* Make the request to the POST /single-file URL */
       axios.post('/file-upload/',
@@ -65,7 +79,6 @@ export default {
     },
     /* Handles a change on the file upload */
     handleFileUpload () {
-      this.file = this.$refs.file.files[0]
     }
   }
 }

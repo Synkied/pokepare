@@ -1,18 +1,18 @@
 <template>
   <v-app>
-    <div id="app">
-      <app-header></app-header>
-      <!-- Hey! -->
-      <search-bar></search-bar>
-      <router-view/>
+    <app-header></app-header>
+    <v-content>
+      <v-container class="body-container">
+        <router-view/>
+      </v-container>
       <app-footer></app-footer>
-    </div>
+    </v-content>
   </v-app>
 </template>
 
 <script>
-import Header from './components/Shared/Header.vue'
-import Footer from './components/Shared/Footer.vue'
+import Header from './components/shared/Header.vue'
+import Footer from './components/shared/Footer.vue'
 import SearchBar from './components/SearchBar.vue'
 
 export default {
@@ -33,34 +33,31 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Oxygen');
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
 @import url('https://fonts.googleapis.com/css?family=Material+Icons');
+@import url('https://use.fontawesome.com/releases/v5.0.13/css/all.css');
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  background-color: #EEE;
+/*  background-color: #EEE;
+*/}
+
+.body-container {
+  padding-bottom: 100px;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1500px;
 }
 
-a {
+.v-application a {
   text-decoration: none;
-  color: #30415d
+  color: #fff
 }
 
 a:hover {
   text-decoration: none;
-}
-
-.navbar {
-  color: #000;
-}
-
-nav a, nav a:hover, nav a:active{
-  color: #000;
 }
 
 .card-title{
@@ -112,12 +109,10 @@ h3 small {
 }
 
 .ns-li a {
-  color: #000;
   text-decoration: none;
 }
 
 .ns-li a:hover {
-  color: #0e5c59;
   text-decoration: none;
 }
 
@@ -130,7 +125,7 @@ ul {
   padding: 0;
 }
 
-table {
+/*table {
   border: 2px solid #42b983;
   border-radius: 3px;
   background-color: #000;
@@ -162,7 +157,7 @@ th.active {
 th.active .arrow {
   opacity: 1;
 }
-
+*/
 .arrow {
   display: inline-block;
   vertical-align: middle;

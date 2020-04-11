@@ -1,29 +1,34 @@
 <template>
-  <div id="sets" class="container mt-5">
-    <h2>{{ moduleTitle }}</h2>
-    <h4>{{ dataCount }} card sets</h4>
-    <div>
-      <template v-if="!userQuery">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-3 col-sm-4 col-12 mt-5"  v-for="cardSet in cardSets" :key="cardSet.id">
-              <ul>
-                <li class="ns-li mb-2">
-                  <a :href="cardSet.url"><img class="cardset-img" :src="cardSet.image" height="25px" :alt="cardSet.name"></a>
-                </li>
-                <li class="ns-li">
-                  <p><a :href="cardSet.url">{{ cardSet.name }}</a></p>
-                </li>
-              </ul>
+  <v-container id="cardsets">
+    <v-card flat outlined>
+      <v-card-title>
+        {{ dataCount }} card sets
+      </v-card-title>
+      <div>
+        <v-row v-if="cardSets">
+          <v-col
+            cols="12"
+            md="2"
+            v-for="cardSet in cardSets"
+            :key="cardSet.id">
+            <ul>
+              <li class="ns-li mb-2">
+                <a :href="cardSet.url">
+                  <img class="cardset-img" :src="cardSet.image" height="25px" :alt="cardSet.name">
+                </a>
+              </li>
+              <li class="ns-li">
+                <p><a :href="cardSet.url">{{ cardSet.name }}</a></p>
+              </li>
+            </ul>
+          </v-col>
+            <div v-if="next">
+              <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
             </div>
-          </div>
-          <div v-if="next">
-            <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
-          </div>
-        </div>
-      </template>
-    </div>
-  </div>
+        </v-row>
+      </div>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -41,7 +46,6 @@ export default {
       pageCount: null,
       status: '',
       cardSets: [],
-      userQuery: null,
       animated: false,
       errorMsg: null,
       moduleTitle: 'Card sets',
@@ -89,9 +93,4 @@ export default {
 
 <!-- scoped styles for this component -->
 <style scoped>
-
-  .container {
-    max-width: 960px;
-  }
-
 </style>

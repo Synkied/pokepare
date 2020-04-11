@@ -3,28 +3,18 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import BootstrapVue from 'bootstrap-vue'
 
-/* boostrap's css import, needed for bootstrap to work */
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import store from './store'
 import titleMixin from './mixins/titleMixin'
 import constants from './plugins/constants.js'
 import vuetify from '@/plugins/vuetify' // path to vuetify export
+import clipboard from 'v-clipboard'
 
 Vue.mixin(titleMixin)
 
-library.add(faUser)
-
-Vue.component('font-awesome-icon', FontAwesomeIcon)
-
 Vue.config.productionTip = false
-Vue.use(BootstrapVue)
 Vue.use(constants)
+Vue.use(clipboard)
 
 require('vue2-animate/dist/vue2-animate.min.css')
 
@@ -35,8 +25,7 @@ new Vue({
   router,
   vuetify,
   components: {
-    App,
-    BootstrapVue
+    App
   },
   template: '<App/>'
 })

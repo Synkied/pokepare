@@ -2,19 +2,11 @@
   <div id="sets">
     <div>
       <template>
-        <div class="container-fluid">
-            <ul>
-              <li class="ns-li">
-                <img :src="cardSet.image" height="100px" :alt="cardSet.name">
-              </li>
-            </ul>
-            <li class="ns-li">
-              <p>{{ cardSet.name }}</p>
-            </li>
-            <li class="ns-li" v-if="cardSetCode">
-              <cards :cardSetCode="cardSetCode"></cards>
-            </li>
-        </div>
+        <v-container>
+          <img :src="cardSet.image" height="100px" :alt="cardSet.name">
+          <p>{{ cardSet.name }}</p>
+          <cards v-if="cardSetCode" :cardSetCode="cardSetCode"></cards>
+        </v-container>
       </template>
     </div>
   </div>

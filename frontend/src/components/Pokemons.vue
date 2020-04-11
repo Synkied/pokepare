@@ -1,28 +1,47 @@
 <template>
-  <div id="pokemons" class="container mt-5">
-    <h2>{{ moduleTitle }}</h2>
-    <h4 v-if="dataCount">{{ dataCount }} Pokémon</h4>
-    <button ref="previous" class="btn btn-info mt-5" :disabled="pageNumber === 0 || disable" @click="prevPage">Prev</button>
-    <button ref="next" class="btn btn-info mt-5" :disabled="pageNumber >= pageCount -1 || disable" @click="nextPage">Next</button>
-    <div>
-      <template v-if="!userQuery">
-        <div class="container-fluid">
-          <div class="row" v-if="pokemons">
-            <div class="col-xl-2 col-lg-6 col-md-6 col-6 col-xs-6 mt-3" v-for="pokemon in paginatedData" :key="pokemon.id">
-              <ul>
-                <li class="ns-li">
-                  <a :href="pokemon.url"><img :src="pokemon.image" :alt="pokemon.name"></a>
-                </li>
-                <li class="ns-li">
-                  <p><a :href="pokemon.url">{{ pokemon.name }}</a></p>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
-  </div>
+  <v-container id="pokemons">
+    <v-card flat outlined>
+      <v-card-title v-if="dataCount">
+        {{ dataCount }} Pokémon
+      </v-card-title>
+      <v-btn
+        outline
+        ref="previous"
+        class="btn btn-info mt-5"
+        :disabled="pageNumber === 0 || disable"
+        @click="prevPage">
+          Prev
+      </v-btn>
+      <v-btn
+        outline
+        ref="next"
+        class="btn btn-info mt-5"
+        :disabled="pageNumber >= pageCount -1 || disable"
+        @click="nextPage">
+          Next
+      </v-btn>
+      <div>
+        <v-row v-if="pokemons">
+          <v-col
+            cols="12"
+            md="2"
+            v-for="pokemon in paginatedData"
+            :key="pokemon.id">
+            <ul>
+              <li class="ns-li mb-2">
+                <a :href="pokemon.url">
+                  <img class="card-img" :src="pokemon.image" :alt="pokemon.name">
+                </a>
+              </li>
+              <li class="ns-li">
+                <p><a :href="pokemon.url">{{ pokemon.name }}</a></p>
+              </li>
+            </ul>
+          </v-col>
+        </v-row>
+      </div>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -37,7 +56,6 @@ export default {
     return {
       dataCount: '',
       status: '',
-      userQuery: null,
       animated: false,
       errorMsg: null,
       moduleTitle: 'Pokémon',
@@ -144,8 +162,4 @@ export default {
 
 <!-- scoped styles for this component -->
 <style scoped>
-  .container {
-    max-width: 960px;
-  }
-
 </style>
