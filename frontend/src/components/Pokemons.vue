@@ -6,7 +6,7 @@
       </v-card-title>
       <v-divider class="mb-5"></v-divider>
       <v-btn
-        outline
+        outlined
         ref="previous"
         class="btn btn-info mt-5"
         :disabled="pageNumber === 0 || disable"
@@ -14,7 +14,7 @@
           Prev
       </v-btn>
       <v-btn
-        outline
+        outlined
         ref="next"
         class="btn btn-info mt-5"
         :disabled="pageNumber >= pageCount -1 || disable"
@@ -131,7 +131,6 @@ export default {
     loadProgressBar()
     axios.get(path).then(response => {
       if (response.data) {
-        console.log(response.status)
         this.next = response.data.next
         this.pokemons = response.data.results
         this.dataCount = response.data.count
