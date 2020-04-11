@@ -48,7 +48,7 @@ export default {
 }
 
 .container {
-  max-width: 1500px;
+  max-width: 1400px;
 }
 
 .v-application a {
@@ -105,7 +105,6 @@ h3 small {
 
 .ns-li {
   list-style-type: none;
-  font-weight: 600;
 }
 
 .ns-li a {
@@ -117,7 +116,6 @@ h3 small {
 }
 
 .ns-li p {
-  font-size: 1rem;
   text-align:center;
 }
 

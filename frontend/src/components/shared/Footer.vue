@@ -20,7 +20,7 @@
           text
           rounded
           class="my-2"
-          :to="link.link_to"
+          :href="link.link_to"
         >
           <span v-if="link.icon">
             <v-icon>{{ link.icon }}</v-icon>

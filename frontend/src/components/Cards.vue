@@ -1,15 +1,14 @@
 <template>
   <v-container>
-    <v-card flat outlined>
-      <v-card-title>
-        {{ cardsCount }} cards found
+    <v-card tile flat outlined>
+      <v-card-title class="secondary darken-1 headline">
+        {{ cardsCount }} CARDS
       </v-card-title>
+      <v-divider class="mb-5"></v-divider>
       <v-row v-if="initData">
         <v-col
-          cols="12"
+          cols="6"
           md="2"
-          s="3"
-          xs="3"
           v-for="card in cardsData"
           :key="card.id">
           <ul>

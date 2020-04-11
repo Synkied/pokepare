@@ -1,9 +1,10 @@
 <template>
   <v-container id="pokemons">
-    <v-card flat outlined>
-      <v-card-title v-if="dataCount">
-        {{ dataCount }} Pokémon
+    <v-card tile flat outlined>
+      <v-card-title class="secondary darken-1 headline" v-if="dataCount">
+        {{ dataCount }} POKÉMON
       </v-card-title>
+      <v-divider class="mb-5"></v-divider>
       <v-btn
         outline
         ref="previous"
@@ -23,12 +24,12 @@
       <div>
         <v-row v-if="pokemons">
           <v-col
-            cols="12"
+            cols="4"
             md="2"
             v-for="pokemon in paginatedData"
             :key="pokemon.id">
             <ul>
-              <li class="ns-li mb-2">
+              <li class="ns-li">
                 <a :href="pokemon.url">
                   <img class="card-img" :src="pokemon.image" :alt="pokemon.name">
                 </a>

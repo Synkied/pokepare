@@ -1,31 +1,40 @@
 <template>
   <v-container id="cardsets">
-    <v-card flat outlined>
-      <v-card-title>
-        {{ dataCount }} card sets
+    <v-card tile flat outlined>
+      <v-card-title class="secondary darken-1 headline">
+        {{ dataCount }} CARD SETS
       </v-card-title>
+      <v-divider class="mb-5"></v-divider>
       <div>
         <v-row v-if="cardSets">
           <v-col
-            cols="12"
+            cols="4"
             md="2"
             v-for="cardSet in cardSets"
             :key="cardSet.id">
-            <ul>
+            <ul class="mb-5">
               <li class="ns-li mb-2">
                 <a :href="cardSet.url">
-                  <img class="cardset-img" :src="cardSet.image" height="25px" :alt="cardSet.name">
+                  <img class="cardset-img" :src="cardSet.image" height="20px" :alt="cardSet.name">
                 </a>
               </li>
               <li class="ns-li">
-                <p><a :href="cardSet.url">{{ cardSet.name }}</a></p>
+                <p>
+                  <a :href="cardSet.url">
+                    {{ cardSet.name }}
+                  </a>
+                </p>
               </li>
             </ul>
           </v-col>
-            <div v-if="next">
-              <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
-            </div>
         </v-row>
+      </div>
+      <div v-if="nextPage">
+        <v-btn
+          class="my-5"
+          @click="viewMore()">
+            View more
+        </v-btn>
       </div>
     </v-card>
   </v-container>
@@ -49,7 +58,7 @@ export default {
       animated: false,
       errorMsg: null,
       moduleTitle: 'Card sets',
-      next: '',
+      nextPage: '',
       cardSetCodesValues: this.cardSetCodes
     }
   },
@@ -59,11 +68,11 @@ export default {
   methods: {
     viewMore () {
       var thisVm = this
-      axios.get(thisVm.next).then(response => {
+      axios.get(thisVm.nextPage).then(response => {
         for (var i = 0; i < response.data.results.length; i++) {
           thisVm.cardSets.push(response.data.results[i])
         }
-        thisVm.next = response.data.next
+        thisVm.nextPage = response.data.next
       })
     },
     viewSets () {
@@ -72,12 +81,10 @@ export default {
       let cardSetsURL = this.$constants('cardSetsURL')
       axios.get(cardSetsURL).then(response => {
         if (response.data) {
-          console.log(response.status)
-          console.log(response.data)
           thisVm.cardSets = response.data.results
           thisVm.status = response.status
           thisVm.dataCount = response.data.count
-          thisVm.next = response.data.next
+          thisVm.nextPage = response.data.next
         }
       })
     }
