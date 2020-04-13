@@ -69,7 +69,6 @@ class PokemonCardsViewDetail(View):
 
     def get(self, request):
         # initial instantiation to avoid TypeError and empty card.prices
-        print('test')
         cards = Card.objects.all()
         context = {
             "cards": cards,

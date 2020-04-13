@@ -59,7 +59,6 @@ INSTALLED_APPS = [
     'pokemons',
     'cardsets',
     'pokepare',
-    'webpack_loader',
     'rest_framework',
     'corsheaders',
     'django_filters',
@@ -163,12 +162,6 @@ STATICFILES_DIRS = (
 
 CARD_PLACEHOLDER = STATIC_URL + 'img/pokepare_card.png'
 
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': '',
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
-    }
-}
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),  # noqa

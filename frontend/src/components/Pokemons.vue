@@ -108,9 +108,9 @@ export default {
   components: {
   },
   mounted () {
-    const path = '/api/pokemons/'
+    const pokemonUrl = this.$constants.pokemonURL
     loadProgressBar()
-    axios.get(path).then(response => {
+    axios.get(pokemonUrl).then(response => {
       if (response.data) {
         console.log(response.status)
         this.next = response.data.next
