@@ -93,7 +93,6 @@ export default {
         return axios.get(pokemonCardsUrl)
       })
       .then(response => {
-        console.log(response)
         let cards = response.data
         for (var i = 0; i < cards.results.length; i++) {
           let cardPrices = utils.deepGet(cards.results[i], 'prices')
