@@ -8,12 +8,10 @@
       flat
       app
     >
-      <v-toolbar-title>
-        <a class="white--text" href="/">
-          <img src="../../assets/pokepare_200.png" height="50" alt=""/>
-          <span class="headline">POKEPARE</span>
-        </a>
-      </v-toolbar-title>
+      <a class="d-flex align-center white--text" href="/">
+        <img src="../../assets/pokepare_200.png" height="50" alt=""/>
+        <span class="headline ml-1">POKEPARE</span>
+      </a>
       <v-spacer></v-spacer>
       <v-container id="app-bar-search-bar">
         <search-bar></search-bar>
@@ -39,9 +37,7 @@ export default {
     'search-bar': SearchBar
   },
   data () {
-    return {
-      drawer: false
-    }
+    return {}
   }
 }
 </script>
