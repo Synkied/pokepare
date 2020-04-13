@@ -68,8 +68,6 @@ export default {
       immediate: true,
       deep: true,
       handler (newVal, oldVal) {
-        console.log('newVal', newVal)
-        console.log('newVal', newVal.results)
         this.cardsData = newVal.results
         this.cardsCount = newVal.count
         this.nextPage = newVal.next
@@ -83,8 +81,9 @@ export default {
     viewMore () {
       var thisVm = this
       axios.get(thisVm.nextPage).then(response => {
-        for (var i = 0; i < response.data.results.length; i++) {
-          thisVm.cardsData.push(response.data.results[i])
+        let cards = response.data.results
+        for (var i = 0; i < cards.length; i++) {
+          thisVm.cardsData.push(cards[i])
         }
         thisVm.nextPage = response.data.next
       })

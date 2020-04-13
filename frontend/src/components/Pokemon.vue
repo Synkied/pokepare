@@ -16,6 +16,7 @@
             </ul>
             <li class="ns-li" v-if="cards">
               <cards :cards="cards"></cards>
+              <price-table :cards="cards.results"></price-table>
             </li>
         </div>
       </template>
@@ -32,8 +33,11 @@
 import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
+
 import CardSets from './CardSets.vue'
 import Cards from './Cards.vue'
+import PriceTable from './PriceTable.vue'
+import utils from '@/utils'
 
 function capitalize (s) {
   return s && s[0].toUpperCase() + s.slice(1)
@@ -45,6 +49,11 @@ function onlyUnique (value, index, self) {
 
 /* data, methods, components... declaration */
 export default {
+  components: {
+    'cardsets': CardSets,
+    'cards': Cards,
+    'price-table': PriceTable
+  },
   data () {
     return {
       status: '',
@@ -60,10 +69,6 @@ export default {
     return `PokePare — ${this.pokemon.name}`
   },
   methods: {
-  },
-  components: {
-    'cardsets': CardSets,
-    'cards': Cards
   },
   mounted () {
     var thisVm = this
@@ -89,10 +94,18 @@ export default {
       })
       .then(response => {
         console.log(response)
-        thisVm.cards = response.data
-        for (var i = 0; i < response.data.results.length; i++) {
-          cardSetsList.push(response.data.results[i].card_set_code)
+        let cards = response.data
+        for (var i = 0; i < cards.results.length; i++) {
+          let cardPrices = utils.deepGet(cards.results[i], 'prices')
+          if (cardPrices) {
+            cardPrices.map(price => {
+              let cardUniqueId = utils.deepGet(cards.results[i], 'unique_id')
+              price.card_unique_id = `${cardUniqueId}`
+            })
+          }
+          cardSetsList.push(cards.results[i].card_set_code)
         }
+        thisVm.cards = cards
         thisVm.cardSets = cardSetsList.filter(onlyUnique)
       })
       .catch(function (error) {

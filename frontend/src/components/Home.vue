@@ -19,6 +19,13 @@ import FileUpload from './FileUpload.vue'
 
 /* data, methods, components... declaration */
 export default {
+  components: {
+    'rise-loader': RiseLoader,
+    'search-bar': SearchBar,
+    'pokemons': Pokemons,
+    'cards': Cards,
+    'file-upload': FileUpload
+  },
   data () {
     return {
       moduleTitle: 'Home',
@@ -49,13 +56,6 @@ export default {
     let localStorageCards = JSON.parse(localStorage.getItem('seenCards'))
     this.previouslySeenCards.results = await this.getCards(localStorageCards)
     this.previouslySeenCards.count = this.previouslySeenCards.results.length
-  },
-  components: {
-    'rise-loader': RiseLoader,
-    'search-bar': SearchBar,
-    'pokemons': Pokemons,
-    'cards': Cards,
-    'file-upload': FileUpload
   }
 }
 </script>

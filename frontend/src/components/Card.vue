@@ -19,102 +19,7 @@
               <p v-else>#{{ pokemon.number }}</p>
             </a>
           </div>
-          <v-container fluid>
-            <v-card>
-              <v-data-table
-                dark
-                dense
-                :search="searchQuery"
-                :headers="headers"
-                :items="orderedPrices"
-                :options="tableOptions"
-              >
-              <template v-slot:top>
-                <v-container>
-                  <v-row>
-                    <v-col>
-                      <v-text-field
-                        v-model="searchQuery"
-                        dense
-                        label="Search"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col>
-                      <v-autocomplete
-                        v-model="selectedWebsites"
-                        :items="websites"
-                        clearable
-                        dense
-                        chips
-                        small-chips
-                        label="Website"
-                        multiple
-                      ></v-autocomplete>
-                    </v-col>
-                    <v-col>
-                      <v-autocomplete
-                        v-model="selectedConditions"
-                        :items="conditions"
-                        clearable
-                        dense
-                        chips
-                        small-chips
-                        label="Condition"
-                        multiple
-                      ></v-autocomplete>
-                    </v-col>
-                    <v-col>
-                      <v-autocomplete
-                        v-model="selectedEditions"
-                        :items="editions"
-                        clearable
-                        dense
-                        chips
-                        small-chips
-                        label="Edition"
-                        multiple
-                      ></v-autocomplete>
-                    </v-col>
-                    <v-col>
-                      <v-autocomplete
-                        v-model="selectedCurrencies"
-                        :items="currencies"
-                        clearable
-                        dense
-                        chips
-                        small-chips
-                        label="Currency"
-                        multiple
-                      ></v-autocomplete>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </template>
-              <template v-slot:item.link="{ item }">
-                <v-btn icon color="white" :to="item.link">
-                  <v-icon small>
-                    launch
-                  </v-icon>
-                </v-btn>
-              </template>
-              <template v-slot:item.copy_row="{ item }">
-                <v-tooltip content-class="copy-tooltip" nudge-right="8" :open-on-click="true" close-delay="200" right>
-                  <template v-slot:activator="{ on }">
-                    <v-btn icon color="white" @mouseover="rowCopyTooltipText = 'Copy row'" @click="copyRow(item.product_id); rowCopyTooltipText = 'Copied!'" v-on="on">
-                      <v-icon small>
-                        file_copy
-                      </v-icon>
-                    </v-btn>
-                  </template>
-                  <span>{{ rowCopyTooltipText }}</span>
-                </v-tooltip>
-              </template>
-              <template v-slot:no-data="{ item }">
-                No prices found for {{ item.card_unique_id }}.
-              </template>
-              </v-data-table>
-            </v-card>
-          </v-container>
+          <price-table :cards="[card]"></price-table>
         </v-card>
       </v-container>
     </div>
@@ -127,10 +32,14 @@ import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
+import PriceTable from './PriceTable.vue'
 import utils from '@/utils'
 
 /* data, methods, components... declaration */
 export default {
+  components: {
+    'price-table': PriceTable
+  },
   data () {
     return {
       headers: [
@@ -181,18 +90,6 @@ export default {
         return a.market_price - b.market_price
       })
       return sortedCardPrices
-    },
-    websites () {
-      return this.computeSearchItems('website')
-    },
-    conditions () {
-      return this.computeSearchItems('condition')
-    },
-    editions () {
-      return this.computeSearchItems('edition')
-    },
-    currencies () {
-      return this.computeSearchItems('currency')
     }
   },
   methods: {
@@ -252,17 +149,6 @@ export default {
           console.error(error.config)
         })
     },
-    filterCards () {
-
-    },
-    computeSearchItems (itemToGet) {
-      let uniqueItems = new Set()
-      for (var i = this.card.prices.length - 1; i >= 0; i--) {
-        var item = utils.deepGet(this.card.prices[i], itemToGet, '')
-        uniqueItems.add(item)
-      }
-      return Array.from(uniqueItems)
-    },
     addCardToStorage (card) {
       let alreadySeenCards = []
       alreadySeenCards = JSON.parse(localStorage.getItem('seenCards'))
@@ -274,13 +160,6 @@ export default {
         if (alreadySeenCards.some(seenCard => seenCard !== card.unique_id)) {
           alreadySeenCards.push(card.unique_id)
           localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
-        }
-      }
-    },
-    copyRow (productId) {
-      for (var i = this.card.prices.length - 1; i >= 0; i--) {
-        if (this.card.prices[i].product_id === productId) {
-          this.$clipboard(this.card.prices[i])
         }
       }
     }
