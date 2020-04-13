@@ -15,7 +15,7 @@
             <ul class="mb-5">
               <li class="ns-li mb-2">
                 <a :href="cardSet.url">
-                  <img class="cardset-img" :src="cardSet.image" height="20px" :alt="cardSet.name">
+                  <img class="cardset-img" :src="cardSet.image" :alt="cardSet.name">
                 </a>
               </li>
               <li class="ns-li">
@@ -100,4 +100,7 @@ export default {
 
 <!-- scoped styles for this component -->
 <style scoped>
+.cardset-img {
+  max-height: 20px;
+}
 </style>

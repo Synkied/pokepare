@@ -24,6 +24,7 @@
               <v-data-table
                 dark
                 dense
+                :search="searchQuery"
                 :headers="headers"
                 :items="orderedPrices"
                 :options="tableOptions"
@@ -40,8 +41,9 @@
                     </v-col>
                     <v-col>
                       <v-autocomplete
-                        v-model="values"
-                        :items="items"
+                        v-model="selectedWebsites"
+                        :items="websites"
+                        clearable
                         dense
                         chips
                         small-chips
@@ -51,8 +53,9 @@
                     </v-col>
                     <v-col>
                       <v-autocomplete
-                        v-model="values"
-                        :items="items"
+                        v-model="selectedConditions"
+                        :items="conditions"
+                        clearable
                         dense
                         chips
                         small-chips
@@ -62,8 +65,9 @@
                     </v-col>
                     <v-col>
                       <v-autocomplete
-                        v-model="values"
-                        :items="items"
+                        v-model="selectedEditions"
+                        :items="editions"
+                        clearable
                         dense
                         chips
                         small-chips
@@ -73,8 +77,9 @@
                     </v-col>
                     <v-col>
                       <v-autocomplete
-                        v-model="values"
-                        :items="items"
+                        v-model="selectedCurrencies"
+                        :items="currencies"
+                        clearable
                         dense
                         chips
                         small-chips
@@ -93,7 +98,7 @@
                 </v-btn>
               </template>
               <template v-slot:item.copy_row="{ item }">
-                <v-tooltip :open-on-click="true" close-delay="200" right>
+                <v-tooltip content-class="copy-tooltip" nudge-right="8" :open-on-click="true" close-delay="200" right>
                   <template v-slot:activator="{ on }">
                     <v-btn icon color="white" @mouseover="rowCopyTooltipText = 'Copy row'" @click="copyRow(item.product_id); rowCopyTooltipText = 'Copied!'" v-on="on">
                       <v-icon small>
@@ -105,7 +110,7 @@
                 </v-tooltip>
               </template>
               <template v-slot:no-data="{ item }">
-                No prices found for {{ item.name }}.
+                No prices found for {{ item.card_unique_id }}.
               </template>
               </v-data-table>
             </v-card>
@@ -122,11 +127,14 @@ import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
+import utils from '@/utils'
+
 /* data, methods, components... declaration */
 export default {
   data () {
     return {
       headers: [
+        { text: 'Card id', value: 'card_unique_id' },
         { text: 'Website', value: 'website' },
         { text: 'Condition', value: 'condition' },
         { text: 'Edition', value: 'edition' },
@@ -151,7 +159,10 @@ export default {
       uniqueNumInSet: '',
       items: [],
       searchQuery: '',
-      values: '',
+      selectedWebsites: '',
+      selectedConditions: '',
+      selectedEditions: '',
+      selectedCurrencies: '',
       rowCopyTooltipText: 'Copy row'
     }
   },
@@ -161,6 +172,27 @@ export default {
   watch: {
     card: function (newVal, oldVal) {
       this.addCardToStorage(newVal)
+    }
+  },
+  computed: {
+    orderedPrices () {
+      let sortedCardPrices = JSON.parse(JSON.stringify(this.card.prices))
+      sortedCardPrices = sortedCardPrices.sort((a, b) => {
+        return a.market_price - b.market_price
+      })
+      return sortedCardPrices
+    },
+    websites () {
+      return this.computeSearchItems('website')
+    },
+    conditions () {
+      return this.computeSearchItems('condition')
+    },
+    editions () {
+      return this.computeSearchItems('edition')
+    },
+    currencies () {
+      return this.computeSearchItems('currency')
     }
   },
   methods: {
@@ -181,6 +213,10 @@ export default {
           if (response.data) {
             thisVm.status = response.status
             thisVm.card = response.data.results[0]
+            thisVm.card.prices.map(price => {
+              let cardUniqueId = utils.deepGet(thisVm.card, 'unique_id')
+              price.card_unique_id = `${cardUniqueId}`
+            })
             thisVm.numberInCardSet = response.data.results[0].number_in_set
           }
           // get the pokemon data linked to the card
@@ -216,6 +252,17 @@ export default {
           console.error(error.config)
         })
     },
+    filterCards () {
+
+    },
+    computeSearchItems (itemToGet) {
+      let uniqueItems = new Set()
+      for (var i = this.card.prices.length - 1; i >= 0; i--) {
+        var item = utils.deepGet(this.card.prices[i], itemToGet, '')
+        uniqueItems.add(item)
+      }
+      return Array.from(uniqueItems)
+    },
     addCardToStorage (card) {
       let alreadySeenCards = []
       alreadySeenCards = JSON.parse(localStorage.getItem('seenCards'))
@@ -238,14 +285,6 @@ export default {
       }
     }
   },
-  computed: {
-    orderedPrices () {
-      let sortedCardPrices = JSON.parse(JSON.stringify(this.card.prices))
-      return sortedCardPrices.sort((a, b) => {
-        return a.market_price - b.market_price
-      })
-    }
-  },
   async mounted () {
     await this.getCardData()
   }
@@ -254,4 +293,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.v-tooltip__content.copy-tooltip {
+  border-radius: 0;
+  padding: 2px 5px;
+  font-size: 12px;
+}
 </style>
