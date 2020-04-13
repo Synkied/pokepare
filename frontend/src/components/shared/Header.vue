@@ -10,14 +10,14 @@
     >
       <a class="d-flex align-center white--text" href="/">
         <img src="../../assets/pokepare_200.png" height="50" alt=""/>
-        <span class="headline ml-1">POKEPARE</span>
+        <span class="headline ml-1">POKÉPARE</span>
       </a>
       <v-spacer></v-spacer>
       <v-container id="app-bar-search-bar">
         <search-bar></search-bar>
       </v-container>
       <v-btn text small to="/cards">Cards</v-btn>
-      <v-btn text small to="/pokemons">Pokemon</v-btn>
+      <v-btn text small to="/pokemons">Pokémon</v-btn>
       <v-btn text small to="/cardsets">Cards Sets</v-btn>
       <v-btn icon small to="#">
         <v-icon>

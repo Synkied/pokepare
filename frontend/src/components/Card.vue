@@ -86,18 +86,26 @@
                 </v-container>
               </template>
               <template v-slot:item.link="{ item }">
-                <v-btn icon color="primary" :to="item.link">
+                <v-btn icon color="white" :to="item.link">
                   <v-icon small>
                     launch
                   </v-icon>
                 </v-btn>
               </template>
               <template v-slot:item.copy_row="{ item }">
-                <v-btn icon color="secondary" @click="copyRow(item.product_id)">
-                  <v-icon small>
-                    file_copy
-                  </v-icon>
-                </v-btn>
+                <v-tooltip :open-on-click="true" close-delay="200" right>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon color="white" @mouseover="rowCopyTooltipText = 'Copy row'" @click="copyRow(item.product_id); rowCopyTooltipText = 'Copied!'" v-on="on">
+                      <v-icon small>
+                        file_copy
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>{{ rowCopyTooltipText }}</span>
+                </v-tooltip>
+              </template>
+              <template v-slot:no-data="{ item }">
+                No prices found for {{ item.name }}.
               </template>
               </v-data-table>
             </v-card>
@@ -143,26 +151,32 @@ export default {
       uniqueNumInSet: '',
       items: [],
       searchQuery: '',
-      values: ''
+      values: '',
+      rowCopyTooltipText: 'Copy row'
     }
   },
   title () {
     return `PokePare — ${this.card.name}`
   },
+  watch: {
+    card: function (newVal, oldVal) {
+      this.addCardToStorage(newVal)
+    }
+  },
   methods: {
-    getCardData () {
+    async getCardData () {
       var thisVm = this
       if (thisVm.$route.params) {
         thisVm.cardId = thisVm.$route.params.unique_id
       }
-      const pokemonURL = this.$constants('pokemonURL')
-      const cardSetsURL = this.$constants('cardSetsURL')
-      const cardsURL = this.$constants('cardsURL')
-      const cardURL = `${cardsURL}?unique_id=${encodeURI(thisVm.cardId)}`
+      const pokemonUrl = this.$constants('pokemonUrl')
+      const cardSetsUrl = this.$constants('cardSetsUrl')
+      const cardsUrl = this.$constants('cardsUrl')
+      const cardUrl = `${cardsUrl}?unique_id=${encodeURI(thisVm.cardId)}`
       loadProgressBar()
 
       // get the cards data
-      axios.get(cardURL)
+      axios.get(cardUrl)
         .then(response => {
           if (response.data) {
             thisVm.status = response.status
@@ -171,13 +185,13 @@ export default {
           }
           // get the pokemon data linked to the card
           let pokemonId = response.data.results[0].pokemon
-          return axios.get(`${pokemonURL}${pokemonId}`)
+          return axios.get(`${pokemonUrl}${pokemonId}`)
         })
         .then(response => {
           thisVm.pokemon = response.data
           thisVm.pokemonId = response.data.id
           // get the card's set data
-          const cardSetPath = `${cardSetsURL}?code=${encodeURI(thisVm.card.card_set_code)}`
+          const cardSetPath = `${cardSetsUrl}?code=${encodeURI(thisVm.card.card_set_code)}`
           return axios.get(cardSetPath)
         })
         .then(response => {
@@ -202,6 +216,20 @@ export default {
           console.error(error.config)
         })
     },
+    addCardToStorage (card) {
+      let alreadySeenCards = []
+      alreadySeenCards = JSON.parse(localStorage.getItem('seenCards'))
+      if (!alreadySeenCards) {
+        alreadySeenCards = []
+        alreadySeenCards.push(card.unique_id)
+        localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
+      } else {
+        if (alreadySeenCards.some(seenCard => seenCard !== card.unique_id)) {
+          alreadySeenCards.push(card.unique_id)
+          localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
+        }
+      }
+    },
     copyRow (productId) {
       for (var i = this.card.prices.length - 1; i >= 0; i--) {
         if (this.card.prices[i].product_id === productId) {
@@ -218,13 +246,12 @@ export default {
       })
     }
   },
-  mounted () {
-    this.getCardData()
+  async mounted () {
+    await this.getCardData()
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 </style>

@@ -1,7 +1,10 @@
 <template>
   <v-container>
     <v-card tile flat outlined>
-      <v-card-title class="secondary darken-1 headline">
+      <v-card-title class="secondary darken-1 headline" v-if="customCardTitle">
+        {{ customCardTitle }}
+      </v-card-title>
+      <v-card-title class="secondary darken-1 headline" v-else>
         {{ cardsCount }} CARDS
       </v-card-title>
       <v-divider class="mb-5"></v-divider>
@@ -42,7 +45,7 @@ import 'axios-progress-bar/dist/nprogress.css'
 
 /* data, methods, components... declaration */
 export default {
-  props: ['cards', 'cardSetCode'],
+  props: ['cards', 'cardSetCode', 'customCardTitle'],
   data () {
     return {
       status: '',
@@ -61,10 +64,16 @@ export default {
     return `PokePare — ${this.moduleTitle}`
   },
   watch: {
-    cards: function (newVal, oldVal) {
-      this.cardsData = this.cards.results
-      this.cardsCount = this.cards.count
-      this.nextPage = this.cards.next
+    cards: {
+      immediate: true,
+      deep: true,
+      handler (newVal, oldVal) {
+        console.log('newVal', newVal)
+        console.log('newVal', newVal.results)
+        this.cardsData = newVal.results
+        this.cardsCount = newVal.count
+        this.nextPage = newVal.next
+      }
     },
     cardSetCode: function (newVal, oldVal) {
       this.cardSetCodeValue = newVal
@@ -80,13 +89,11 @@ export default {
         thisVm.nextPage = response.data.next
       })
     },
-    initData (path) {
+    initData (apiURL) {
       var thisVm = this
       loadProgressBar()
-      axios.get(path).then(response => {
+      axios.get(apiURL).then(response => {
         if (response.data) {
-          console.log('cards status:', response.status)
-          console.log(response.data)
           thisVm.cardsData = response.data.results
           thisVm.status = response.status
           thisVm.cardsCount = response.data.count
@@ -97,31 +104,31 @@ export default {
           if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
-            console.log(error.response.data)
-            console.log(error.response.status)
-            console.log(error.response.headers)
+            console.error(error.response.data)
+            console.error(error.response.status)
+            console.error(error.response.headers)
           } else if (error.request) {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser
             // and an instance of http.ClientRequest in node.js
-            console.log(error.request)
+            console.error(error.request)
           } else {
             // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message)
+            console.error('Error', error.message)
           }
-          console.log(error.config)
+          console.error(error.config)
         })
     }
   },
   mounted () {
     var thisVm = this
     if (!thisVm.cards) {
-      let cardsURL = this.$constants('cardsURL')
+      let cardsUrl = this.$constants('cardsUrl')
       if (thisVm.cardSetCodeValue) {
-        thisVm.path = `${cardsURL}?card_set_code=${thisVm.cardSetCodeValue}`
+        thisVm.path = `${cardsUrl}?card_set_code=${thisVm.cardSetCodeValue}`
         thisVm.initData(thisVm.path)
       } else {
-        thisVm.path = `${cardsURL}`
+        thisVm.path = `${cardsUrl}`
         thisVm.initData(thisVm.path)
       }
     }

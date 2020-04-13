@@ -38,9 +38,9 @@ export default {
       /* axios to ajax the query */
       thisVm.userQuery = thisVm.$route.query.query
       if (thisVm.userQuery) {
-        const path = `${this.$constants('cardsURL')}?insensitive_name=${encodeURI(thisVm.userQuery)}`
+        const searchCardUrl = `${this.$constants('cardsUrl')}?insensitive_name=${encodeURI(thisVm.userQuery)}`
         loadProgressBar()
-        axios.get(path).then(response => {
+        axios.get(searchCardUrl).then(response => {
           if (response.data.count > 0) {
             console.log('search_bar', response.data)
             thisVm.cards = response.data

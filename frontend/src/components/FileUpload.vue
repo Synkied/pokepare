@@ -3,6 +3,7 @@
     <div>
       <v-file-input
         show-size
+        outlined
         accept="image/*"
         label="Upload a Pokémon card..."
         id="file"

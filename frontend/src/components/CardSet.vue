@@ -43,10 +43,10 @@ export default {
       if (thisVm.$route.params) {
         thisVm.cardSetCode = thisVm.$route.params.code
       }
-      const cardSetURL = `${this.$constants('cardSetsURL')}?code=${encodeURI(thisVm.cardSetCode)}`
+      const cardSetUrl = `${this.$constants('cardSetsUrl')}?code=${encodeURI(thisVm.cardSetCode)}`
       loadProgressBar()
-      console.log(cardSetURL)
-      axios.get(cardSetURL).then(response => {
+      console.log(cardSetUrl)
+      axios.get(cardSetUrl).then(response => {
         console.log(response)
         if (response.data) {
           thisVm.status = response.status

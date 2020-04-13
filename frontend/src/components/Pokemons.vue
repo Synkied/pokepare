@@ -127,9 +127,9 @@ export default {
   components: {
   },
   mounted () {
-    const pokemonURL = this.$constants('pokemonURL')
+    const pokemonUrl = this.$constants('pokemonUrl')
     loadProgressBar()
-    axios.get(pokemonURL).then(response => {
+    axios.get(pokemonUrl).then(response => {
       if (response.data) {
         this.next = response.data.next
         this.pokemons = response.data.results
