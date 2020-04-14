@@ -14,15 +14,15 @@
             :key="cardSet.id">
             <ul class="mb-5">
               <li class="ns-li mb-2">
-                <a :href="cardSet.url">
+                <router-link :to="{ name: 'cardSetDetail', params: { code: cardSet.code }}">
                   <img class="cardset-img" :src="cardSet.image" :alt="cardSet.name">
-                </a>
+                </router-link>
               </li>
               <li class="ns-li">
                 <p>
-                  <a :href="cardSet.url">
+                  <router-link :to="{ name: 'cardSetDetail', params: { code: cardSet.code }}">
                     {{ cardSet.name }}
-                  </a>
+                  </router-link>
                 </p>
               </li>
             </ul>
