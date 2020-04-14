@@ -1,16 +1,48 @@
 <template>
-  <div class="container">
-    <div class="col-xl-12 col-12 cell">
-      <label class="btn btn-primary">Browse files...
-        <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" hidden/>
-      </label>
-      {{ file.name }}
+  <v-container>
+    <div>
+      <v-file-input
+        show-size
+        filled
+        dense
+        accept="image/*"
+        placeholder="Upload a Pokémon card..."
+        id="file"
+        ref="file"
+        v-model="userUploadedFile"
+        prepend-icon=""
+        prepend-inner-icon="image"
+        @change="handleFileUpload()"
+      />
     </div>
-    <button class="btn btn-info" v-on:click="submitFile()">Submit</button>
-    <div class="mt-4" v-if="errorMsg">
-      <b-alert show variant="danger">{{ errorMsg }}</b-alert>
-    </div>
-  </div>
+    <v-btn
+      tile
+      outlined
+      color="primary"
+      @click="submitFile()"
+    >
+      Upload image
+    </v-btn>
+
+    <v-snackbar
+      :top="true"
+      v-model="snackbar.showSnackbar"
+      :color="snackbar.color"
+      class="color--text"
+      :multi-line="snackbar.mode === 'multi-line'"
+      :timeout="snackbar.timeout"
+      :vertical="snackbar.mode === 'vertical'">
+      <span v-if="snackbar.status">
+        {{ snackbar.status }}
+      </span>
+      {{ snackbar.text }}
+      <v-btn
+        text
+        @click="snackbar.showSnackbar = false">
+        <v-icon class="color--text">close</v-icon>
+      </v-btn>
+    </v-snackbar>
+  </v-container>
 </template>
 
 <script>
@@ -26,9 +58,16 @@ export default {
   */
   data () {
     return {
-      file: '',
       card_name: '',
-      errorMsg: ''
+      userUploadedFile: null,
+      snackbar: {
+        showSnackbar: false,
+        color: '',
+        mode: '',
+        timeout: 4000,
+        text: '',
+        errors: ''
+      }
     }
   },
   methods: {
@@ -38,34 +77,54 @@ export default {
       /* Initialize the form data */
       let formData = new FormData()
 
-      /* Add the form data we need to submit */
-      formData.append('image', this.file)
-      loadProgressBar()
-      /* Make the request to the POST /single-file URL */
-      axios.post('/file-upload/',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
+      if (this.userUploadedFile) {
+        /* Add the form data we need to submit */
+        formData.append('image', this.userUploadedFile)
+        loadProgressBar()
+        /* Make the request to the POST /single-file URL */
+        axios.post('/file-upload/',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
           }
-        }
-      ).then(response => {
-        if (response.data) {
-          thisVm.card_name = response.data.result
-        }
-        if (thisVm.card_name) {
-          window.location.href = '/cards/' + thisVm.card_name
-        } else {
-          thisVm.errorMsg = 'No card found for this image.'
-        }
-      })
-        .catch(function () {
-          console.log('FAILURE!!')
+        ).then(response => {
+          if (response.data) {
+            thisVm.card_name = response.data.result
+          }
+          if (thisVm.card_name) {
+            window.location.href = '/cards/' + thisVm.card_name
+          } else {
+            this.snackbarMessage('No card found for this image.', 'error')
+          }
         })
+          .catch((err) => {
+            console.error(err)
+            this.snackbarMessage('A problem occured, please contact the developer.', 'error')
+          })
+      } else {
+        this.snackbarMessage('Please upload an image.', 'warning')
+      }
+    },
+    snackbarMessage (response, color, errors) {
+      let okStatus = [200, 201, 202]
+      this.snackbar.showSnackbar = false
+      this.snackbar.color = color
+      this.snackbar.showSnackbar = true
+      if (response.status) {
+        this.snackbar.status = response.status
+        if (okStatus.includes(response.status)) {
+          this.snackbar.text = 'File uploaded.'
+        } else {
+          this.snackbar.text = response.statusText
+        }
+      } else {
+        this.snackbar.text = response
+      }
     },
     /* Handles a change on the file upload */
     handleFileUpload () {
-      this.file = this.$refs.file.files[0]
     }
   }
 }
