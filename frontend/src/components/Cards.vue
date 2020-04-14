@@ -16,12 +16,14 @@
           :key="card.id">
           <ul>
             <li class="ns-li mb-2">
-              <a :href="card.url">
+              <router-link :to="{ name: 'cardDetail', params: { unique_id: card.unique_id }}">
                 <img class="card-img" :src="card.image" :alt="card.name">
-              </a>
+              </router-link>
             </li>
             <li class="ns-li">
-              <p><a :href="card.url">{{ card.name }}</a></p>
+              <p>
+                <router-link :to="{ name: 'cardDetail', params: { unique_id: card.unique_id }}">{{ card.name }}</router-link>
+              </p>
             </li>
           </ul>
         </v-col>
@@ -68,9 +70,11 @@ export default {
       immediate: true,
       deep: true,
       handler (newVal, oldVal) {
-        this.cardsData = newVal.results
-        this.cardsCount = newVal.count
-        this.nextPage = newVal.next
+        if (newVal) {
+          this.cardsData = newVal.results
+          this.cardsCount = newVal.count
+          this.nextPage = newVal.next
+        }
       }
     },
     cardSetCode: function (newVal, oldVal) {
