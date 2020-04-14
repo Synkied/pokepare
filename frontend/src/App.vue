@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="app-wrapper">
     <app-header></app-header>
     <v-content>
       <v-container class="body-container">
@@ -43,7 +43,7 @@ export default {
 /*  background-color: #EEE;
 */}
 
-.body-container {
+.app-wrapper .container.body-container {
   padding-bottom: 100px;
 }
 
@@ -51,7 +51,7 @@ export default {
   max-width: 1400px;
 }
 
-.v-application a {
+.v-application.app-wrapper a {
   text-decoration: none;
   color: #fff
 }
