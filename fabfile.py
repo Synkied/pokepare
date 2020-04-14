@@ -146,8 +146,8 @@ def mep_install(version=None):
     gitflow_release(version)
     execute(local_push_tags)
     execute(remote_pull_production)
-    execute(build_production)
     execute(remote_install_production)
+    execute(build_production)
     execute(remote_restart_production)
 
 
