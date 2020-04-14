@@ -1,16 +1,18 @@
 <template>
-  <div id="app">
+  <v-app>
     <app-header></app-header>
-    <!-- Hey! -->
-    <search-bar></search-bar>
-    <router-view/>
-    <app-footer></app-footer>
-  </div>
+    <v-content>
+      <v-container class="body-container">
+        <router-view/>
+      </v-container>
+      <app-footer></app-footer>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-import Header from './components/Shared/Header.vue'
-import Footer from './components/Shared/Footer.vue'
+import Header from './components/shared/Header.vue'
+import Footer from './components/shared/Footer.vue'
 import SearchBar from './components/SearchBar.vue'
 
 export default {
@@ -27,58 +29,47 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Avenir');
 @import url('https://fonts.googleapis.com/css?family=Oswald');
 @import url('https://fonts.googleapis.com/css?family=Cabin');
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+@import url('https://fonts.googleapis.com/css?family=Oxygen');
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
+@import url('https://fonts.googleapis.com/css?family=Material+Icons');
+@import url('https://use.fontawesome.com/releases/v5.0.13/css/all.css');
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  background-color: #EEE;
+/*  background-color: #EEE;
+*/}
+
+.body-container {
+  padding-bottom: 100px;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
 }
 
-a {
+.v-application a {
   text-decoration: none;
-  color: #30415d
+  color: #fff
 }
 
 a:hover {
   text-decoration: none;
 }
 
-.navbar {
-  color: #000;
-}
-
-nav a, nav a:hover, nav a:active{
-  color: #000;
-}
-
-.card-title{
-  font-family: 'Oswald', sans-serif;
-  font-weight: 600;
-}
-
-.card-title a{
-  color: #0db4b9;
-}
-
-.card-title a:hover {
-  text-decoration: none;
-}
-
 .related-pokemon-image {
-  margin: -10px 0 0 0;
+  width: 100px;
+  margin: auto;
 }
 
 .pokemon-link p {
   margin: -10px 0 30px 0;
 }
 
-h1{
+h1 {
   text-align: center;
   font-family: 'Cabin', sans-serif;
   font-weight: bold;
@@ -101,21 +92,17 @@ h3 small {
 
 .ns-li {
   list-style-type: none;
-  font-weight: 600;
 }
 
 .ns-li a {
-  color: #000;
   text-decoration: none;
 }
 
 .ns-li a:hover {
-  color: #0e5c59;
   text-decoration: none;
 }
 
 .ns-li p {
-  font-size: 1rem;
   text-align:center;
 }
 
@@ -123,58 +110,8 @@ ul {
   padding: 0;
 }
 
-table {
-  border: 2px solid #42b983;
-  border-radius: 3px;
-  background-color: #000;
-}
-
-th {
-  background-color: #42b983;
-  color: rgba(255,255,255,0.66);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-td {
-  background-color: #f9f9f9;
-}
-
-th, td {
-  min-width: 120px;
-  padding: 10px 20px;
-}
-
-th.active {
-  color: #000;
-}
-
-th.active .arrow {
-  opacity: 1;
-}
-
-.arrow {
-  display: inline-block;
-  vertical-align: middle;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  opacity: 0.66;
-}
-
-.arrow.asc {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 4px solid #000;
-}
-
-.arrow.dsc {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #000;
+.v-data-table__wrapper table {
+  color: #fff;
 }
 
 </style>

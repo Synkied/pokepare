@@ -1,28 +1,48 @@
 <template>
-  <div id="pokemons" class="container mt-5">
-    <h2>{{ moduleTitle }}</h2>
-    <h4 v-if="dataCount">{{ dataCount }} Pokémon</h4>
-    <button ref="previous" class="btn btn-info mt-5" :disabled="pageNumber === 0 || disable" @click="prevPage">Prev</button>
-    <button ref="next" class="btn btn-info mt-5" :disabled="pageNumber >= pageCount -1 || disable" @click="nextPage">Next</button>
-    <div>
-      <template v-if="!userQuery">
-        <div class="container-fluid">
-          <div class="row" v-if="pokemons">
-            <div class="col-xl-2 col-lg-6 col-md-6 col-6 col-xs-6 mt-3" v-for="pokemon in paginatedData" :key="pokemon.id">
-              <ul>
-                <li class="ns-li">
-                  <a :href="pokemon.url"><img :src="pokemon.image" :alt="pokemon.name"></a>
-                </li>
-                <li class="ns-li">
-                  <p><a :href="pokemon.url">{{ pokemon.name }}</a></p>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
-  </div>
+  <v-container id="pokemons">
+    <v-card tile flat outlined>
+      <v-card-title class="secondary darken-1 headline" v-if="dataCount">
+        {{ dataCount }} POKÉMON
+      </v-card-title>
+      <v-divider class="mb-5"></v-divider>
+      <v-btn
+        outlined
+        ref="previous"
+        class="btn btn-info mt-5"
+        :disabled="pageNumber === 0 || disable"
+        @click="prevPage">
+          Prev
+      </v-btn>
+      <v-btn
+        outlined
+        ref="next"
+        class="btn btn-info mt-5"
+        :disabled="pageNumber >= pageCount -1 || disable"
+        @click="nextPage">
+          Next
+      </v-btn>
+      <div>
+        <v-row v-if="pokemons">
+          <v-col
+            cols="4"
+            md="2"
+            v-for="pokemon in paginatedData"
+            :key="pokemon.id">
+            <ul>
+              <li class="ns-li">
+                <a :href="pokemon.url">
+                  <img class="card-img" :src="pokemon.image" :alt="pokemon.name">
+                </a>
+              </li>
+              <li class="ns-li">
+                <p><a :href="pokemon.url">{{ pokemon.name }}</a></p>
+              </li>
+            </ul>
+          </v-col>
+        </v-row>
+      </div>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -37,7 +57,6 @@ export default {
     return {
       dataCount: '',
       status: '',
-      userQuery: null,
       animated: false,
       errorMsg: null,
       moduleTitle: 'Pokémon',
@@ -108,11 +127,10 @@ export default {
   components: {
   },
   mounted () {
-    const path = '/api/pokemons/'
+    const pokemonUrl = this.$constants('pokemonUrl')
     loadProgressBar()
-    axios.get(path).then(response => {
+    axios.get(pokemonUrl).then(response => {
       if (response.data) {
-        console.log(response.status)
         this.next = response.data.next
         this.pokemons = response.data.results
         this.dataCount = response.data.count
@@ -144,11 +162,4 @@ export default {
 
 <!-- scoped styles for this component -->
 <style scoped>
-  @import url('https://fonts.googleapis.com/css?family=Oxygen');
-  @import url('https://fonts.googleapis.com/css?family=Raleway');
-
-  .container {
-    max-width: 960px;
-  }
-
 </style>

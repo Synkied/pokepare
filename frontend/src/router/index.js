@@ -10,7 +10,8 @@ const routerOptions = [
   { path: '/pokemons/:name', component: 'Pokemon', name: 'pokemonDetail' },
   { path: '/cardsets/', component: 'CardSets', name: 'allCardSets' },
   { path: '/cardsets/:code', component: 'CardSet', props: true, name: 'cardSetDetail' },
-  { path: '/search/', component: 'Search', props: (route) => ({ query: route.query.query }), name: 'search' }
+  { path: '/search/', component: 'Search', props: (route) => ({ query: route.query.query }), name: 'search' },
+  { path: '/about/', component: 'About', name: 'about' }
 ]
 
 const routes = routerOptions.map(route => {
