@@ -1,63 +1,28 @@
 <template>
   <div id="cards">
     <div>
-      <template v-if="card">
-        <div class="container">
-            <ul>
-              <h3 class="card-title">{{ card.name }} - <a :href="'/sets/' + card.card_set_code">{{ card.card_set }}</a>
-                <small>{{ card.number_in_set }}</small>
-              </h3>
-              <li class="ns-li">
-                <img :src="card.image" :alt="card.name">
-              </li>
-            </ul>
-            <div class="related-pokemon-image">
-              <a :href="pokemon.url" class="pokemon-link">
-                <img :src="pokemon.image" :alt="pokemon.name">
-                <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
-                <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
-                <p v-else>#{{ pokemon.number }}</p>
-              </a>
-            </div>
-            <template v-if="card.prices.length > 0">
-                <div style="overflow-x:auto;">
-                  <table width="100%">
-                    <thead>
-                      <th>Website</th>
-                      <th>Condition</th>
-                      <th>Edition</th>
-                      <th>URL</th>
-                      <th>Current Price</th>
-                      <th>Currency</th>
-                    </thead>
-                    <tbody>
-                      <tr v-for="item in orderedPrices" :key="item.id">
-                        <td>{{ item.website }}</td>
-                        <td>{{ item.condition }}</td>
-                        <td>{{ item.edition }}</td>
-                        <td><a :href="item.link">{{ item.link }}</a></td>
-                        <td id="price">{{ item.market_price }}</td>
-                        <td>{{ item.currency }}</td>
-                      </tr>
-                    </tbody>
-<!--                     <tbody v-if="card.prices.tcgplayer" v-for="item in card.prices.tcgplayer" :key="item.id">
-  <tr v-for="price in item.prices" :key="price.id">
-    <td>TCGPlayer</td>
-    <td>N/A</td>
-    <td>{{ price.subTypeName }}</td>
-    <td><a :href="item.viewItemURL">{{ item.viewItemURL }}</a></td>
-    <td id="price">{{ price.marketPrice }}</td>
-    <td>USD</td>
-  </tr>
-</tbody> -->
-                  </table>
-                </div>
+      <v-container v-if="card">
+        <v-card flat outlined>
+          <v-card-title class="pokemon-title title justify-center">
+            {{ card.name }}&nbsp;-&nbsp;
+            <router-link :to="{ name: 'cardSetDetail', params: { code: card.card_set_code }}">{{ card.card_set }}</router-link>
+            <v-tooltip content-class="card-number-in-set-title" right>
+              <template v-slot:activator="{ on }">
+                <small v-on="on">&nbsp;{{ card.number_in_set }}</small>
               </template>
-            <template v-else>
-              <p>No prices found for this card.</p>
-            </template>
-        </div>
-      </template>
+              <span>Card number in set</span>
+            </v-tooltip>
+          </v-card-title>
+          <img :src="card.image" :alt="card.name">
+          <div class="mt-2 related-pokemon-image">
+            <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}" class="pokemon-link">
+              <img :src="pokemon.image" :alt="pokemon.name">
+              <p>#{{ pokemon.number }}</p>
+            </router-link>
+          </div>
+          <price-table :cards="[card]"></price-table>
+        </v-card>
+      </v-container>
     </div>
   </div>
 </template>
@@ -68,11 +33,29 @@ import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
+import PriceTable from './PriceTable.vue'
+import utils from '@/utils'
+
 /* data, methods, components... declaration */
 export default {
+  components: {
+    'price-table': PriceTable
+  },
   data () {
     return {
-      data: null,
+      headers: [
+        { text: 'Card id', value: 'card_unique_id' },
+        { text: 'Website', value: 'website' },
+        { text: 'Condition', value: 'condition' },
+        { text: 'Edition', value: 'edition' },
+        { text: 'URL', value: 'link' },
+        { text: 'Current Price', value: 'market_price' },
+        { text: 'Currency', value: 'currency' },
+        { text: '', value: 'copy_row', sortable: false, align: 'end', width: '1%' }
+      ],
+      tableOptions: {
+        itemsPerPage: 25
+      },
       status: '',
       card: '',
       cardId: '',
@@ -83,41 +66,72 @@ export default {
       errorMsg: null,
       numberInCardSet: '',
       totalNoCardSet: '',
-      uniqueNumInSet: ''
+      uniqueNumInSet: '',
+      items: [],
+      searchQuery: '',
+      selectedWebsites: '',
+      selectedConditions: '',
+      selectedEditions: '',
+      selectedCurrencies: '',
+      rowCopyTooltipText: 'Copy row'
     }
   },
   title () {
     return `PokePare — ${this.card.name}`
   },
+  watch: {
+    card: function (newCard, oldCard) {
+      let cardToAddToLocalStorage = {}
+      if (newCard) {
+        cardToAddToLocalStorage.unique_id = newCard.unique_id
+        cardToAddToLocalStorage.image = newCard.image
+        cardToAddToLocalStorage.name = newCard.name
+        utils.addObjectToLocalStorage('seenCards', cardToAddToLocalStorage, 'unique_id')
+      }
+    }
+  },
+  computed: {
+    orderedPrices () {
+      let sortedCardPrices = JSON.parse(JSON.stringify(this.card.prices))
+      sortedCardPrices = sortedCardPrices.sort((a, b) => {
+        return a.market_price - b.market_price
+      })
+      return sortedCardPrices
+    }
+  },
   methods: {
-    getCardData () {
+    async getCardData () {
       var thisVm = this
       if (thisVm.$route.params) {
         thisVm.cardId = thisVm.$route.params.unique_id
       }
-      const pokemonURL = this.$constants('pokemonURL')
-      const cardSetsURL = this.$constants('cardSetsURL')
-      const cardsURL = this.$constants('cardsURL')
-      const cardURL = `${cardsURL}?unique_id=${encodeURI(thisVm.cardId)}`
+      const pokemonsUrl = this.$constants('pokemonsUrl')
+      const cardSetsUrl = this.$constants('cardSetsUrl')
+      const cardsUrl = this.$constants('cardsUrl')
+      const cardDetailUrl = `${cardsUrl}?unique_id=${encodeURI(thisVm.cardId)}`
       loadProgressBar()
 
       // get the cards data
-      axios.get(cardURL)
+      axios.get(cardDetailUrl)
         .then(response => {
           if (response.data) {
             thisVm.status = response.status
             thisVm.card = response.data.results[0]
+            thisVm.card.prices.map(price => {
+              let cardUniqueId = utils.deepGet(thisVm.card, 'unique_id')
+              price.card_unique_id = `${cardUniqueId}`
+            })
             thisVm.numberInCardSet = response.data.results[0].number_in_set
           }
           // get the pokemon data linked to the card
           let pokemonId = response.data.results[0].pokemon
-          return axios.get(`${pokemonURL}${pokemonId}`)
+          return axios.get(`${pokemonsUrl}${pokemonId}`)
         })
         .then(response => {
           thisVm.pokemon = response.data
           thisVm.pokemonId = response.data.id
           // get the card's set data
-          const cardSetPath = `${cardSetsURL}?code=${encodeURI(thisVm.card.card_set_code)}`
+          const cardSetPath = `${cardSetsUrl}?code=${encodeURI(thisVm.card.card_set_code)}`
           return axios.get(cardSetPath)
         })
         .then(response => {
@@ -143,21 +157,39 @@ export default {
         })
     }
   },
-  computed: {
-    orderedPrices () {
-      let sortedCardPrices = JSON.parse(JSON.stringify(this.card.prices))
-      return sortedCardPrices.sort((a, b) => {
-        return a.market_price - b.market_price
-      })
-    }
-  },
-  mounted () {
-    this.getCardData()
+  async mounted () {
+    await this.getCardData()
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.v-tooltip__content.copy-tooltip {
+  border-radius: 0;
+  padding: 2px 5px;
+  font-size: 12px;
+}
+
+.pokemon-title small {
+  font-size: 60%;
+  color: #6f6f6f;
+  line-height: 0;
+}
+
+.pokemon-title {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+}
+
+.pokemon-title a {
+  color: #0db4b9;
+}
+
+.v-tooltip__content.card-number-in-set-title {
+  border-radius: 0;
+  padding: 2px 5px;
+  font-size: 11px;
+}
 
 </style>

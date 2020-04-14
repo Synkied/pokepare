@@ -1,62 +1,45 @@
 <template>
-  <div id="home">
-    <p>Or upload an image:</p>
+  <v-container>
     <file-upload class="mb-5"></file-upload>
-    <section class="about-us">
-      <h1 class="mt-5">What's PokePare?</h1>
-      <img class="mb-4" src="../assets/pokepare_200.png" height="40px" alt="">
-      <p>PokePare is all about finding the prices for Pokemon cards.</p>
-      <p>It's also a bit more, as it has an API built-in to retrieve Pokemons, their cards, and the cards' sets. It is available at: <a href="http://pokepare.com/api/">pokepare.com/api/</a>.</p>
-      <p>Some documentation will be written soon.</p>
-      <p>The Pokemon' data and cards were built using (a big thank to them!):</p>
-      <ul>
-        <li class="ns-li"><a href="https://pokeapi.co/">Pokéapi</a></li>
-        <li class="ns-li"><a href="http://pokemontcg.io/">PokemonTCG</a></li>
-      </ul>
-    </section>
-  </div>
+    <li class="ns-li" v-if="previouslySeenCards.results.length">
+      <cards :cards="previouslySeenCards" customCardTitle="PREVIOUSLY SEEN CARDS"></cards>
+    </li>
+  </v-container>
 </template>
 
 <script>
 /* Imports */
-import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
-import SearchBar from './SearchBar'
-import Pokemons from './Pokemons'
 import Cards from './Cards'
 import FileUpload from './FileUpload.vue'
 
 /* data, methods, components... declaration */
 export default {
+  components: {
+    'cards': Cards,
+    'file-upload': FileUpload
+  },
   data () {
     return {
-      moduleTitle: 'Home'
+      moduleTitle: 'Home',
+      previouslySeenCards: {
+        results: []
+      }
     }
   },
   title () {
     return `PokePare — ${this.moduleTitle}`
   },
-  methods: {
-  },
-  components: {
-    'rise-loader': RiseLoader,
-    'search-bar': SearchBar,
-    'pokemons': Pokemons,
-    'cards': Cards,
-    'file-upload': FileUpload
-  },
-  mounted () {
+  async mounted () {
+    // trick to not load entire card
+    let localStorageSeenCards = JSON.parse(localStorage.getItem('seenCards'))
+    if (localStorageSeenCards.length) {
+      let truncatedLocalStorageSeenCards = localStorageSeenCards.splice(0, 6)
+      this.previouslySeenCards.results = truncatedLocalStorageSeenCards
+    }
   }
 }
 </script>
 
 <!-- scoped styles for this component -->
 <style scoped>
-  @import url('https://fonts.googleapis.com/css?family=Oxygen');
-  @import url('https://fonts.googleapis.com/css?family=Raleway');
-
-  .about-us {
-    background-color: white;
-    padding: 4rem;
-  }
-
 </style>

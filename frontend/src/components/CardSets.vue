@@ -1,29 +1,43 @@
 <template>
-  <div id="sets" class="container mt-5">
-    <h2>{{ moduleTitle }}</h2>
-    <h4>{{ dataCount }} card sets</h4>
-    <div>
-      <template v-if="!userQuery">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-3 col-sm-4 col-12 mt-5"  v-for="cardSet in cardSets" :key="cardSet.id">
-              <ul>
-                <li class="ns-li mb-2">
-                  <a :href="cardSet.url"><img class="cardset-img" :src="cardSet.image" height="25px" :alt="cardSet.name"></a>
-                </li>
-                <li class="ns-li">
-                  <p><a :href="cardSet.url">{{ cardSet.name }}</a></p>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div v-if="next">
-            <button class="btn btn-info mt-5" @click="[viewMore()]">View more</button>
-          </div>
-        </div>
-      </template>
-    </div>
-  </div>
+  <v-container id="cardsets">
+    <v-card tile flat outlined>
+      <v-card-title class="secondary darken-1 headline">
+        {{ dataCount }} CARD SETS
+      </v-card-title>
+      <v-divider class="mb-5"></v-divider>
+      <div>
+        <v-row v-if="cardSets">
+          <v-col
+            cols="4"
+            md="2"
+            v-for="cardSet in cardSets"
+            :key="cardSet.id">
+            <ul class="mb-5">
+              <li class="ns-li mb-2">
+                <router-link :to="{ name: 'cardSetDetail', params: { code: cardSet.code }}">
+                  <img class="cardset-img" :src="cardSet.image" :alt="cardSet.name">
+                </router-link>
+              </li>
+              <li class="ns-li">
+                <p>
+                  <router-link :to="{ name: 'cardSetDetail', params: { code: cardSet.code }}">
+                    {{ cardSet.name }}
+                  </router-link>
+                </p>
+              </li>
+            </ul>
+          </v-col>
+        </v-row>
+      </div>
+      <div v-if="nextPage">
+        <v-btn
+          class="my-5"
+          @click="viewMore()">
+            View more
+        </v-btn>
+      </div>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -41,11 +55,10 @@ export default {
       pageCount: null,
       status: '',
       cardSets: [],
-      userQuery: null,
       animated: false,
       errorMsg: null,
       moduleTitle: 'Card sets',
-      next: '',
+      nextPage: '',
       cardSetCodesValues: this.cardSetCodes
     }
   },
@@ -55,25 +68,23 @@ export default {
   methods: {
     viewMore () {
       var thisVm = this
-      axios.get(thisVm.next).then(response => {
+      axios.get(thisVm.nextPage).then(response => {
         for (var i = 0; i < response.data.results.length; i++) {
           thisVm.cardSets.push(response.data.results[i])
         }
-        thisVm.next = response.data.next
+        thisVm.nextPage = response.data.next
       })
     },
     viewSets () {
       var thisVm = this
       loadProgressBar()
-      let cardSetsURL = this.$constants('cardSetsURL')
-      axios.get(cardSetsURL).then(response => {
+      let cardSetsUrl = this.$constants('cardSetsUrl')
+      axios.get(cardSetsUrl).then(response => {
         if (response.data) {
-          console.log(response.status)
-          console.log(response.data)
           thisVm.cardSets = response.data.results
           thisVm.status = response.status
           thisVm.dataCount = response.data.count
-          thisVm.next = response.data.next
+          thisVm.nextPage = response.data.next
         }
       })
     }
@@ -89,11 +100,7 @@ export default {
 
 <!-- scoped styles for this component -->
 <style scoped>
-  @import url('https://fonts.googleapis.com/css?family=Oxygen');
-  @import url('https://fonts.googleapis.com/css?family=Raleway');
-
-  .container {
-    max-width: 960px;
-  }
-
+.cardset-img {
+  max-height: 20px;
+}
 </style>

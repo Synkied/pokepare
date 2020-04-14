@@ -2,19 +2,11 @@
   <div id="sets">
     <div>
       <template>
-        <div class="container-fluid">
-            <ul>
-              <li class="ns-li">
-                <img :src="cardSet.image" height="100px" :alt="cardSet.name">
-              </li>
-            </ul>
-            <li class="ns-li">
-              <p>{{ cardSet.name }}</p>
-            </li>
-            <li class="ns-li" v-if="cardSetCode">
-              <cards :cardSetCode="cardSetCode"></cards>
-            </li>
-        </div>
+        <v-container>
+          <img :src="cardSet.image" height="100px" :alt="cardSet.name">
+          <p>{{ cardSet.name }}</p>
+          <cards v-if="cardSetCode" :cardSetCode="cardSetCode"></cards>
+        </v-container>
       </template>
     </div>
   </div>
@@ -51,10 +43,10 @@ export default {
       if (thisVm.$route.params) {
         thisVm.cardSetCode = thisVm.$route.params.code
       }
-      const cardSetURL = `${this.$constants('cardSetsURL')}?code=${encodeURI(thisVm.cardSetCode)}`
+      const cardSetUrl = `${this.$constants('cardSetsUrl')}?code=${encodeURI(thisVm.cardSetCode)}`
       loadProgressBar()
-      console.log(cardSetURL)
-      axios.get(cardSetURL).then(response => {
+      console.log(cardSetUrl)
+      axios.get(cardSetUrl).then(response => {
         console.log(response)
         if (response.data) {
           thisVm.status = response.status
