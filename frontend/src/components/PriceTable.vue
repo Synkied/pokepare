@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-card>
+    <v-card outlined>
       <v-data-table
         dark
         dense

@@ -3,15 +3,18 @@
     <div>
       <v-container v-if="card">
         <v-card flat outlined>
-          <ul>
-            <h3 class="card-title">{{ card.name }} - <a :href="'/cardsets/' + card.card_set_code">{{ card.card_set }}</a>
-              <small>{{ card.number_in_set }}</small>
-            </h3>
-            <li class="ns-li">
-              <img :src="card.image" :alt="card.name">
-            </li>
-          </ul>
-          <div class="related-pokemon-image">
+          <v-card-title class="pokemon-title title justify-center">
+            {{ card.name }}&nbsp;-&nbsp;
+            <a :href="'/cardsets/' + card.card_set_code">{{ card.card_set }}</a>
+            <v-tooltip content-class="card-number-in-set-title" right>
+              <template v-slot:activator="{ on }">
+                <small v-on="on">&nbsp;{{ card.number_in_set }}</small>
+              </template>
+              <span>Card number in set</span>
+            </v-tooltip>
+          </v-card-title>
+          <img :src="card.image" :alt="card.name">
+          <div class="mt-2 related-pokemon-image">
             <a :href="pokemon.url" class="pokemon-link">
               <img :src="pokemon.image" :alt="pokemon.name">
               <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
@@ -101,11 +104,11 @@ export default {
       const pokemonUrl = this.$constants('pokemonUrl')
       const cardSetsUrl = this.$constants('cardSetsUrl')
       const cardsUrl = this.$constants('cardsUrl')
-      const cardUrl = `${cardsUrl}?unique_id=${encodeURI(thisVm.cardId)}`
+      const cardDetailUrl = `${cardsUrl}?unique_id=${encodeURI(thisVm.cardId)}`
       loadProgressBar()
 
       // get the cards data
-      axios.get(cardUrl)
+      axios.get(cardDetailUrl)
         .then(response => {
           if (response.data) {
             thisVm.status = response.status
@@ -156,11 +159,14 @@ export default {
         alreadySeenCards = []
         alreadySeenCards.push(card.unique_id)
         localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
+      } else if (alreadySeenCards.includes(card.unique_id)) {
+        let idx = alreadySeenCards.indexOf(card.unique_id)
+        alreadySeenCards.splice(idx, 1)
+        alreadySeenCards.unshift(card.unique_id)
+        localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
       } else {
-        if (alreadySeenCards.some(seenCard => seenCard !== card.unique_id)) {
-          alreadySeenCards.push(card.unique_id)
-          localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
-        }
+        alreadySeenCards.push(card.unique_id)
+        localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
       }
     }
   },
@@ -177,4 +183,26 @@ export default {
   padding: 2px 5px;
   font-size: 12px;
 }
+
+.pokemon-title small {
+  font-size: 60%;
+  color: #6f6f6f;
+  line-height: 0;
+}
+
+.pokemon-title {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+}
+
+.pokemon-title a {
+  color: #0db4b9;
+}
+
+.v-tooltip__content.card-number-in-set-title {
+  border-radius: 0;
+  padding: 2px 5px;
+  font-size: 11px;
+}
+
 </style>

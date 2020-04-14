@@ -60,19 +60,6 @@ a:hover {
   text-decoration: none;
 }
 
-.card-title{
-  font-family: 'Oswald', sans-serif;
-  font-weight: 600;
-}
-
-.card-title a{
-  color: #0db4b9;
-}
-
-.card-title a:hover {
-  text-decoration: none;
-}
-
 .related-pokemon-image {
   width: 100px;
   margin: auto;

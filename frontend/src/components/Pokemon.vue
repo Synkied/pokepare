@@ -1,31 +1,31 @@
 <template>
-  <div id="pokemons" class="container">
+  <v-container id="pokemons">
     <div>
       <template v-if="pokemon">
-        <div class="container-fluid">
-            <ul>
-              <li class="ns-li">
-                <img :src="pokemon.image" :alt="pokemon.name">
-              </li>
-              <li class="ns-li">
-                <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
-                <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
-                <p v-else>#{{ pokemon.number }}</p>
-                <p>{{ pokemon.name }}</p>
-              </li>
-            </ul>
-            <li class="ns-li" v-if="cards">
-              <cards :cards="cards"></cards>
-              <price-table :cards="cards.results"></price-table>
+        <v-container>
+          <ul>
+            <li class="ns-li">
+              <img :src="pokemon.image" :alt="pokemon.name">
             </li>
-        </div>
+            <li class="ns-li">
+              <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
+              <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
+              <p v-else>#{{ pokemon.number }}</p>
+              <p>{{ pokemon.name }}</p>
+            </li>
+          </ul>
+          <li class="ns-li" v-if="cards">
+            <cards :cards="cards"></cards>
+            <!-- <price-table :cards="cards.results"></price-table> -->
+          </li>
+        </v-container>
       </template>
       <template v-else>
         {{ errorMsg }}
       </template>
 
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -69,62 +69,67 @@ export default {
     return `PokePare — ${this.pokemon.name}`
   },
   methods: {
-  },
-  mounted () {
-    var thisVm = this
-    var cardSetsList = []
-    if (thisVm.$route.params) {
-      thisVm.pokemon_name = thisVm.$route.params.name
-    }
-    const pokemonUrl = `/api/pokemons/?name=${capitalize(encodeURI(thisVm.pokemon_name))}`
-    let pokemonId
-    loadProgressBar()
-    axios.get(pokemonUrl)
-      .then(response => {
-        if (response.data.count > 0) {
-          thisVm.pokemon = response.data.results[0]
-          thisVm.status = response.status
-          pokemonId = response.data.results[0].id
-          // filter to get only unique values in array
-        } else {
-          thisVm.errorMsg = 'No Pokémon found.'
-        }
-        const pokemonCardsUrl = `/api/cards/?pokemon_id=${pokemonId}`
-        return axios.get(pokemonCardsUrl)
-      })
-      .then(response => {
-        let cards = response.data
-        for (var i = 0; i < cards.results.length; i++) {
-          let cardPrices = utils.deepGet(cards.results[i], 'prices')
-          if (cardPrices) {
-            cardPrices.map(price => {
-              let cardUniqueId = utils.deepGet(cards.results[i], 'unique_id')
-              price.card_unique_id = `${cardUniqueId}`
-            })
+    getPokemonCards () {
+      let thisVm = this
+      let cardSetsList = []
+      if (thisVm.$route.params) {
+        thisVm.pokemon_name = thisVm.$route.params.name
+      }
+      const pokemonUrl = `/api/pokemons/?name=${capitalize(encodeURI(thisVm.pokemon_name))}`
+      let pokemonId
+      loadProgressBar()
+
+      return axios.get(pokemonUrl)
+        .then(response => {
+          if (response.data.count > 0) {
+            thisVm.pokemon = response.data.results[0]
+            thisVm.status = response.status
+            pokemonId = response.data.results[0].id
+            // filter to get only unique values in array
+          } else {
+            thisVm.errorMsg = 'No Pokémon found.'
           }
-          cardSetsList.push(cards.results[i].card_set_code)
-        }
-        thisVm.cards = cards
-        thisVm.cardSets = cardSetsList.filter(onlyUnique)
-      })
-      .catch(function (error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(error.response.data)
-          console.log(error.response.status)
-          console.log(error.response.headers)
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser
-          // and an instance of http.ClientRequest in node.js
-          console.log(error.request)
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message)
-        }
-        console.log(error.config)
-      })
+          const pokemonCardsUrl = `/api/cards/?pokemon_id=${pokemonId}`
+          return axios.get(pokemonCardsUrl)
+        })
+        .then(response => {
+          let cards = response.data
+          for (var i = 0; i < cards.results.length; i++) {
+            let cardPrices = utils.deepGet(cards.results[i], 'prices')
+            if (cardPrices) {
+              cardPrices.map(price => {
+                let cardUniqueId = utils.deepGet(cards.results[i], 'unique_id')
+                price.card_unique_id = `${cardUniqueId}`
+              })
+            }
+            cardSetsList.push(cards.results[i].card_set_code)
+          }
+          thisVm.cardSets = cardSetsList.filter(onlyUnique)
+          thisVm.cards = cards
+          return cards
+        })
+        .catch(function (error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser
+            // and an instance of http.ClientRequest in node.js
+            console.log(error.request)
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.log('Error', error.message)
+          }
+          console.log(error.config)
+        })
+    }
+  },
+  async mounted () {
+    await this.getPokemonCards()
   }
 }
 </script>
