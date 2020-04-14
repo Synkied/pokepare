@@ -1,7 +1,7 @@
 const CONSTANTS = {
   cardSetsUrl: '/api/cardsets/',
   cardsUrl: '/api/cards/',
-  pokemonUrl: '/api/pokemons/'
+  pokemonsUrl: '/api/pokemons/'
 }
 
 CONSTANTS.install = function (Vue, options) {

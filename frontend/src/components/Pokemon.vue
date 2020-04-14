@@ -8,9 +8,7 @@
               <img :src="pokemon.image" :alt="pokemon.name">
             </li>
             <li class="ns-li">
-              <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
-              <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
-              <p v-else>#{{ pokemon.number }}</p>
+              <p>#{{ pokemon.number }}</p>
               <p>{{ pokemon.name }}</p>
             </li>
           </ul>
@@ -34,7 +32,6 @@ import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
-import CardSets from './CardSets.vue'
 import Cards from './Cards.vue'
 import PriceTable from './PriceTable.vue'
 import utils from '@/utils'
@@ -50,7 +47,6 @@ function onlyUnique (value, index, self) {
 /* data, methods, components... declaration */
 export default {
   components: {
-    'cardsets': CardSets,
     'cards': Cards,
     'price-table': PriceTable
   },
@@ -75,11 +71,14 @@ export default {
       if (thisVm.$route.params) {
         thisVm.pokemon_name = thisVm.$route.params.name
       }
-      const pokemonUrl = `/api/pokemons/?name=${capitalize(encodeURI(thisVm.pokemon_name))}`
+      const pokemonsUrl = this.$constants('pokemonsUrl')
+      const cardsUrl = this.$constants('cardsUrl')
+
+      const pokemonDetailUrl = `${pokemonsUrl}?name=${capitalize(encodeURI(thisVm.pokemon_name))}`
       let pokemonId
       loadProgressBar()
 
-      return axios.get(pokemonUrl)
+      return axios.get(pokemonDetailUrl)
         .then(response => {
           if (response.data.count > 0) {
             thisVm.pokemon = response.data.results[0]
@@ -89,7 +88,7 @@ export default {
           } else {
             thisVm.errorMsg = 'No Pokémon found.'
           }
-          const pokemonCardsUrl = `/api/cards/?pokemon_id=${pokemonId}`
+          const pokemonCardsUrl = `${cardsUrl}?pokemon_id=${pokemonId}`
           return axios.get(pokemonCardsUrl)
         })
         .then(response => {

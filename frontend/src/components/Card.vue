@@ -5,7 +5,7 @@
         <v-card flat outlined>
           <v-card-title class="pokemon-title title justify-center">
             {{ card.name }}&nbsp;-&nbsp;
-            <a :href="'/cardsets/' + card.card_set_code">{{ card.card_set }}</a>
+            <router-link :to="{ name: 'cardSetDetail', params: { code: card.card_set_code }}">{{ card.card_set }}</router-link>
             <v-tooltip content-class="card-number-in-set-title" right>
               <template v-slot:activator="{ on }">
                 <small v-on="on">&nbsp;{{ card.number_in_set }}</small>
@@ -15,12 +15,10 @@
           </v-card-title>
           <img :src="card.image" :alt="card.name">
           <div class="mt-2 related-pokemon-image">
-            <a :href="pokemon.url" class="pokemon-link">
+            <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}" class="pokemon-link">
               <img :src="pokemon.image" :alt="pokemon.name">
-              <p v-if="pokemon.number < 10">#00{{ pokemon.number }}</p>
-              <p v-else-if="pokemon.number < 100">#0{{ pokemon.number }}</p>
-              <p v-else>#{{ pokemon.number }}</p>
-            </a>
+              <p>#{{ pokemon.number }}</p>
+            </router-link>
           </div>
           <price-table :cards="[card]"></price-table>
         </v-card>
@@ -82,8 +80,14 @@ export default {
     return `PokePare — ${this.card.name}`
   },
   watch: {
-    card: function (newVal, oldVal) {
-      this.addCardToStorage(newVal)
+    card: function (newCard, oldCard) {
+      let cardToAddToLocalStorage = {}
+      if (newCard) {
+        cardToAddToLocalStorage.unique_id = newCard.unique_id
+        cardToAddToLocalStorage.image = newCard.image
+        cardToAddToLocalStorage.name = newCard.name
+        utils.addObjectToLocalStorage('seenCards', cardToAddToLocalStorage, 'unique_id')
+      }
     }
   },
   computed: {
@@ -101,7 +105,7 @@ export default {
       if (thisVm.$route.params) {
         thisVm.cardId = thisVm.$route.params.unique_id
       }
-      const pokemonUrl = this.$constants('pokemonUrl')
+      const pokemonsUrl = this.$constants('pokemonsUrl')
       const cardSetsUrl = this.$constants('cardSetsUrl')
       const cardsUrl = this.$constants('cardsUrl')
       const cardDetailUrl = `${cardsUrl}?unique_id=${encodeURI(thisVm.cardId)}`
@@ -121,7 +125,7 @@ export default {
           }
           // get the pokemon data linked to the card
           let pokemonId = response.data.results[0].pokemon
-          return axios.get(`${pokemonUrl}${pokemonId}`)
+          return axios.get(`${pokemonsUrl}${pokemonId}`)
         })
         .then(response => {
           thisVm.pokemon = response.data
@@ -151,23 +155,6 @@ export default {
           }
           console.error(error.config)
         })
-    },
-    addCardToStorage (card) {
-      let alreadySeenCards = []
-      alreadySeenCards = JSON.parse(localStorage.getItem('seenCards'))
-      if (!alreadySeenCards) {
-        alreadySeenCards = []
-        alreadySeenCards.push(card.unique_id)
-        localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
-      } else if (alreadySeenCards.includes(card.unique_id)) {
-        let idx = alreadySeenCards.indexOf(card.unique_id)
-        alreadySeenCards.splice(idx, 1)
-        alreadySeenCards.unshift(card.unique_id)
-        localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
-      } else {
-        alreadySeenCards.push(card.unique_id)
-        localStorage.setItem('seenCards', JSON.stringify(alreadySeenCards))
-      }
     }
   },
   async mounted () {

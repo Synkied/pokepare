@@ -30,12 +30,12 @@
             :key="pokemon.id">
             <ul>
               <li class="ns-li">
-                <a :href="pokemon.url">
+                <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">
                   <img class="card-img" :src="pokemon.image" :alt="pokemon.name">
-                </a>
+                </router-link>
               </li>
               <li class="ns-li">
-                <p><a :href="pokemon.url">{{ pokemon.name }}</a></p>
+                <p><router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">{{ pokemon.name }}</router-link></p>
               </li>
             </ul>
           </v-col>
@@ -127,9 +127,9 @@ export default {
   components: {
   },
   mounted () {
-    const pokemonUrl = this.$constants('pokemonUrl')
+    const pokemonsUrl = this.$constants('pokemonsUrl')
     loadProgressBar()
-    axios.get(pokemonUrl).then(response => {
+    axios.get(pokemonsUrl).then(response => {
       if (response.data) {
         this.next = response.data.next
         this.pokemons = response.data.results
@@ -156,6 +156,9 @@ export default {
         }
         console.log(error.config)
       })
+  },
+  goToView (routeName, routeParams) {
+    this.$router.push({ name: routeName, params: routeParams })
   }
 }
 </script>
