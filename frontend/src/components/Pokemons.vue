@@ -5,6 +5,11 @@
         {{ dataCount }} POKÉMON
       </v-card-title>
       <v-divider class="mb-5"></v-divider>
+      <v-pagination
+        v-model="pokemonPage"
+        :length="pokemonNbOfPages"
+      >
+      </v-pagination>
       <v-btn
         outlined
         ref="previous"
@@ -65,7 +70,9 @@ export default {
       pageNumber: 0,
       limit: '',
       pokemons: '',
-      disable: false
+      disable: false,
+      pokemonPage: 1,
+      pokemonNbOfPages: 1
     }
   },
   title () {
@@ -124,8 +131,6 @@ export default {
       this.pageNumber--
     }
   },
-  components: {
-  },
   mounted () {
     const pokemonsUrl = this.$constants('pokemonsUrl')
     loadProgressBar()
@@ -156,9 +161,6 @@ export default {
         }
         console.log(error.config)
       })
-  },
-  goToView (routeName, routeParams) {
-    this.$router.push({ name: routeName, params: routeParams })
   }
 }
 </script>
