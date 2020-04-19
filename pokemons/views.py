@@ -3,6 +3,7 @@ from cards.models import Card
 from django.shortcuts import render
 from django.views import View
 
+from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
 from rest_framework import permissions
@@ -19,9 +20,15 @@ class PokemonFilter(FilterSet):
     # set a filterset to use filters
     # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut  # noqa
     # but it won't let you use "exclude"
+    insensitive_name = filters.CharFilter(
+        field_name="name",
+        lookup_expr='icontains'
+    )
+
     class Meta:
         model = Pokemon
         exclude = ['image']
+        fields = '__all__'
 
 
 class PokemonViewSet(viewsets.ModelViewSet):
