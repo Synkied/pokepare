@@ -114,7 +114,7 @@ export default {
       handler (newVal, oldVal) {
         if (newVal) {
           let perPageLimit = this.perPageLimit
-          let pageOffset = (newVal * this.pageOffset) - this.pageOffset
+          let pageOffset = (this.perPageLimit * newVal) - this.perPageLimit
           let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
           this.getPokemonPage(pokemonPageUrl)
         }
@@ -123,16 +123,11 @@ export default {
     perPageLimit: {
       handler (newVal, oldVal) {
         if (newVal && oldVal) {
-          if (newVal < oldVal) {
-            console.log(newVal, oldVal)
-            this.pokemons = this.pokemons.slice(0, newVal)
-          } else {
-            let perPageLimit = this.perPageLimit
-            let pageOffset = (this.pokemonPage * this.pageOffset) - this.pageOffset
-            let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
-            console.log(pokemonPageUrl)
-            this.getPokemonPage(pokemonPageUrl)
-          }
+          let perPageLimit = this.perPageLimit
+          let pageOffset = (this.perPageLimit * this.pokemonPage) - this.perPageLimit
+          let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
+          console.log(pokemonPageUrl)
+          this.getPokemonPage(pokemonPageUrl)
         }
       }
     }
@@ -145,13 +140,13 @@ export default {
     },
     async getPokemonPage (pokemonPageUrl) {
       try {
+        console.log(pokemonPageUrl)
         let response = await axios.get(pokemonPageUrl)
         if (response.data) {
           this.pokemons = response.data.results
-          let nextPage = response.data.next
           this.pokemonCount = response.data.count
-          this.perPageLimit = Number(utils.urlArgsParser(nextPage)['limit']) || 60
-          this.pageOffset = Number(utils.urlArgsParser(nextPage)['offset']) || 0
+          this.perPageLimit = Number(utils.urlArgsParser(pokemonPageUrl)['limit']) || 60
+          this.pageOffset = Number(utils.urlArgsParser(pokemonPageUrl)['offset']) || 0
           this.pokemonNbOfPages = Math.round(this.pokemonCount / this.perPageLimit)
         }
       } catch (err) {
