@@ -30,6 +30,20 @@ const utilsFunc = {
         localStorage.setItem(localStorageItemName, JSON.stringify(localStorageItem))
       }
     }
+  },
+
+  urlArgsParser (url) {
+    let urlArgsObj = {}
+
+    try {
+      let urlArgs = url.split('?')[1].split('&')
+      for (let i = 0; i < urlArgs.length; i++) {
+        urlArgsObj[urlArgs[i].split('=')[0]] = urlArgs[i].split('=')[1]
+      }
+    } catch (err) {
+      console.error(err)
+    }
+    return urlArgsObj
   }
 }
 
