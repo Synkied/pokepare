@@ -35,6 +35,18 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Material+Icons');
 @import url('https://use.fontawesome.com/releases/v5.0.13/css/all.css');
 
+/* Hide spinners for Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Hide spinners for Chrome */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

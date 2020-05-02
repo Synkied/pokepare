@@ -1,32 +1,59 @@
 <template>
   <v-container id="pokemons">
     <v-card tile flat outlined>
-      <v-card-title class="secondary darken-1 headline" v-if="dataCount">
-        {{ dataCount }} POKÉMON
+      <v-card-title class="secondary darken-1 headline" v-if="pokemonCount">
+        <template>
+          <v-row class="justify-center">
+            <v-col
+              cols="2"
+            >
+              <span>
+                {{ pokemonCount }} POKÉMON
+              </span>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col
+              cols="6"
+            >
+            </v-col>
+          </v-row>
+        </template>
       </v-card-title>
       <v-divider class="mb-5"></v-divider>
-      <v-btn
-        outlined
-        ref="previous"
-        class="btn btn-info mt-5"
-        :disabled="pageNumber === 0 || disable"
-        @click="prevPage">
-          Prev
-      </v-btn>
-      <v-btn
-        outlined
-        ref="next"
-        class="btn btn-info mt-5"
-        :disabled="pageNumber >= pageCount -1 || disable"
-        @click="nextPage">
-          Next
-      </v-btn>
+      <v-container>
+        <v-row class="justify-center">
+          <v-col
+            cols="4"
+          >
+            <v-pagination
+              v-model="pokemonPage"
+              :length="pokemonNbOfPages"
+              next-icon="arrow_right"
+              prev-icon="arrow_left"
+              total-visible="8"
+            >
+            </v-pagination>
+          </v-col>
+          <v-col
+            cols="1"
+            >
+            <v-autocomplete
+              type="number"
+              class="no-padding-text-field"
+              :items="numberPerPage"
+              label="Per page"
+              v-model="perPageLimit"
+            >
+            </v-autocomplete>
+          </v-col>
+        </v-row>
+      </v-container>
       <div>
         <v-row v-if="pokemons">
           <v-col
             cols="4"
-            md="2"
-            v-for="pokemon in paginatedData"
+            md="3"
+            v-for="pokemon in pokemons"
             :key="pokemon.id">
             <ul>
               <li class="ns-li">
@@ -41,6 +68,14 @@
           </v-col>
         </v-row>
       </div>
+      <v-pagination
+        v-model="pokemonPage"
+        :length="pokemonNbOfPages"
+        next-icon="arrow_right"
+        prev-icon="arrow_left"
+        total-visible="6"
+      >
+      </v-pagination>
     </v-card>
   </v-container>
 </template>
@@ -51,118 +86,98 @@ import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
 
+import utils from '@/utils'
+
 /* data, methods, components... declaration */
 export default {
   data () {
     return {
-      dataCount: '',
-      status: '',
-      animated: false,
-      errorMsg: null,
+      pokemonCount: '',
       moduleTitle: 'Pokémon',
-      next: '',
-      previous: '',
-      pageNumber: 0,
-      limit: '',
-      pokemons: '',
-      disable: false
+      perPageLimit: 60,
+      pageOffset: 0,
+      pokemons: [],
+      pokemonPage: 1,
+      pokemonNbOfPages: 0,
+      numberPerPage: [
+        20,
+        60,
+        100
+      ]
     }
   },
   title () {
     return `PokePare — ${this.moduleTitle}`
   },
-  props: {
-    size: {
-      type: Number,
-      required: false,
-      default: 60
-    }
-  },
-  computed: {
-    pageCount () {
-      let l = this.dataCount
-      let s = this.size
-      return Math.ceil(l / s)
+  watch: {
+    pokemonPage: {
+      handler (newVal, oldVal) {
+        if (newVal) {
+          let perPageLimit = this.perPageLimit
+          let pageOffset = (this.perPageLimit * newVal) - this.perPageLimit
+          let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
+          this.getPokemonPage(pokemonPageUrl)
+        }
+      }
     },
-    paginatedData () {
-      const start = this.pageNumber * this.size
-      const end = start + this.size
-      return this.pokemons.slice(start, end)
+    perPageLimit: {
+      handler (newVal, oldVal) {
+        if (newVal && oldVal) {
+          let perPageLimit = this.perPageLimit
+          let pageOffset = (this.perPageLimit * this.pokemonPage) - this.perPageLimit
+          let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
+          console.log(pokemonPageUrl)
+          this.getPokemonPage(pokemonPageUrl)
+        }
+      }
     }
   },
   methods: {
-  /* viewMore () {
-      axios.get(this.next).then(response => {
-        for (var i = 0; i < response.data.results.length; i++) {
-          this.pokemons.push(response.data.results[i])
-        }
-        this.next = response.data.next
-      })
-    }, */
-    nextPage () {
-      this.disable = true
-      axios.get(this.next)
-        .then(response => {
-          for (var i = 0; i < response.data.results.length; i++) {
-            this.pokemons.push(response.data.results[i])
-            this.disable = false
-          }
-          this.next = response.data.next
-        })
-      this.pageNumber++
-      if (this.pokemons.length === this.dataCount) {
-        this.disable = false
-      }
+    async getPokemons () {
+      const pokemonsUrl = `${this.$constants('pokemonsUrl')}?limit=${this.perPageLimit}&offset=${this.pageOffset}`
+      loadProgressBar()
+      await this.getPokemonPage(pokemonsUrl)
     },
-    prevPage () {
-      axios.get(this.previous).then(response => {
-        for (var i = 0; i < response.data.results.length; i++) {
-          this.pokemons.push(response.data.results[i])
+    async getPokemonPage (pokemonPageUrl) {
+      try {
+        console.log(pokemonPageUrl)
+        let response = await axios.get(pokemonPageUrl)
+        if (response.data) {
+          this.pokemons = response.data.results
+          this.pokemonCount = response.data.count
+          this.perPageLimit = Number(utils.urlArgsParser(pokemonPageUrl)['limit']) || 60
+          this.pageOffset = Number(utils.urlArgsParser(pokemonPageUrl)['offset']) || 0
+          this.pokemonNbOfPages = Math.round(this.pokemonCount / this.perPageLimit)
         }
-        this.previous = response.data.previous
-      })
-      this.pageNumber--
-    }
-  },
-  components: {
-  },
-  mounted () {
-    const pokemonsUrl = this.$constants('pokemonsUrl')
-    loadProgressBar()
-    axios.get(pokemonsUrl).then(response => {
-      if (response.data) {
-        this.next = response.data.next
-        this.pokemons = response.data.results
-        this.dataCount = response.data.count
-        this.status = response.status
-        this.limit = Number(this.next.substring(this.next.indexOf('=') + 1, this.next.indexOf('&')))
-      }
-    })
-      .catch(function (error) {
-        if (error.response) {
+      } catch (err) {
+        if (err.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(error.response.data)
-          console.log(error.response.status)
-          console.log(error.response.headers)
-        } else if (error.request) {
+          console.log(err.response.data)
+          console.log(err.response.status)
+          console.log(err.response.headers)
+        } else if (err.request) {
           // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser
+          // `err.request` is an instance of XMLHttpRequest in the browser
           // and an instance of http.ClientRequest in node.js
-          console.log(error.request)
+          console.log(err.request)
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message)
+          console.log('Error', err.message)
         }
-        console.log(error.config)
-      })
+        console.log(err.config)
+      }
+    }
   },
-  goToView (routeName, routeParams) {
-    this.$router.push({ name: routeName, params: routeParams })
+  mounted () {
+    this.getPokemons()
   }
 }
 </script>
 
 <!-- scoped styles for this component -->
 <style scoped>
+.no-padding-text-field {
+  padding: 0;
+}
 </style>
