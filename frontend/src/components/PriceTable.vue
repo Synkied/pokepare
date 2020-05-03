@@ -72,7 +72,7 @@
         </v-container>
       </template>
       <template v-slot:item.link="{ item }">
-        <v-btn icon color="white" :href="item.link">
+        <v-btn icon color="white" :href="item.link" target="_blank">
           <v-icon small>
             launch
           </v-icon>
