@@ -161,7 +161,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'dist'),
 )
 
-CARD_PLACEHOLDER = STATIC_URL + 'img/pokepare_card.png'
+CARD_PLACEHOLDER = STATIC_URL + 'assets/pokepare_card.png'
 
 WEBPACK_LOADER = {
     'DEFAULT': {
