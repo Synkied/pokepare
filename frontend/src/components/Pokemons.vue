@@ -113,6 +113,10 @@ export default {
     pokemonPage: {
       handler (newVal, oldVal) {
         if (newVal) {
+          let curQuery = JSON.parse(JSON.stringify(this.$route.query))
+          if (Number(curQuery['page']) !== newVal) {
+            this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, page: newVal } })
+          }
           let perPageLimit = this.perPageLimit
           let pageOffset = (this.perPageLimit * newVal) - this.perPageLimit
           let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
@@ -123,10 +127,13 @@ export default {
     perPageLimit: {
       handler (newVal, oldVal) {
         if (newVal && oldVal) {
+          let curQuery = JSON.parse(JSON.stringify(this.$route.query))
+          if (Number(curQuery['per-page']) !== newVal) {
+            this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, 'per-page': newVal } })
+          }
           let perPageLimit = this.perPageLimit
           let pageOffset = (this.perPageLimit * this.pokemonPage) - this.perPageLimit
           let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
-          console.log(pokemonPageUrl)
           this.getPokemonPage(pokemonPageUrl)
         }
       }
@@ -140,7 +147,6 @@ export default {
     },
     async getPokemonPage (pokemonPageUrl) {
       try {
-        console.log(pokemonPageUrl)
         let response = await axios.get(pokemonPageUrl)
         if (response.data) {
           this.pokemons = response.data.results
@@ -153,24 +159,34 @@ export default {
         if (err.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(err.response.data)
-          console.log(err.response.status)
-          console.log(err.response.headers)
+          console.error(err.response.data)
+          console.error(err.response.status)
+          console.error(err.response.headers)
         } else if (err.request) {
           // The request was made but no response was received
           // `err.request` is an instance of XMLHttpRequest in the browser
           // and an instance of http.ClientRequest in node.js
-          console.log(err.request)
+          console.error(err.request)
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.log('Error', err.message)
+          console.error('Error', err.message)
         }
-        console.log(err.config)
+        console.error(err.config)
       }
     }
   },
-  mounted () {
-    this.getPokemons()
+  async mounted () {
+    await this.getPokemons()
+    let page = utils.deepGet(this.$route, 'query.page')
+    let perPage = utils.deepGet(this.$route, 'query.per-page')
+    if (page && parseInt(page, 10) && page <= this.pokemonNbOfPages) {
+      this.pokemonPage = Number(page)
+    } else {
+      this.pokemonPage = 1
+    }
+    if (perPage && parseInt(perPage, 10) && perPage <= this.pokemonCount) {
+      this.perPageLimit = Number(perPage)
+    }
   }
 }
 </script>
