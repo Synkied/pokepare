@@ -59,7 +59,7 @@ input[type=number]::-webkit-inner-spin-button {
   padding-bottom: 100px;
 }
 
-.container {
+#app .container {
   max-width: 1400px;
 }
 
