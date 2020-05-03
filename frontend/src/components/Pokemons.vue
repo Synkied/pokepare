@@ -8,7 +8,7 @@
       <v-btn
         outlined
         ref="previous"
-        class="mt-5"
+        class="btn btn-info mt-5"
         :disabled="pageNumber === 0 || disable"
         @click="prevPage">
           Prev
@@ -16,7 +16,7 @@
       <v-btn
         outlined
         ref="next"
-        class="mt-5"
+        class="btn btn-info mt-5"
         :disabled="pageNumber >= pageCount -1 || disable"
         @click="nextPage">
           Next
