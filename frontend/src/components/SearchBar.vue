@@ -12,6 +12,7 @@
       hide-details
       @keyup.esc="query=''"
       @keyup.enter="searchCards()"
+      @change="searchCards()"
       name="query"
       class="search-query elevation-0"
       placeholder="Enter something"

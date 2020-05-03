@@ -14,7 +14,7 @@
             </v-tooltip>
           </v-card-title>
           <img :src="card.image" :alt="card.name">
-          <div class="mt-2 related-pokemon-image">
+          <div class="mt-2 related-pokemon-image" v-if="pokemon">
             <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}" class="pokemon-link">
               <img :src="pokemon.image" :alt="pokemon.name">
               <p>#{{ pokemon.number }}</p>

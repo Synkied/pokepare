@@ -18,7 +18,6 @@ const utilsFunc = {
       localStorage.setItem(localStorageItemName, JSON.stringify(localStorageItem))
     } else if (localStorageItem.length) {
       let idx = localStorageItem.findIndex(obj => utilsFunc.deepGet(obj, keyToCheck) === utilsFunc.deepGet(item, keyToCheck))
-      console.log(idx)
       // if localStorage array exists and item already in it
       if (idx >= 0) {
         localStorageItem.splice(idx, 1)

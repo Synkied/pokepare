@@ -112,9 +112,9 @@ export default {
         { text: 'Website', value: 'website' },
         { text: 'Condition', value: 'condition' },
         { text: 'Edition', value: 'edition' },
-        { text: 'URL', value: 'link' },
         { text: 'Current Price', value: 'market_price' },
         { text: 'Currency', value: 'currency' },
+        { text: 'URL', value: 'link', sortable: false, align: 'end' },
         { text: '', value: 'copy_row', sortable: false, align: 'end', width: '1%' }
       ],
       tableOptions: {
