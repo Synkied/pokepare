@@ -6,6 +6,18 @@ from pokepare.utils import OverwriteStorage
 
 
 class Pokemon(models.Model):
+    number = models.PositiveIntegerField()
+
+
+class PokemonTranslations(models.Model):
+    pokemon = models.ForeignKey(
+        Pokemon,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name='pokemon_translations',
+    )
+    language = models.CharField(max_length=50)
     name = models.CharField(max_length=500)
     image = models.ImageField(
         storage=OverwriteStorage(),
@@ -13,4 +25,3 @@ class Pokemon(models.Model):
         blank=True,
         null=True,
     )
-    number = models.PositiveIntegerField()

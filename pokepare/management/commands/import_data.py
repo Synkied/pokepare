@@ -126,19 +126,12 @@ class Command(BaseCommand):
         with open("log_import_pokemons" + ".txt", 'w') as f:
             f.write("Import started at: " + "{}".format(date_format) + '\n')
 
-        for _ in range(ceil(int(res_json["count"]) // limit) + 1):
-            # updating the url for the offset limit each turn
-
+        while res_json.get('next'):
             try:
-                res = requests.get(url)
+                page_res = requests.get(res_json['next'])
+                pokemons = res_json.get('results')
 
-                res_json = res.json()
-
-                print(url)
-
-                url = res_json["next"]
-
-                for index, pokemon in enumerate(res_json["results"]):
+                for index, pokemon in enumerate(pokemons):
                     count += 1
 
                     new_pokemon = requests.get(
@@ -168,6 +161,7 @@ class Command(BaseCommand):
                         with open("log_import_pokemons" + ".txt", 'a') as f:
                             f.write(my_pokemon["name"] + ' imported... \n')
 
+                res_json = page_res.json()
             except KeyError as kerr:
                 self.stdout.write(
                     "KeyError",
