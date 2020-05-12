@@ -20,7 +20,8 @@ class PokemonDRFTestCase(TestCase):
     def setUp(self):
         """Define the test client and other test variables."""
         self.client = APIClient()
-        self.user = User.objects.create_superuser('test_user', '', 'test_password')
+        self.user = User.objects.create_superuser(
+            'test_user', '', 'test_password')
         self.pokemon_data = {'id': 1, 'name': "Bulbasaur", 'number': 1}
         _ = Pokemon.objects.create(**self.pokemon_data)
 

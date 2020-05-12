@@ -3,7 +3,7 @@ from .base import *  # noqa
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DEBUG = False
+DEBUG = True
 
 DATABASES = {
     'default': {

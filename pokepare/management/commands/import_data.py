@@ -15,6 +15,7 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 
 from pokemons.models import Pokemon
+from pokemons.models import PokemonTranslation
 
 import requests
 
@@ -83,7 +84,8 @@ class Command(BaseCommand):
                     file_name = "-".join((url.split('/')[-2::]))
 
                 elif obj.__class__.__name__ == 'Pokemon':
-                    file_name = ".".join([obj.name, url.split('.')[-1]])
+                    ext = url.split('.')[-1]
+                    file_name = ".".join([str(obj.number), ext])
 
                 elif obj.__class__.__name__ == 'CardSet':
                     file_name = "-".join((url.split('/')[-2::]))
@@ -102,8 +104,10 @@ class Command(BaseCommand):
 
                     # Write image block to temporary file
                     lf.write(block)
-
-                obj.image.save(file_name, files.File(lf))
+                if obj.__class__.__name__ == 'Pokemon':
+                    obj.front_sprite.save(file_name, files.File(lf))
+                else:
+                    obj.image.save(file_name, files.File(lf))
         else:
             return False
 
@@ -117,49 +121,73 @@ class Command(BaseCommand):
         limit = 20
         date_format = time.strftime('%Y-%m-%d_%H:%M')
 
-        url = 'http://pokeapi.co/api/v2/pokemon?limit=' + str(limit)
+        url = 'https://pokeapi.co/api/v2/pokemon-species/?limit=' + str(limit)
+        pokemon_sprites_url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'  # noqa
+        import_log_file = 'log_import_pokemons.txt'
 
         res = requests.get(url)
 
         res_json = res.json()
 
-        with open("log_import_pokemons" + ".txt", 'w') as f:
+        with open(import_log_file, 'w') as f:
             f.write("Import started at: " + "{}".format(date_format) + '\n')
 
         while res_json.get('next'):
             try:
                 page_res = requests.get(res_json['next'])
                 pokemons = res_json.get('results')
-
-                for index, pokemon in enumerate(pokemons):
-                    count += 1
-
-                    new_pokemon = requests.get(
-                        res_json["results"][index]['url'])
-                    name = new_pokemon.json()['name'].title()
-                    pokemon_id = new_pokemon.json()['id']
-                    image = new_pokemon.json()['sprites']['front_default']
-
-                    my_pokemon = {
-                        "name": name,
+                for pokemon in pokemons:
+                    pokemon_specie = requests.get(pokemon.get('url')).json()
+                    pokemon_id = pokemon_specie.get('id')
+                    pokemon_front_sprite = '%s%s.png' % (
+                        pokemon_sprites_url, pokemon_id)
+                    pokemon_names = pokemon_specie.get('names')
+                    new_pokemon = {
                         "number": pokemon_id,
-                        "image": image,
+                        "front_sprite": pokemon_front_sprite,
                     }
-
                     pokemon_obj, created = Pokemon.objects.get_or_create(
-                        **my_pokemon
+                        **new_pokemon
                     )
-                    self.get_remote_image(image, pokemon_obj)
 
                     if created:
-                        self.stdout.write(my_pokemon["name"] + ' imported...')
-                        with open("log_import_pokemons" + ".txt", 'a') as f:
-                            f.write(my_pokemon["name"] + ' imported... \n')
+                        self.stdout.write('Num: %s %s' % (
+                            new_pokemon['number'], 'imported...'))
+                        with open(import_log_file, 'a') as f:
+                            f.write('Num: %s %s' % (
+                                new_pokemon['number'], 'imported...\n'))
                     else:
-                        self.stdout.write(
-                            my_pokemon["name"] + ' NOT CREATED...')
-                        with open("log_import_pokemons" + ".txt", 'a') as f:
-                            f.write(my_pokemon["name"] + ' imported... \n')
+                        self.stdout.write('Num: %s %s' % (
+                            new_pokemon['number'], 'NOT CREATED...'))
+                        with open(import_log_file, 'a') as f:
+                            f.write('Num: %s %s' % (
+                                new_pokemon['number'], 'NOT CREATED...'))
+
+                    self.get_remote_image(pokemon_front_sprite, pokemon_obj)
+
+                    for name_data in pokemon_names:
+                        new_pokemon_t = {
+                            "pokemon": pokemon_obj,
+                            "name": name_data['name'],
+                            "language": name_data['language']['name'],
+                        }
+
+                        pokemon_t_obj, created = PokemonTranslation.objects.get_or_create(  # noqa
+                            **new_pokemon_t
+                        )
+
+                        if created:
+                            self.stdout.write('%s %s' % (
+                                    new_pokemon_t['name'], 'imported...\n'))
+                            with open(import_log_file, 'a') as f:
+                                f.write('%s %s' % (
+                                    new_pokemon_t['name'], 'imported...\n'))
+                        else:
+                            self.stdout.write('%s %s' % (
+                                new_pokemon_t['name'], 'NOT CREATED...'))
+                            with open(import_log_file, 'a') as f:
+                                f.write('%s %s' % (
+                                    new_pokemon_t['name'], 'NOT CREATED...'))
 
                 res_json = page_res.json()
             except KeyError as kerr:
@@ -170,7 +198,7 @@ class Command(BaseCommand):
                 )
                 pass
 
-        with open("log_import_pokemons" + ".txt", 'a') as f:
+        with open(import_log_file, 'a') as f:
             f.write("Import finished at: " + "{}".format(date_format))
 
         self.stdout.write(

@@ -11,6 +11,7 @@ from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
 
 from .models import Pokemon
+from .models import PokemonTranslation
 from .serializers import PokemonSerializer
 
 # Create your views here.
@@ -27,7 +28,7 @@ class PokemonFilter(FilterSet):
 
     class Meta:
         model = Pokemon
-        exclude = ['image']
+        exclude = ['front_sprite']
         fields = '__all__'
 
 
@@ -44,12 +45,23 @@ class PokemonViewSet(viewsets.ModelViewSet):
     ordering = ['number']  # default ordering
 
 
-class PokemonView(View):
+class PokemonTranslationViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows pokemons to be viewed or edited.
+    """
+    queryset = PokemonTranslation.objects.all()
+    serializer_class = PokemonSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter,)
+    filter_class = PokemonFilter
+    ordering_fields = '__all__'  # what field can be ordered via the API
+    ordering = ['number']  # default ordering
 
+
+class PokemonView(View):
     template_name = "index.html"
 
     def get(self, request):
-
         pokemons = Pokemon.objects.all()
 
         context = {
@@ -59,24 +71,43 @@ class PokemonView(View):
         return render(request, self.template_name, context)
 
 
-class PokemonViewDetail(View):
-
+class PokemonTranslationView(View):
     template_name = "index.html"
 
-    def get(self, request, name):
+    def get(self, request):
+        pokemons_trans = PokemonTranslation.objects.all()
 
-        context = {}
+        context = {
+            "pokemons_trans": pokemons_trans,
+        }
 
         return render(request, self.template_name, context)
 
 
-class PokemonCardsViewDetail(View):
+class PokemonViewDetail(View):
+    template_name = "index.html"
 
+    def get(self, request, number):
+        context = {}
+        return render(request, self.template_name, context)
+
+
+class PokemonTranslationViewDetail(View):
+    template_name = "index.html"
+
+    def get(self, request, name):
+        pokemons_trans = PokemonTranslation.objects.get(name=name)
+        context = {
+            "pokemons_trans": pokemons_trans
+        }
+        return render(request, self.template_name, context)
+
+
+class PokemonCardsViewDetail(View):
     template_name = "index.html"
 
     def get(self, request):
         # initial instantiation to avoid TypeError and empty card.prices
-        print('test')
         cards = Card.objects.all()
         context = {
             "cards": cards,
