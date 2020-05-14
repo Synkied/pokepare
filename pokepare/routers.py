@@ -9,4 +9,5 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register(r'cards', card_views.CardViewSet, basename="card")
 router.register(r'pokemons', pokemon_views.PokemonViewSet, basename="pokemon")
+router.register(r'pokemons_translations', pokemon_views.PokemonTranslationViewSet, basename="pokemon_translation")  # noqa
 router.register(r'cardsets', cardset_views.CardSetViewSet, basename="cardset")

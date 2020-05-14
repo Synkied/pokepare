@@ -19,7 +19,7 @@ class PokemonSerializer(serializers.HyperlinkedModelSerializer):
 class PokemonTranslationSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
     url = serializers.HyperlinkedIdentityField(
-        view_name='pokemons:pokemon_detail',
+        view_name='pokemons:pokemon_translation_detail',
         lookup_field='name',
     )
 

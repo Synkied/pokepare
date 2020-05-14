@@ -13,11 +13,19 @@ from rest_framework.filters import OrderingFilter
 from .models import Pokemon
 from .models import PokemonTranslation
 from .serializers import PokemonSerializer
+from .serializers import PokemonTranslationSerializer
 
 # Create your views here.
 
 
 class PokemonFilter(FilterSet):
+    class Meta:
+        model = Pokemon
+        exclude = ['front_sprite']
+        fields = '__all__'
+
+
+class PokemonTranslationFilter(FilterSet):
     # set a filterset to use filters
     # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut  # noqa
     # but it won't let you use "exclude"
@@ -27,7 +35,7 @@ class PokemonFilter(FilterSet):
     )
 
     class Meta:
-        model = Pokemon
+        model = PokemonTranslation
         exclude = ['front_sprite']
         fields = '__all__'
 
@@ -50,12 +58,12 @@ class PokemonTranslationViewSet(viewsets.ModelViewSet):
     API endpoint that allows pokemons to be viewed or edited.
     """
     queryset = PokemonTranslation.objects.all()
-    serializer_class = PokemonSerializer
+    serializer_class = PokemonTranslationSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
-    filter_class = PokemonFilter
+    filter_class = PokemonTranslationFilter
     ordering_fields = '__all__'  # what field can be ordered via the API
-    ordering = ['number']  # default ordering
+    ordering = ['id']  # default ordering
 
 
 class PokemonView(View):
@@ -96,9 +104,10 @@ class PokemonTranslationViewDetail(View):
     template_name = "index.html"
 
     def get(self, request, name):
-        pokemons_trans = PokemonTranslation.objects.get(name=name)
+        pokemon_trans = PokemonTranslation.objects.get(name=name)
+        print(pokemon_trans)
         context = {
-            "pokemons_trans": pokemons_trans
+            "pokemon_trans": pokemon_trans
         }
         return render(request, self.template_name, context)
 
