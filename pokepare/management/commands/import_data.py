@@ -14,8 +14,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
+from pokemons.models import Language
 from pokemons.models import Pokemon
-from pokemons.models import PokemonTranslation
+from pokemons.models import PokemonSpecies
+from pokemons.models import PokemonSpeciesName
 
 import requests
 
@@ -38,6 +40,8 @@ class Command(BaseCommand):
 
         if import_type == 'all':
             self.clear_pokemons()
+            self.clear_pokemon_species()
+            self.clear_languages()
             self.clear_cards()
             self.clear_sets()
             self.import_pokemons()
@@ -45,6 +49,8 @@ class Command(BaseCommand):
             self.import_sets()
         elif import_type == 'pokemons':
             self.clear_pokemons()
+            self.clear_pokemon_species()
+            self.clear_languages()
             self.import_pokemons()
         elif import_type == 'cards':
             self.clear_cards()
@@ -63,6 +69,18 @@ class Command(BaseCommand):
         self.stdout.write(self.style.WARNING('Deleting all pokemons...'))
         Pokemon.objects.all().delete()
         self.stdout.write(self.style.SUCCESS('All pokemons deleted!'))
+
+    def clear_pokemon_species(self):
+        self.stdout.write(self.style.WARNING(
+            'Deleting all pokemons species...'))
+        PokemonSpecies.objects.all().delete()
+        self.stdout.write(self.style.SUCCESS('All pokemons species deleted!'))
+
+    def clear_languages(self):
+        self.stdout.write(self.style.WARNING(
+            'Deleting all languages...'))
+        Language.objects.all().delete()
+        self.stdout.write(self.style.SUCCESS('All languages deleted!'))
 
     def clear_cards(self):
         self.stdout.write(self.style.WARNING('Deleting all cards...'))
@@ -111,19 +129,30 @@ class Command(BaseCommand):
         else:
             return False
 
-##############################
-# Importing Pokemons
-##############################
+    ##############################
+    # Importing Pokemons
+    ##############################
+    def import_pokemon_species(self, pokemon_specie, log_file):
+        pokemon_specie_entry, created = PokemonSpecies.objects.get_or_create(  # noqa
+            **pokemon_specie)
+        self.log_imported(
+            created,
+            pokemon_specie,
+            'name',
+            log_file)
+
+        return pokemon_specie_entry
+
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
 
-        count = 0
         limit = 20
         date_format = time.strftime('%Y-%m-%d_%H:%M')
 
-        url = 'https://pokeapi.co/api/v2/pokemon-species/?limit=' + str(limit)
+        url = 'https://pokeapi.co/api/v2/pokemon-species/?limit=%s' % limit
         pokemon_sprites_url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'  # noqa
         import_log_file = 'log_import_pokemons.txt'
+        languages = []
 
         res = requests.get(url)
 
@@ -136,58 +165,67 @@ class Command(BaseCommand):
             try:
                 page_res = requests.get(res_json['next'])
                 pokemons = res_json.get('results')
+
                 for pokemon in pokemons:
                     pokemon_specie = requests.get(pokemon.get('url')).json()
                     pokemon_id = pokemon_specie.get('id')
                     pokemon_front_sprite = '%s%s.png' % (
                         pokemon_sprites_url, pokemon_id)
                     pokemon_names = pokemon_specie.get('names')
+
+                    # import pokemon specie
+                    new_poke_specie = {
+                        "name": pokemon['name'],
+                    }
+                    pokemon_specie_entry = self.import_pokemon_species(
+                        new_poke_specie, import_log_file)
+
                     new_pokemon = {
                         "number": pokemon_id,
                         "front_sprite": pokemon_front_sprite,
+                        "pokemon_species": pokemon_specie_entry,
+                        "name": pokemon['name']
                     }
-                    pokemon_obj, created = Pokemon.objects.get_or_create(
-                        **new_pokemon
-                    )
+                    pokemon_entry, created = Pokemon.objects.get_or_create(
+                        **new_pokemon)
+                    self.log_imported(
+                        created,
+                        new_pokemon,
+                        'number',
+                        import_log_file)
 
-                    if created:
-                        self.stdout.write('Num: %s %s' % (
-                            new_pokemon['number'], 'imported...'))
-                        with open(import_log_file, 'a') as f:
-                            f.write('Num: %s %s' % (
-                                new_pokemon['number'], 'imported...\n'))
-                    else:
-                        self.stdout.write('Num: %s %s' % (
-                            new_pokemon['number'], 'NOT CREATED...'))
-                        with open(import_log_file, 'a') as f:
-                            f.write('Num: %s %s' % (
-                                new_pokemon['number'], 'NOT CREATED...'))
+                    for local_name in pokemon_names:
+                        # import languages
+                        if local_name['language']['name'] not in languages:
+                            language_data = requests.get(
+                                local_name['language']['url']).json()
+                            languages.append(language_data['name'])
+                            del language_data['names']
+                            del language_data['id']
+                            language, created = Language.objects.get_or_create(
+                                **language_data)
+                            self.log_imported(
+                                created,
+                                language_data,
+                                'name',
+                                import_log_file)
 
-                    self.get_remote_image(pokemon_front_sprite, pokemon_obj)
-
-                    for name_data in pokemon_names:
-                        new_pokemon_t = {
-                            "pokemon": pokemon_obj,
-                            "name": name_data['name'],
-                            "language": name_data['language']['name'],
+                        # import pokemon species names
+                        new_poke_name = {
+                            "name": local_name['name'],
+                            "language": language,
+                            "language_name": language_data['name'],
+                            "pokemon_species": pokemon_specie_entry
                         }
+                        PokemonSpeciesName.objects.get_or_create(
+                            **new_poke_name)
+                        self.log_imported(
+                            created,
+                            new_poke_name,
+                            'name',
+                            import_log_file)
 
-                        pokemon_t_obj, created = PokemonTranslation.objects.get_or_create(  # noqa
-                            **new_pokemon_t
-                        )
-
-                        if created:
-                            self.stdout.write('%s %s' % (
-                                    new_pokemon_t['name'], 'imported...\n'))
-                            with open(import_log_file, 'a') as f:
-                                f.write('%s %s' % (
-                                    new_pokemon_t['name'], 'imported...\n'))
-                        else:
-                            self.stdout.write('%s %s' % (
-                                new_pokemon_t['name'], 'NOT CREATED...'))
-                            with open(import_log_file, 'a') as f:
-                                f.write('%s %s' % (
-                                    new_pokemon_t['name'], 'NOT CREATED...'))
+                    self.get_remote_image(pokemon_front_sprite, pokemon_entry)
 
                 res_json = page_res.json()
             except KeyError as kerr:
@@ -202,11 +240,12 @@ class Command(BaseCommand):
             f.write("Import finished at: " + "{}".format(date_format))
 
         self.stdout.write(
-            self.style.SUCCESS(str(count) + ' Pokemons imported!'))
+            self.style.SUCCESS(
+                str(Pokemon.objects.count()) + ' Pokemons imported!'))
 
-##############################
-# Importing cards
-##############################
+    ##############################
+    # Importing cards
+    ##############################
     def import_cards(self):
         self.stdout.write('Importing cards...')
 
@@ -299,11 +338,11 @@ class Command(BaseCommand):
             self.style.SUCCESS(str(len(cards)) + ' cards imported!')
         )
 
-##############################
-# Importing sets
-##############################
+    ##############################
+    # Importing cardsets
+    ##############################
     def import_sets(self):
-        self.stdout.write('Importing sets...')
+        self.stdout.write('Importing cardsets...')
 
         url_tcg = 'https://api.pokemontcg.io/v1/sets?pageSize=100'
 
@@ -363,3 +402,17 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(str(len(card_sets)) + ' sets imported!'))
+
+    def log_imported(self, created, obj, key, log_file):
+        if created:
+            self.stdout.write('%s %s' % (
+                    obj[key], 'imported...\n'))
+            with open(log_file, 'a') as f:
+                f.write('%s %s' % (
+                    obj[key], 'imported...\n'))
+        else:
+            self.stdout.write('%s %s' % (
+                obj[key], 'NOT CREATED...'))
+            with open(log_file, 'a') as f:
+                f.write('%s %s' % (
+                    obj[key], 'NOT CREATED...'))

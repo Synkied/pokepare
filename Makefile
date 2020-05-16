@@ -8,10 +8,17 @@ create_cache_table:
 	docker exec pokepare_py /bin/sh -c "python manage.py createcachetable" 
 
 migrate_db:
+	docker exec pokepare_py /bin/sh -c 'python manage.py makemigrations'
 	docker exec pokepare_py /bin/sh -c 'python manage.py migrate'
+
+flush_db:
+	docker exec pokepare_py /bin/sh -c 'python manage.py flush --no-input'
 
 import_data:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data all'
+
+import_pokemon:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data pokemons'
 
 add_images:
 	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all'

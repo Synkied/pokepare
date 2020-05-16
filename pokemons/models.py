@@ -2,11 +2,11 @@ from django.db import models
 
 from pokepare.utils import OverwriteStorage
 
-# Create your models here.
 
-
+##############################
+#           HAS
+##############################
 class HasLanguage(models.Model):
-
     language = models.ForeignKey(
         "Language",
         blank=True,
@@ -20,7 +20,6 @@ class HasLanguage(models.Model):
 
 
 class HasName(models.Model):
-
     name = models.CharField(max_length=100, db_index=True)
 
     class Meta:
@@ -28,9 +27,21 @@ class HasName(models.Model):
 
 
 class HasPokemon(models.Model):
-
     pokemon = models.ForeignKey(
         "Pokemon",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name='%(class)s',
+    )
+
+    class Meta:
+        abstract = True
+
+
+class HasPokemonSpecies(models.Model):
+    pokemon_species = models.ForeignKey(
+        "PokemonSpecies",
         blank=True,
         null=True,
         related_name="%(class)s",
@@ -41,11 +52,17 @@ class HasPokemon(models.Model):
         abstract = True
 
 
+##############################
+#           IS
+##############################
 class IsName(HasName, HasLanguage):
     class Meta:
         abstract = True
 
 
+##############################
+#           LANGUAGE
+##############################
 class Language(HasName):
 
     iso639 = models.CharField(max_length=10)
@@ -53,30 +70,22 @@ class Language(HasName):
     official = models.BooleanField(default=False)
 
 
-class LanguageName(IsName):
-
-    local_language = models.ForeignKey(
-        "Language",
-        blank=True,
-        null=True,
-        related_name="locallanguage",
-        on_delete=models.CASCADE,
-    )
-
-
-class Pokemon(HasName):
-
-    height = models.IntegerField()
-    weight = models.IntegerField()
-    base_experience = models.IntegerField()
-    is_default = models.BooleanField(default=False)
-
-
-class PokemonSprites(HasPokemon):
-
+##############################
+#           POKEMONS
+##############################
+class Pokemon(HasName, HasPokemonSpecies):
+    number = models.PositiveIntegerField()
     front_sprite = models.ImageField(
         storage=OverwriteStorage(),
         upload_to="pokemons/",
         blank=True,
         null=True,
     )
+
+
+class PokemonSpecies(HasName):
+    pass
+
+
+class PokemonSpeciesName(IsName, HasPokemonSpecies):
+    pass
