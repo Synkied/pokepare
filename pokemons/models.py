@@ -3,9 +3,9 @@ from django.db import models
 from pokepare.utils import OverwriteStorage
 
 
-##############################
-#           HAS
-##############################
+#############################
+#            HAS            #
+#############################
 class HasLanguage(models.Model):
     language = models.ForeignKey(
         "Language",
@@ -52,16 +52,16 @@ class HasPokemonSpecies(models.Model):
         abstract = True
 
 
-##############################
-#           IS
-##############################
+#############################
+#            IS             #
+#############################
 class IsName(HasName, HasLanguage):
     class Meta:
         abstract = True
 
 
 ##############################
-#           LANGUAGE
+#          LANGUAGE          #
 ##############################
 class Language(HasName):
 
@@ -71,7 +71,7 @@ class Language(HasName):
 
 
 ##############################
-#           POKEMONS
+#           POKEMONS         #
 ##############################
 class Pokemon(HasName, HasPokemonSpecies):
     number = models.PositiveIntegerField()
@@ -88,4 +88,11 @@ class PokemonSpecies(HasName):
 
 
 class PokemonSpeciesName(IsName, HasPokemonSpecies):
+    pass
+
+
+##############################
+#           TYPES         #
+##############################
+class Type(HasName):
     pass
