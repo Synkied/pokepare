@@ -214,7 +214,6 @@ class Command(BaseCommand):
                         new_poke_name = {
                             "name": local_name['name'],
                             "language": language,
-                            "language_name": language_data['name'],
                             "pokemon_species": pokemon_specie_entry
                         }
                         PokemonSpeciesName.objects.get_or_create(
