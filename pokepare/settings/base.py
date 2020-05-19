@@ -109,7 +109,7 @@ DATABASES = {
         'USER': 'pokepare',
         'PASSWORD': '',
         'HOST': '',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 
