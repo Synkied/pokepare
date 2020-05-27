@@ -39,18 +39,21 @@ class Command(BaseCommand):
             return False
 
         if import_type == 'all':
+            self.clear_languages()
             self.clear_pokemons()
             self.clear_pokemon_species()
-            self.clear_languages()
             self.clear_cards()
             self.clear_sets()
+            self.import_languages()
             self.import_pokemons()
             self.import_cards()
             self.import_sets()
+        elif import_type == 'languages':
+            self.clear_languages()
+            self.import_languages()
         elif import_type == 'pokemons':
             self.clear_pokemons()
             self.clear_pokemon_species()
-            self.clear_languages()
             self.import_pokemons()
         elif import_type == 'cards':
             self.clear_cards()
@@ -143,6 +146,44 @@ class Command(BaseCommand):
 
         return pokemon_specie_entry
 
+    def import_languages(self):
+        self.stdout.write(self.style.WARNING('Importing languages...'))
+        import_log_file = 'log_import_languages.txt'
+        lang_url = 'https://pokeapi.co/api/v2/language/'
+        language_sprite_url = 'https://www.countryflags.io/'
+        res = requests.get(lang_url)
+        res_json = res.json()
+        while res_json:
+            try:
+                languages = res_json.get('results')
+                for language in languages:
+                    language_data = requests.get(language['url']).json()
+                    language_data['sprite'] = '%s%s%s' % (
+                        language_sprite_url,
+                        language_data['iso3166'],
+                        '/flat/16.png'
+                    )
+                    del language_data['names']
+                    del language_data['id']
+                    language, created = Language.objects.get_or_create(
+                        **language_data
+                    )
+
+                    self.log_imported(
+                        created,
+                        language_data,
+                        'name',
+                        import_log_file)
+
+                res_json = res_json.get('next')
+            except KeyError as kerr:
+                self.stdout.write(
+                    "KeyError",
+                    kerr,
+                    ". Check if there was a request throttle."
+                )
+                pass
+
     def import_pokemons(self):
         self.stdout.write(self.style.WARNING('Importing pokemons...'))
 
@@ -152,7 +193,6 @@ class Command(BaseCommand):
         url = 'https://pokeapi.co/api/v2/pokemon-species/?limit=%s' % limit
         pokemon_sprites_url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'  # noqa
         import_log_file = 'log_import_pokemons.txt'
-        languages = []
 
         res = requests.get(url)
 
@@ -163,7 +203,6 @@ class Command(BaseCommand):
 
         while res_json.get('next'):
             try:
-                page_res = requests.get(res_json['next'])
                 pokemons = res_json.get('results')
 
                 for pokemon in pokemons:
@@ -178,7 +217,8 @@ class Command(BaseCommand):
                         "name": pokemon['name'],
                     }
                     pokemon_specie_entry = self.import_pokemon_species(
-                        new_poke_specie, import_log_file)
+                        new_poke_specie, import_log_file
+                    )
 
                     new_pokemon = {
                         "number": pokemon_id,
@@ -187,7 +227,8 @@ class Command(BaseCommand):
                         "name": pokemon['name']
                     }
                     pokemon_entry, created = Pokemon.objects.get_or_create(
-                        **new_pokemon)
+                        **new_pokemon
+                    )
                     self.log_imported(
                         created,
                         new_pokemon,
@@ -196,21 +237,31 @@ class Command(BaseCommand):
 
                     for local_name in pokemon_names:
                         # import languages
-                        if local_name['language']['name'] not in languages:
-                            language_data = requests.get(
-                                local_name['language']['url']).json()
-                            languages.append(language_data['name'])
-                            del language_data['names']
-                            del language_data['id']
-                            language, created = Language.objects.get_or_create(
-                                **language_data)
-                            self.log_imported(
-                                created,
-                                language_data,
-                                'name',
-                                import_log_file)
+                        # if local_name['language']['name'] not in languages:
+                        #     language_data = requests.get(
+                        #         local_name['language']['url']
+                        #     ).json()
+                        #     language_data['sprite'] = '%s%s%s' % (
+                        #         language_sprite_url,
+                        #         language_data['iso639'],
+                        #         '/flat/16.png'
+                        #     )
+                        #     languages.append(language_data['name'])
+                        #     del language_data['names']
+                        #     del language_data['id']
+                        #     language, created = Language.objects.get_or_create(
+                        #         **language_data)
+
+                        #     self.log_imported(
+                        #         created,
+                        #         language_data,
+                        #         'name',
+                        #         import_log_file)
 
                         # import pokemon species names
+                        language = Language.objects.get(
+                            name=local_name['language']['name']
+                        )
                         new_poke_name = {
                             "name": local_name['name'],
                             "language": language,
@@ -226,6 +277,7 @@ class Command(BaseCommand):
 
                     self.get_remote_image(pokemon_front_sprite, pokemon_entry)
 
+                page_res = requests.get(res_json['next'])
                 res_json = page_res.json()
             except KeyError as kerr:
                 self.stdout.write(

@@ -9,7 +9,13 @@ export default new Vuex.Store(
   {
     state: {
       pokemons: [],
-      cards: []
+      cards: [],
+      userLanguage: 'en'
+    },
+    getters: {
+      getUserLanguage: state => {
+        return state.userLanguage
+      }
     },
     mutations: {
       addPokemon (state, pokemon) {
@@ -17,6 +23,9 @@ export default new Vuex.Store(
       },
       addcard (state, card) {
         state.cards.push(card)
+      },
+      setUserLanguage (state, languageSelected) {
+        state.userLanguage = languageSelected
       }
     }
   }
