@@ -2,6 +2,7 @@ const CONSTANTS = {
   cardSetsUrl: '/api/cardset/',
   cardsUrl: '/api/card/',
   pokemonsUrl: '/api/pokemon/',
+  pokemonSpeciesUrl: '/api/pokemonspecie/',
   languagesUrl: '/api/language/'
 }
 

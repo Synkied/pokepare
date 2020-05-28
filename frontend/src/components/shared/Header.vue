@@ -8,17 +8,17 @@
       flat
       app
     >
-      <a class="d-flex align-center white--text" href="/">
+      <router-link class="d-flex align-center white--text" :to="{ name: 'home' }">
         <img src="../../assets/pokepare_200.png" height="50" alt=""/>
         <span class="headline ml-1">POKÉPARE</span>
-      </a>
+      </router-link>
       <v-spacer></v-spacer>
       <v-container id="app-bar-search-bar">
         <search-bar></search-bar>
       </v-container>
-      <v-btn text small to="/cards">Cards</v-btn>
-      <v-btn text small to="/pokemons">Pokémon</v-btn>
-      <v-btn text small to="/cardsets">Cards Sets</v-btn>
+      <v-btn text small :to="{ name: 'allCards' }">Cards</v-btn>
+      <v-btn text small :to="{ name: 'allPokemons' }">Pokémon</v-btn>
+      <v-btn text small :to="{ name: 'allCardSets' }">Cards Sets</v-btn>
       <v-btn icon small to="#">
         <v-icon>
           face
@@ -55,7 +55,6 @@
 <script>
 import SearchBar from '../SearchBar'
 import axios from 'axios'
-import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'Header',
@@ -69,17 +68,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'getUserLanguage'
-    ])
   },
   methods: {
-    ...mapMutations([
-      'setUserLanguage'
-    ]),
     setUserLanguageInStore () {
-      console.log(this.selectedLanguage)
-      this.setUserLanguage(this.selectedLanguage)
+      localStorage.setItem('userLanguage', this.selectedLanguage)
     },
     async getLanguages () {
       const languagesUrl = this.$constants('languagesUrl')
@@ -91,25 +83,25 @@ export default {
           if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
-            console.log(error.response.data)
-            console.log(error.response.status)
-            console.log(error.response.headers)
+            console.error(error.response.data)
+            console.error(error.response.status)
+            console.error(error.response.headers)
           } else if (error.request) {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser
             // and an instance of http.ClientRequest in node.js
-            console.log(error.request)
+            console.error(error.request)
           } else {
             // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message)
+            console.error('Error', error.message)
           }
-          console.log(error.config)
+          console.error(error.config)
         })
     }
   },
   async mounted () {
     await this.getLanguages()
-    // this.selectedLanguage = this.getUserLanguage()
+    this.selectedLanguage = localStorage.getItem('userLanguage') || 'en'
   }
 }
 </script>

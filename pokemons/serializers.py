@@ -58,10 +58,14 @@ class PokemonSpeciesDetailSerializer(serializers.ModelSerializer):
     def get_pokemon_names(self, obj):
 
         species_results = PokemonSpeciesName.objects.filter(
-            pokemon_species=obj)
+            pokemon_species=obj
+        )
         species_serializer = PokemonSpeciesNameSerializer(
             species_results, many=True, context=self.context
         )
+        print('obj', obj.__dict__)
+        print(species_results)
+        print(species_serializer)
 
         data = species_serializer.data
 

@@ -236,28 +236,6 @@ class Command(BaseCommand):
                         import_log_file)
 
                     for local_name in pokemon_names:
-                        # import languages
-                        # if local_name['language']['name'] not in languages:
-                        #     language_data = requests.get(
-                        #         local_name['language']['url']
-                        #     ).json()
-                        #     language_data['sprite'] = '%s%s%s' % (
-                        #         language_sprite_url,
-                        #         language_data['iso639'],
-                        #         '/flat/16.png'
-                        #     )
-                        #     languages.append(language_data['name'])
-                        #     del language_data['names']
-                        #     del language_data['id']
-                        #     language, created = Language.objects.get_or_create(
-                        #         **language_data)
-
-                        #     self.log_imported(
-                        #         created,
-                        #         language_data,
-                        #         'name',
-                        #         import_log_file)
-
                         # import pokemon species names
                         language = Language.objects.get(
                             name=local_name['language']['name']
@@ -268,7 +246,8 @@ class Command(BaseCommand):
                             "pokemon_species": pokemon_specie_entry
                         }
                         PokemonSpeciesName.objects.get_or_create(
-                            **new_poke_name)
+                            **new_poke_name
+                        )
                         self.log_imported(
                             created,
                             new_poke_name,

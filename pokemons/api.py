@@ -49,6 +49,11 @@ class LanguageFilter(FilterSet):
 
 
 class PokemonFilter(FilterSet):
+    insensitive_name = filters.CharFilter(
+        field_name="name",
+        lookup_expr="icontains"
+    )
+
     class Meta:
         model = Pokemon
         exclude = ["front_sprite"]
