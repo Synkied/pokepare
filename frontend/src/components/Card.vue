@@ -77,7 +77,7 @@ export default {
     }
   },
   title () {
-    return `PokePare — ${this.card.name}`
+    return `PokePare — ${utils.deepGet(this.card, 'name')}`
   },
   watch: {
     card: function (newCard, oldCard) {
@@ -116,11 +116,14 @@ export default {
         .then(response => {
           if (response.data) {
             thisVm.status = response.status
-            thisVm.card = response.data.results[0]
-            thisVm.card.prices.map(price => {
-              let cardUniqueId = utils.deepGet(thisVm.card, 'unique_id')
-              price.card_unique_id = `${cardUniqueId}`
-            })
+            thisVm.card = response.data.results[0] || ''
+            let cardPrices = utils.deepGet(thisVm.card, 'prices')
+            if (cardPrices) {
+              cardPrices.map(price => {
+                let cardUniqueId = utils.deepGet(thisVm.card, 'unique_id')
+                price.card_unique_id = `${cardUniqueId}`
+              })
+            }
             thisVm.numberInCardSet = response.data.results[0].number_in_set
           }
           // get the pokemon data linked to the card
@@ -131,7 +134,8 @@ export default {
           thisVm.pokemon = response.data
           thisVm.pokemonId = response.data.id
           // get the card's set data
-          const cardSetPath = `${cardSetsUrl}?code=${encodeURI(thisVm.card.card_set_code)}`
+          let cardSetCode = utils.deepGet(thisVm.card, 'card_set_code')
+          const cardSetPath = `${cardSetsUrl}?code=${encodeURI(cardSetCode)}`
           return axios.get(cardSetPath)
         })
         .then(response => {

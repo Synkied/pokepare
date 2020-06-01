@@ -5,11 +5,11 @@
         <v-container>
           <ul>
             <li class="ns-li">
-              <img :src="pokemon.image" :alt="pokemon.name">
+              <img :src="pokemon.front_sprite" :alt="pokemon.name">
             </li>
             <li class="ns-li">
               <p>#{{ pokemon.number }}</p>
-              <p>{{ pokemon.name }}</p>
+              <p>{{ titleize(pokemon.name) }}</p>
             </li>
           </ul>
           <li class="ns-li" v-if="cards">
@@ -65,6 +65,7 @@ export default {
     return `PokePare — ${this.pokemon.name}`
   },
   methods: {
+    titleize: utils.titleize,
     getPokemonCards () {
       let thisVm = this
       let cardSetsList = []
@@ -74,7 +75,7 @@ export default {
       const pokemonsUrl = this.$constants('pokemonsUrl')
       const cardsUrl = this.$constants('cardsUrl')
 
-      const pokemonDetailUrl = `${pokemonsUrl}?name=${capitalize(encodeURI(thisVm.pokemon_name))}`
+      const pokemonDetailUrl = `${pokemonsUrl}?insensitive_name=${capitalize(encodeURI(thisVm.pokemon_name))}`
       let pokemonId
       loadProgressBar()
 
@@ -111,19 +112,19 @@ export default {
           if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
-            console.log(error.response.data)
-            console.log(error.response.status)
-            console.log(error.response.headers)
+            console.error(error.response.data)
+            console.error(error.response.status)
+            console.error(error.response.headers)
           } else if (error.request) {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser
             // and an instance of http.ClientRequest in node.js
-            console.log(error.request)
+            console.error(error.request)
           } else {
             // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message)
+            console.error('Error', error.message)
           }
-          console.log(error.config)
+          console.error(error.config)
         })
     }
   },

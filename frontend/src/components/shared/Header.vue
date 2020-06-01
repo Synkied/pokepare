@@ -32,7 +32,7 @@
         prepend-inner-icon="language"
         hide-details
         class="pb-1 language-selection"
-        @change="setUserLanguageInStore()"
+        @change="setUserLanguageInStores()"
       >
         <template v-slot:selection="{ item, index }">
           <span>
@@ -55,6 +55,7 @@
 <script>
 import SearchBar from '../SearchBar'
 import axios from 'axios'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Header',
@@ -70,8 +71,12 @@ export default {
   computed: {
   },
   methods: {
-    setUserLanguageInStore () {
+    ...mapMutations([
+      'setUserLanguage'
+    ]),
+    setUserLanguageInStores () {
       localStorage.setItem('userLanguage', this.selectedLanguage)
+      this.setUserLanguage(this.selectedLanguage)
     },
     async getLanguages () {
       const languagesUrl = this.$constants('languagesUrl')

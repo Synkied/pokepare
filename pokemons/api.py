@@ -5,14 +5,18 @@ from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
 from rest_framework import permissions
-from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Language
 from .models import Pokemon
 from .models import PokemonSpecies
+from .models import PokemonSpeciesName
 from .serializers import LanguageDetailSerializer
 from .serializers import LanguageSerializer
+from .serializers import PokemonDetailSerializer
 from .serializers import PokemonSerializer
 from .serializers import PokemonSpeciesDetailSerializer
 from .serializers import PokemonSpeciesListSerializer
@@ -77,7 +81,7 @@ class PokemonSpeciesFilter(FilterSet):
 ##############################
 #           RESOURCES
 ##############################
-class LanguageResource(PokePareCommonResource, viewsets.ModelViewSet):
+class LanguageResource(PokePareCommonResource, ModelViewSet):
     """
     API endpoint that allows pokemons to be viewed or edited.
     """
@@ -91,20 +95,21 @@ class LanguageResource(PokePareCommonResource, viewsets.ModelViewSet):
     ordering = ['id']  # default ordering
 
 
-class PokemonResource(viewsets.ModelViewSet):
+class PokemonResource(ModelViewSet):
     """
     API endpoint that allows pokemons to be viewed or edited.
     """
     queryset = Pokemon.objects.all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = PokemonSerializer
+    list_serializer_class = PokemonSerializer
+    serializer_class = PokemonDetailSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
     filter_class = PokemonFilter
     ordering_fields = '__all__'  # what field can be ordered via the API
     ordering = ['number']  # default ordering
 
 
-class PokemonSpeciesResource(PokePareCommonResource, viewsets.ModelViewSet):
+class PokemonSpeciesResource(PokePareCommonResource, ModelViewSet):
 
     queryset = PokemonSpecies.objects.all().order_by('id')
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -122,12 +127,4 @@ class PokemonView(View):
             'pokemons': pokemons,
         }
 
-        return render(request, self.template_name, context)
-
-
-class PokemonViewDetail(View):
-    template_name = 'index.html'
-
-    def get(self, request, number):
-        context = {}
         return render(request, self.template_name, context)

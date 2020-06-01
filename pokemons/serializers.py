@@ -24,10 +24,14 @@ class LanguageDetailSerializer(serializers.HyperlinkedModelSerializer):
 
 class PokemonSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
-    url = serializers.HyperlinkedIdentityField(
-        view_name='pokemons:pokemon_detail',
-        lookup_field='number',
-    )
+
+    class Meta:
+        model = Pokemon
+        fields = '__all__'
+
+
+class PokemonDetailSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.ReadOnlyField()
 
     class Meta:
         model = Pokemon
@@ -64,9 +68,6 @@ class PokemonSpeciesDetailSerializer(serializers.ModelSerializer):
         species_serializer = PokemonSpeciesNameSerializer(
             species_results, many=True, context=self.context
         )
-        print('obj', obj.__dict__)
-        print(species_results)
-        print(species_serializer)
 
         data = species_serializer.data
 

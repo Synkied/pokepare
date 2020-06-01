@@ -53,16 +53,16 @@
           <v-col
             cols="4"
             md="3"
-            v-for="pokemon in pokemons"
+            v-for="pokemon in getPokemonsFromStore"
             :key="pokemon.id">
             <ul>
               <li class="ns-li">
                 <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">
-                  <img class="card-img" :src="pokemon.image" :alt="pokemon.name">
+                  <img class="card-img" :src="pokemon.front_sprite" :alt="pokemon.name">
                 </router-link>
               </li>
               <li class="ns-li">
-                <p><router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">{{ pokemon.name }}</router-link></p>
+                <p><router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">{{ titleize(pokemon.name) }}</router-link></p>
               </li>
             </ul>
           </v-col>
@@ -85,6 +85,7 @@
 import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
+import { mapGetters, mapMutations } from 'vuex'
 
 import utils from '@/utils'
 
@@ -139,7 +140,16 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'getPokemonsFromStore'
+    ])
+  },
   methods: {
+    titleize: utils.titleize,
+    ...mapMutations([
+      'setPokemonsToStore'
+    ]),
     async getPokemons () {
       const pokemonsUrl = `${this.$constants('pokemonsUrl')}?limit=${this.perPageLimit}&offset=${this.pageOffset}`
       loadProgressBar()
@@ -148,13 +158,12 @@ export default {
     async getPokemonPage (pokemonPageUrl) {
       try {
         let response = await axios.get(pokemonPageUrl)
-        if (response.data) {
-          this.pokemons = response.data.results
-          this.pokemonCount = response.data.count
-          this.perPageLimit = Number(utils.urlArgsParser(pokemonPageUrl)['limit']) || 60
-          this.pageOffset = Number(utils.urlArgsParser(pokemonPageUrl)['offset']) || 0
-          this.pokemonNbOfPages = Math.round(this.pokemonCount / this.perPageLimit)
-        }
+        let pokemons = utils.deepGet(response, 'data.results', [])
+        this.setPokemonsToStore(pokemons)
+        this.pokemonCount = response.data.count
+        this.perPageLimit = Number(utils.urlArgsParser(pokemonPageUrl)['limit']) || 60
+        this.pageOffset = Number(utils.urlArgsParser(pokemonPageUrl)['offset']) || 0
+        this.pokemonNbOfPages = Math.round(this.pokemonCount / this.perPageLimit)
       } catch (err) {
         if (err.response) {
           // The request was made and the server responded with a status code

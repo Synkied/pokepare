@@ -8,14 +8,27 @@ Vue.use(Vuex)
 export default new Vuex.Store(
   {
     state: {
-      pokemons: [],
-      cards: []
+      storedPokemons: [],
+      cards: [],
+      userLanguage: localStorage.getItem('userLanguage') || 'en'
     },
     getters: {
+      getPokemonsFromStore: state => {
+        return state.storedPokemons
+      },
+      getUserLanguage: state => {
+        return state.userLanguage
+      }
     },
     mutations: {
+      setPokemonsToStore (state, pokemons) {
+        state.storedPokemons = pokemons
+      },
+      setUserLanguage (state, language) {
+        state.userLanguage = language
+      },
       addPokemon (state, pokemon) {
-        state.pokemons.push(pokemon)
+        state.storedPokemons.push(pokemon)
       },
       addcard (state, card) {
         state.cards.push(card)
