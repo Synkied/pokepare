@@ -30,7 +30,7 @@ class ListOrDetailSerialRelation:
     list_serializer_class = None
 
     def get_serializer_class(self):
-        if self.action == "list" and self.list_serializer_class is not None:
+        if self.action == 'list' and self.list_serializer_class is not None:
             return self.list_serializer_class
         return self.serializer_class
 
@@ -45,33 +45,33 @@ class PokePareCommonResource(ListOrDetailSerialRelation):
 class LanguageFilter(FilterSet):
     class Meta:
         model = Language
-        fields = "__all__"
+        fields = '__all__'
 
 
 class PokemonFilter(FilterSet):
     insensitive_name = filters.CharFilter(
-        field_name="name",
-        lookup_expr="icontains"
+        field_name='name',
+        lookup_expr='icontains'
     )
 
     class Meta:
         model = Pokemon
-        exclude = ["front_sprite"]
-        fields = "__all__"
+        exclude = ['front_sprite']
+        fields = '__all__'
 
 
 class PokemonSpeciesFilter(FilterSet):
     # set a filterset to use filters
     # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut  # noqa
-    # but it won"t let you use "exclude"
+    # but it won't let you use 'exclude'
     insensitive_name = filters.CharFilter(
-        field_name="name",
-        lookup_expr="icontains"
+        field_name='name',
+        lookup_expr='icontains'
     )
 
     class Meta:
         model = PokemonSpecies
-        fields = "__all__"
+        fields = '__all__'
 
 
 ##############################
@@ -87,8 +87,8 @@ class LanguageResource(PokePareCommonResource, viewsets.ModelViewSet):
     serializer_class = LanguageDetailSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
     filter_class = LanguageFilter
-    ordering_fields = "__all__"  # what field can be ordered via the API
-    ordering = ["id"]  # default ordering
+    ordering_fields = '__all__'  # what field can be ordered via the API
+    ordering = ['id']  # default ordering
 
 
 class PokemonResource(viewsets.ModelViewSet):
@@ -100,13 +100,13 @@ class PokemonResource(viewsets.ModelViewSet):
     serializer_class = PokemonSerializer
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
     filter_class = PokemonFilter
-    ordering_fields = "__all__"  # what field can be ordered via the API
-    ordering = ["number"]  # default ordering
+    ordering_fields = '__all__'  # what field can be ordered via the API
+    ordering = ['number']  # default ordering
 
 
 class PokemonSpeciesResource(PokePareCommonResource, viewsets.ModelViewSet):
 
-    queryset = PokemonSpecies.objects.all().order_by("id")
+    queryset = PokemonSpecies.objects.all().order_by('id')
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend, OrderingFilter,)
     list_serializer_class = PokemonSpeciesListSerializer
@@ -114,19 +114,19 @@ class PokemonSpeciesResource(PokePareCommonResource, viewsets.ModelViewSet):
 
 
 class PokemonView(View):
-    template_name = "index.html"
+    template_name = 'index.html'
 
     def get(self, request):
         pokemons = Pokemon.objects.all()
         context = {
-            "pokemons": pokemons,
+            'pokemons': pokemons,
         }
 
         return render(request, self.template_name, context)
 
 
 class PokemonViewDetail(View):
-    template_name = "index.html"
+    template_name = 'index.html'
 
     def get(self, request, number):
         context = {}

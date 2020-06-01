@@ -11,7 +11,7 @@ class LanguageSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Language
-        fields = "__all__"
+        fields = '__all__'
 
 
 class LanguageDetailSerializer(serializers.HyperlinkedModelSerializer):
@@ -19,19 +19,19 @@ class LanguageDetailSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Language
-        fields = "__all__"
+        fields = '__all__'
 
 
 class PokemonSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
     url = serializers.HyperlinkedIdentityField(
-        view_name="pokemons:pokemon_detail",
-        lookup_field="number",
+        view_name='pokemons:pokemon_detail',
+        lookup_field='number',
     )
 
     class Meta:
         model = Pokemon
-        fields = "__all__"
+        fields = '__all__'
 
 
 class PokemonSpeciesNameSerializer(serializers.ModelSerializer):
@@ -39,21 +39,22 @@ class PokemonSpeciesNameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PokemonSpeciesName
-        fields = ("name", "language")
+        fields = ('name', 'language')
 
 
 class PokemonSpeciesListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PokemonSpecies
-        fields = ("url", "name")
+        fields = ('url', 'name')
 
 
 class PokemonSpeciesDetailSerializer(serializers.ModelSerializer):
-    names = serializers.SerializerMethodField("get_pokemon_names")
+    names = serializers.SerializerMethodField('get_pokemon_names')
+    evolves_from_species = PokemonSpeciesListSerializer()
 
     class Meta:
         model = PokemonSpecies
-        fields = "__all__"
+        fields = '__all__'
 
     def get_pokemon_names(self, obj):
 

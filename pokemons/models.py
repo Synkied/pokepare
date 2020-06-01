@@ -85,7 +85,9 @@ class Pokemon(HasName, HasPokemonSpecies):
 
 
 class PokemonSpecies(HasName):
-    pass
+    evolves_from_species = models.ForeignKey(
+        "self", blank=True, null=True, on_delete=models.CASCADE
+    )
 
 
 class PokemonSpeciesName(IsName, HasPokemonSpecies):
