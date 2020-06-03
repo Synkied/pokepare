@@ -152,7 +152,7 @@ export default {
       'userLanguage'
     ]),
     pokemonPageUrl () {
-      return `${this.$constants('pokemonsUrl')}?limit=${this.perPageLimit}&offset=${this.pageOffset}&language=${this.userLanguage}`
+      return `${this.$constants('pokemonsUrl')}?limit=${this.perPageLimit}&offset=${this.pageOffset}&language=${this.getUserLanguage}`
     }
 
   },

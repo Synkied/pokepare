@@ -13,9 +13,6 @@
 
 <script>
 import axios from 'axios'
-import RiseLoader from 'vue-spinner/src/RiseLoader.vue'
-import { loadProgressBar } from 'axios-progress-bar'
-import 'axios-progress-bar/dist/nprogress.css'
 import Cards from './Cards.vue'
 
 export default {
@@ -39,7 +36,6 @@ export default {
       thisVm.userQuery = thisVm.$route.query.query
       if (thisVm.userQuery) {
         const searchCardUrl = `${this.$constants('cardsUrl')}?insensitive_name=${encodeURI(thisVm.userQuery)}`
-        loadProgressBar()
         axios.get(searchCardUrl).then(response => {
           if (response.data.count > 0) {
             console.log('search_bar', response.data)
@@ -79,7 +75,6 @@ export default {
     thisVm.searchCards()
   },
   components: {
-    'rise-loader': RiseLoader,
     'cards': Cards
   }
 }

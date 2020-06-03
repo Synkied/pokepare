@@ -68,7 +68,7 @@ export default {
   computed: {
     ...mapGetters([
       'getUserLanguage'
-    ]),
+    ])
   },
   methods: {
     titleize: utils.titleize,

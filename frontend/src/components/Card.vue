@@ -101,7 +101,7 @@ export default {
     },
     ...mapGetters([
       'getUserLanguage'
-    ]),
+    ])
   },
   methods: {
     async getCardData () {
