@@ -5,11 +5,11 @@
         <v-container>
           <ul>
             <li class="ns-li">
-              <img :src="pokemon.front_sprite" :alt="pokemon.name">
+              <img :src="pokemon.front_sprite" :alt="pokemon.local_name">
             </li>
             <li class="ns-li">
               <p>#{{ pokemon.number }}</p>
-              <p>{{ titleize(pokemon.name) }}</p>
+              <p>{{ titleize(pokemon.local_name) }}</p>
             </li>
           </ul>
           <li class="ns-li" v-if="cards">
@@ -31,6 +31,7 @@
 import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
+import { mapGetters } from 'vuex'
 
 import Cards from './Cards.vue'
 import PriceTable from './PriceTable.vue'
@@ -64,6 +65,11 @@ export default {
   title () {
     return `PokePare — ${this.pokemon.name}`
   },
+  computed: {
+    ...mapGetters([
+      'getUserLanguage'
+    ]),
+  },
   methods: {
     titleize: utils.titleize,
     getPokemonCards () {
@@ -75,7 +81,7 @@ export default {
       const pokemonsUrl = this.$constants('pokemonsUrl')
       const cardsUrl = this.$constants('cardsUrl')
 
-      const pokemonDetailUrl = `${pokemonsUrl}?insensitive_name=${capitalize(encodeURI(thisVm.pokemon_name))}`
+      const pokemonDetailUrl = `${pokemonsUrl}?insensitive_name=${capitalize(encodeURI(thisVm.pokemon_name))}&language=${this.getUserLanguage}`
       let pokemonId
       loadProgressBar()
 

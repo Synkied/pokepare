@@ -20,6 +20,9 @@ import_data:
 import_pokemon:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data pokemons'
 
+import_cards:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data cards'
+
 add_images:
 	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all'
 

@@ -37,7 +37,7 @@
           v-on="on"
         >
           <img :src="item.front_sprite" class="selected-pokemon-img">
-          <span v-text="titleize(item.name)"></span>
+          <span v-text="titleize(item.local_name)"></span>
         </v-chip>
       </template>
       <template v-slot:append>
@@ -59,7 +59,7 @@
             <img src="../assets/pokepare_200.png" class="no-img-card">
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title v-html="titleize(data.item.name)"></v-list-item-title>
+            <v-list-item-title v-html="titleize(data.item.local_name)"></v-list-item-title>
             <v-list-item-subtitle v-html="data.item.number"></v-list-item-subtitle>
           </v-list-item-content>
         </template>
@@ -70,6 +70,8 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
+
 import utils from '@/utils'
 
 export default {
@@ -90,6 +92,11 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'getUserLanguage'
+    ]),
+  },
   methods: {
     titleize: utils.titleize,
     searchCards () {
@@ -100,7 +107,7 @@ export default {
     async liveSearchCards (userQuery) {
       if (userQuery) {
         // const searchCardUrl = `${this.$constants('cardsUrl')}?insensitive_name=${encodeURI(userQuery)}&limit=2000`
-        const searchPokemonUrl = `${this.$constants('pokemonsUrl')}?insensitive_name=${encodeURI(userQuery)}&limit=2000`
+        const searchPokemonUrl = `${this.$constants('pokemonsUrl')}?insensitive_name=${encodeURI(userQuery)}&limit=2000&language=${this.getUserLanguage}`
         // const searchPokemonUrl = `${this.$constants('pokemonSpeciesUrl')}?insensitive_name=${encodeURI(userQuery)}&limit=2000`
 
         try {

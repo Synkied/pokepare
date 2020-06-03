@@ -108,23 +108,6 @@ class PokemonResource(ModelViewSet):
     ordering_fields = '__all__'  # what field can be ordered via the API
     ordering = ['number']  # default ordering
 
-    def retrieve(self, request, pk=None):
-        serializer = super(PokemonResource, self).retrieve(request)
-
-        language = self.request.query_params.get('language')
-        # get local_language
-        if language:
-            lang = Language.objects.get(name=language)
-            local_name = PokemonSpeciesName.objects.get(
-                language=lang,
-                pokemon_species=2861
-            )
-
-        serialized_data = serializer.data
-        serialized_data['local_name'] = local_name.name
-
-        return Response(serialized_data)
-
 
 class PokemonSpeciesResource(PokePareCommonResource, ModelViewSet):
 

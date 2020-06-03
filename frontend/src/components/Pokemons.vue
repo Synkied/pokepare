@@ -58,11 +58,11 @@
             <ul>
               <li class="ns-li">
                 <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">
-                  <img class="card-img" :src="pokemon.front_sprite" :alt="pokemon.name">
+                  <img class="card-img" :src="pokemon.front_sprite" :alt="pokemon.local_name">
                 </router-link>
               </li>
               <li class="ns-li">
-                <p><router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">{{ titleize(pokemon.name) }}</router-link></p>
+                <p><router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">{{ titleize(pokemon.local_name) }}</router-link></p>
               </li>
             </ul>
           </v-col>
@@ -85,7 +85,7 @@
 import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 import utils from '@/utils'
 
@@ -118,10 +118,9 @@ export default {
           if (Number(curQuery['page']) !== newVal) {
             this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, page: newVal } })
           }
-          let perPageLimit = this.perPageLimit
-          let pageOffset = (this.perPageLimit * newVal) - this.perPageLimit
-          let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
-          this.getPokemonPage(pokemonPageUrl)
+          this.pageOffset = (this.perPageLimit * newVal) - this.perPageLimit
+          this.getPokemonPage(this.pokemonPageUrl)
+          this.setPokemonsPage(newVal)
         }
       }
     },
@@ -132,28 +131,41 @@ export default {
           if (Number(curQuery['per-page']) !== newVal) {
             this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, 'per-page': newVal } })
           }
-          let perPageLimit = this.perPageLimit
-          let pageOffset = (this.perPageLimit * this.pokemonPage) - this.perPageLimit
-          let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
-          this.getPokemonPage(pokemonPageUrl)
+          this.pageOffset = (this.perPageLimit * this.pokemonPage) - this.perPageLimit
+          this.getPokemonPage(this.pokemonPageUrl)
+          this.setPokemonsByPage(newVal)
         }
+      }
+    },
+    userLanguage: {
+      handler (newVal, oldVal) {
+        this.getPokemonPage(this.pokemonPageUrl)
       }
     }
   },
   computed: {
     ...mapGetters([
-      'getPokemonsFromStore'
-    ])
+      'getPokemonsFromStore',
+      'getUserLanguage'
+    ]),
+    ...mapState([
+      'userLanguage'
+    ]),
+    pokemonPageUrl () {
+      return `${this.$constants('pokemonsUrl')}?limit=${this.perPageLimit}&offset=${this.pageOffset}&language=${this.userLanguage}`
+    }
+
   },
   methods: {
     titleize: utils.titleize,
     ...mapMutations([
-      'setPokemonsToStore'
+      'setPokemonsToStore',
+      'setPokemonsPage',
+      'setPokemonsByPage'
     ]),
     async getPokemons () {
-      const pokemonsUrl = `${this.$constants('pokemonsUrl')}?limit=${this.perPageLimit}&offset=${this.pageOffset}`
       loadProgressBar()
-      await this.getPokemonPage(pokemonsUrl)
+      await this.getPokemonPage(this.pokemonPageUrl)
     },
     async getPokemonPage (pokemonPageUrl) {
       try {

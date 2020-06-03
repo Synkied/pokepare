@@ -16,7 +16,7 @@
           <img :src="card.image" :alt="card.name">
           <div class="mt-2 related-pokemon-image" v-if="pokemon">
             <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}" class="pokemon-link">
-              <img :src="pokemon.image" :alt="pokemon.name">
+              <img :src="pokemon.front_sprite" :alt="pokemon.local_name">
               <p>#{{ pokemon.number }}</p>
             </router-link>
           </div>
@@ -32,6 +32,7 @@
 import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
+import { mapGetters } from 'vuex'
 
 import PriceTable from './PriceTable.vue'
 import utils from '@/utils'
@@ -97,7 +98,10 @@ export default {
         return a.market_price - b.market_price
       })
       return sortedCardPrices
-    }
+    },
+    ...mapGetters([
+      'getUserLanguage'
+    ]),
   },
   methods: {
     async getCardData () {
@@ -128,7 +132,7 @@ export default {
           }
           // get the pokemon data linked to the card
           let pokemonId = response.data.results[0].pokemon
-          return axios.get(`${pokemonsUrl}${pokemonId}`)
+          return axios.get(`${pokemonsUrl}${pokemonId}?language=${this.getUserLanguage}`)
         })
         .then(response => {
           thisVm.pokemon = response.data

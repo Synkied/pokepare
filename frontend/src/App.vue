@@ -11,14 +11,9 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { mapMutations, mapState } from 'vuex'
-
 import Header from './components/shared/Header.vue'
 import Footer from './components/shared/Footer.vue'
 import SearchBar from './components/SearchBar.vue'
-
-import utils from '@/utils'
 
 export default {
   name: 'App',
@@ -26,59 +21,6 @@ export default {
     'app-header': Header,
     'app-footer': Footer,
     'search-bar': SearchBar
-  },
-  computed: {
-    ...mapState([
-      'userLanguage',
-      'storedPokemons'
-    ])
-  },
-  watch: {
-    userLanguage: {
-      handler (newVal, oldVal) {
-        if (this.storedPokemons.length) {
-          this.getPokemonNames(this.storedPokemons)
-        }
-      }
-    }
-  },
-  methods: {
-    ...mapMutations([
-      'setPokemonsToStore'
-    ]),
-    async getPokemonNames (storedPokemons) {
-      try {
-        for (var i = storedPokemons.length - 1; i >= 0; i--) {
-          let pokemonSpeciesResults = await axios.get(storedPokemons[i].pokemon_species)
-          let pokemonSpeciesNames = utils.deepGet(pokemonSpeciesResults, 'data.names')
-          for (var j = pokemonSpeciesNames.length - 1; j >= 0; j--) {
-            let language = utils.deepGet(pokemonSpeciesNames[j], 'language.iso639')
-            console.log(language, this.userLanguage)
-            if (language === this.userLanguage) {
-              storedPokemons[i].name = pokemonSpeciesNames[j].name
-            }
-          }
-        }
-        this.setPokemonsToStore(storedPokemons)
-      } catch (err) {
-        if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.error(err.response.data)
-          console.error(err.response.status)
-          console.error(err.response.headers)
-        } else if (err.request) {
-          // The request was made but no response was received
-          // `err.request` is an instance of XMLHttpRequest in the browser
-          // and an instance of http.ClientRequest in node.js
-          console.error(err.request)
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Error', err.message)
-        }
-        console.error(err.config)
-      }
-    }
   }
 }
 </script>

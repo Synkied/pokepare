@@ -24,6 +24,26 @@ class LanguageDetailSerializer(serializers.HyperlinkedModelSerializer):
 
 class PokemonSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
+    local_name = serializers.SerializerMethodField('get_local_name')
+
+    def get_local_name(self, obj):
+        query_language = self.context['request'].query_params.get(
+            'language', None
+        )
+
+        lang = Language.objects.get(name='en')
+        local_name = PokemonSpeciesName.objects.get(
+            language=lang,
+            pokemon_species=obj.pokemon_species
+        )
+
+        if query_language:
+            lang = Language.objects.get(name=query_language)
+            local_name = PokemonSpeciesName.objects.get(
+                language=lang,
+                pokemon_species=obj.pokemon_species
+            )
+        return local_name.name
 
     class Meta:
         model = Pokemon
@@ -32,6 +52,26 @@ class PokemonSerializer(serializers.HyperlinkedModelSerializer):
 
 class PokemonDetailSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
+    local_name = serializers.SerializerMethodField('get_local_name')
+
+    def get_local_name(self, obj):
+        query_language = self.context['request'].query_params.get(
+            'language', None
+        )
+
+        lang = Language.objects.get(name='en')
+        local_name = PokemonSpeciesName.objects.get(
+            language=lang,
+            pokemon_species=obj.pokemon_species
+        )
+
+        if query_language:
+            lang = Language.objects.get(name=query_language)
+            local_name = PokemonSpeciesName.objects.get(
+                language=lang,
+                pokemon_species=obj.pokemon_species
+            )
+        return local_name.name
 
     class Meta:
         model = Pokemon
