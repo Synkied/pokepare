@@ -1,14 +1,14 @@
 <template>
   <v-container id="pokemons">
     <v-card tile flat outlined>
-      <v-card-title class="secondary darken-1 headline" v-if="pokemonCount">
+      <v-card-title class="secondary darken-1 headline" v-if="getPokemonsCount">
         <template>
           <v-row class="justify-center">
             <v-col
               cols="2"
             >
               <span>
-                {{ pokemonCount }} POKÉMON
+                {{ getPokemonsCount }} POKÉMON
               </span>
             </v-col>
             <v-spacer></v-spacer>
@@ -93,12 +93,11 @@ import utils from '@/utils'
 export default {
   data () {
     return {
-      pokemonCount: '',
       moduleTitle: 'Pokémon',
-      perPageLimit: 60,
-      pageOffset: 0,
+      perPageLimit: null,
+      pageOffset: null,
       pokemons: [],
-      pokemonPage: 1,
+      pokemonPage: null,
       pokemonNbOfPages: 0,
       numberPerPage: [
         20,
@@ -126,7 +125,7 @@ export default {
     },
     perPageLimit: {
       handler (newVal, oldVal) {
-        if (newVal && oldVal) {
+        if (newVal) {
           let curQuery = JSON.parse(JSON.stringify(this.$route.query))
           if (Number(curQuery['per-page']) !== newVal) {
             this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, 'per-page': newVal } })
@@ -146,7 +145,8 @@ export default {
   computed: {
     ...mapGetters([
       'getPokemonsFromStore',
-      'getUserLanguage'
+      'getUserLanguage',
+      'getPokemonsCount'
     ]),
     ...mapState([
       'userLanguage'
@@ -161,21 +161,18 @@ export default {
     ...mapMutations([
       'setPokemonsToStore',
       'setPokemonsPage',
-      'setPokemonsByPage'
+      'setPokemonsByPage',
+      'setPokemonsCount'
     ]),
-    async getPokemons () {
-      loadProgressBar()
-      await this.getPokemonPage(this.pokemonPageUrl)
-    },
     async getPokemonPage (pokemonPageUrl) {
       try {
         let response = await axios.get(pokemonPageUrl)
         let pokemons = utils.deepGet(response, 'data.results', [])
         this.setPokemonsToStore(pokemons)
-        this.pokemonCount = response.data.count
+        this.setPokemonsCount(response.data.count)
         this.perPageLimit = Number(utils.urlArgsParser(pokemonPageUrl)['limit']) || 60
         this.pageOffset = Number(utils.urlArgsParser(pokemonPageUrl)['offset']) || 0
-        this.pokemonNbOfPages = Math.round(this.pokemonCount / this.perPageLimit)
+        this.pokemonNbOfPages = Math.round(this.getPokemonsCount / this.perPageLimit)
       } catch (err) {
         if (err.response) {
           // The request was made and the server responded with a status code
@@ -196,18 +193,18 @@ export default {
       }
     }
   },
-  async mounted () {
-    await this.getPokemons()
+  async created () {
     let page = utils.deepGet(this.$route, 'query.page')
     let perPage = utils.deepGet(this.$route, 'query.per-page')
-    if (page && parseInt(page, 10) && page <= this.pokemonNbOfPages) {
+    if (page && parseInt(page, 10)) {
       this.pokemonPage = Number(page)
     } else {
       this.pokemonPage = 1
     }
-    if (perPage && parseInt(perPage, 10) && perPage <= this.pokemonCount) {
+    if (perPage && parseInt(perPage, 10) && perPage <= this.getPokemonsCount) {
       this.perPageLimit = Number(perPage)
     }
+    this.pokemonNbOfPages = Math.round(this.getPokemonsCount / this.perPageLimit)
   }
 }
 </script>

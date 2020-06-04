@@ -68,7 +68,8 @@ class Language(HasName):
     iso639 = models.CharField(max_length=10)
     iso3166 = models.CharField(max_length=2)
     official = models.BooleanField(default=False)
-    sprite = models.URLField(max_length=256)
+    local_name = models.CharField(max_length=64)
+    sprite = models.CharField(max_length=256)
 
 
 ##############################

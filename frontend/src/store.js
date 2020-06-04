@@ -9,6 +9,7 @@ export default new Vuex.Store(
   {
     state: {
       storedPokemons: [],
+      pokemonsCount: 0,
       pokemonsPage: 1,
       pokemonsByPage: 60,
       cards: [],
@@ -26,6 +27,9 @@ export default new Vuex.Store(
       },
       getPokemonsByPage: state => {
         return state.pokemonsByPage
+      },
+      getPokemonsCount: state => {
+        return state.pokemonsCount
       }
     },
     mutations: {
@@ -40,6 +44,9 @@ export default new Vuex.Store(
       },
       setUserLanguage (state, language) {
         state.userLanguage = language
+      },
+      setPokemonsCount (state, pokemonsCount) {
+        state.pokemonsCount = pokemonsCount
       },
       addPokemon (state, pokemon) {
         state.storedPokemons.push(pokemon)

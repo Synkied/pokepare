@@ -175,14 +175,22 @@ class Command(BaseCommand):
         self.stdout.write(self.style.WARNING('Importing languages...'))
         import_log_file = 'log_import_languages.txt'
         lang_url = 'https://pokeapi.co/api/v2/language/'
+        local_languages_url = 'https://gist.githubusercontent.com/Synkied/134c208fba5fd3b4046b75a34eb19670/raw/af0e4d90132f004ca565ddc841268e8b3bb7bc16/languages.json'  # noqa
         language_sprite_url = 'https://www.countryflags.io/'
         res = requests.get(lang_url)
         res_json = res.json()
         while res_json:
             try:
+                local_languages = requests.get(local_languages_url).json()
                 languages = res_json.get('results')
                 for language in languages:
                     language_data = requests.get(language['url']).json()
+                    for local_lang in local_languages:
+                        iso639 = language_data.get('iso639', '').split('-')[0]
+                        local_code = local_lang.get('code', '')
+                        if iso639 == local_code:
+                            language_data['local_name'] = local_lang['native']
+
                     language_data['sprite'] = '%s%s%s' % (
                         language_sprite_url,
                         language_data['iso3166'],
@@ -190,6 +198,7 @@ class Command(BaseCommand):
                     )
                     del language_data['names']
                     del language_data['id']
+
                     language, created = Language.objects.get_or_create(
                         **language_data
                     )

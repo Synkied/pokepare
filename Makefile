@@ -17,8 +17,11 @@ flush_db:
 import_data:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data all'
 
-import_pokemon:
+import_pokemons:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data pokemons'
+
+import_languages:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data languages'
 
 import_cards:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data cards'
