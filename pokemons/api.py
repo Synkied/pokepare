@@ -92,7 +92,7 @@ class LanguageResource(PokePareCommonResource, ModelViewSet):
     ordering = ['id']  # default ordering
 
 
-class PokemonResource(ModelViewSet):
+class PokemonResource(PokePareCommonResource, ModelViewSet):
     """
     API endpoint that allows pokemons to be viewed or edited.
     """
@@ -104,19 +104,6 @@ class PokemonResource(ModelViewSet):
     filter_class = PokemonFilter
     ordering_fields = '__all__'  # what field can be ordered via the API
     ordering = ['number']  # default ordering
-
-    # def get_queryset(self):
-    #     queryset = self.queryset
-    #     local_name = self.request.query_params.get('local_name', None)
-    #     language = self.request.query_params.get('language', 'en')
-    #     if local_name:
-    #         lang = Language.objects.get(name=language)
-    #         local_name = PokemonSpeciesName.objects.get(
-    #             language=lang,
-    #             pokemon_species=self.pokemon_species
-    #         )
-    #         queryset = queryset.filter(localname__icontains=local_name).all()
-    #     return queryset
 
 
 class PokemonSpeciesResource(PokePareCommonResource, ModelViewSet):
