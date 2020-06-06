@@ -134,11 +134,11 @@ export default {
           if (Number(curQuery['per_page']) !== newVal) {
             this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, 'per_page': newVal } })
           }
-          if (newVal > maxNumberPerPage) {
-            this.perPageLimit = maxNumberPerPage
-          }
           if (this.pokemonPage > this.pokemonNbOfPages && this.pokemonNbOfPages > 0) {
             this.pokemonPage = this.pokemonNbOfPages
+          }
+          if (newVal > maxNumberPerPage) {
+            this.perPageLimit = maxNumberPerPage
           } else {
             this.pageOffset = (this.perPageLimit * this.pokemonPage) - this.perPageLimit
             this.getPokemonPage(this.pokemonPageUrl)
