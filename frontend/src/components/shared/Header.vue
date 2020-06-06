@@ -17,7 +17,7 @@
         <search-bar></search-bar>
       </v-container>
       <v-btn text small :to="{ name: 'allCards' }">Cards</v-btn>
-      <v-btn text small :to="{ name: 'allPokemons' }">Pokémon</v-btn>
+      <v-btn text small :to="{ name: 'allPokemons', query: { page: 1, 'per_page': 60 } }">Pokémon</v-btn>
       <v-btn text small :to="{ name: 'allCardSets' }">Cards Sets</v-btn>
       <v-btn icon small to="#">
         <v-icon>
@@ -108,6 +108,7 @@ export default {
     ]),
     setUserLanguageInStores () {
       localStorage.setItem('userLanguage', this.selectedLanguage)
+      localStorage.setItem('displayLanguage', this.displayLanguage)
       this.setUserLanguage(this.selectedLanguage)
     },
     async getLanguages () {
@@ -144,7 +145,8 @@ export default {
   },
   async mounted () {
     await this.getLanguages()
-    this.selectedLanguage = localStorage.getItem('userLanguage') || 'en'
+    this.selectedLanguage = localStorage.getItem('userLanguage')
+    this.displayLanguage = localStorage.getItem('displayLanguage')
   }
 }
 </script>
