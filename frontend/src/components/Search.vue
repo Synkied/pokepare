@@ -29,16 +29,22 @@ export default {
       errorMsg: ''
     }
   },
+  watch: {
+    '$route.query.query': {
+      handler (newVal, oldVal) {
+        this.searchCards(newVal)
+      }
+    }
+  },
   methods: {
     searchCards () {
       var thisVm = this
       /* axios to ajax the query */
-      thisVm.userQuery = thisVm.$route.query.query
+      thisVm.userQuery = thisVm.$route.query.query || ''
       if (thisVm.userQuery) {
         const searchCardUrl = `${this.$constants('cardsUrl')}?insensitive_name=${encodeURI(thisVm.userQuery)}`
         axios.get(searchCardUrl).then(response => {
           if (response.data.count > 0) {
-            console.log('search_bar', response.data)
             thisVm.cards = response.data
           } else {
             thisVm.errorMsg = 'No result found for this query.'
@@ -50,19 +56,19 @@ export default {
             if (error.response) {
               // The request was made and the server responded with a status code
               // that falls out of the range of 2xx
-              console.log(error.response.data)
-              console.log(error.response.status)
-              console.log(error.response.headers)
+              console.error(error.response.data)
+              console.error(error.response.status)
+              console.error(error.response.headers)
             } else if (error.request) {
               // The request was made but no response was received
               // `error.request` is an instance of XMLHttpRequest in the browser
               // and an instance of http.ClientRequest in node.js
-              console.log(error.request)
+              console.error(error.request)
             } else {
               // Something happened in setting up the request that triggered an Error
-              console.log('Error', error.message)
+              console.error('Error', error.message)
             }
-            console.log(error.config)
+            console.error(error.config)
           })
       } else {
         thisVm.status = 'NO_QUERY'
@@ -71,8 +77,6 @@ export default {
     }
   },
   mounted () {
-    var thisVm = this
-    thisVm.searchCards()
   },
   components: {
     'cards': Cards

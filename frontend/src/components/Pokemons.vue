@@ -83,8 +83,6 @@
 <script>
 /* Imports */
 import axios from 'axios'
-import { loadProgressBar } from 'axios-progress-bar'
-import 'axios-progress-bar/dist/nprogress.css'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 
 import utils from '@/utils'
@@ -168,8 +166,8 @@ export default {
       try {
         let response = await axios.get(pokemonPageUrl)
         let pokemons = utils.deepGet(response, 'data.results', [])
-        this.setPokemonsToStore(pokemons)
         this.setPokemonsCount(response.data.count)
+        this.setPokemonsToStore(pokemons)
         this.perPageLimit = Number(utils.urlArgsParser(pokemonPageUrl)['limit']) || 60
         this.pageOffset = Number(utils.urlArgsParser(pokemonPageUrl)['offset']) || 0
         this.pokemonNbOfPages = Math.round(this.getPokemonsCount / this.perPageLimit)
@@ -196,14 +194,8 @@ export default {
   async created () {
     let page = utils.deepGet(this.$route, 'query.page')
     let perPage = utils.deepGet(this.$route, 'query.per-page')
-    if (page && parseInt(page, 10)) {
-      this.pokemonPage = Number(page)
-    } else {
-      this.pokemonPage = 1
-    }
-    if (perPage && parseInt(perPage, 10) && perPage <= this.getPokemonsCount) {
-      this.perPageLimit = Number(perPage)
-    }
+    page && parseInt(page, 10) ? this.pokemonPage = Number(page) : this.pokemonPage = 1
+    perPage && parseInt(perPage, 10) && perPage <= this.getPokemonsCount ? this.perPageLimit = Number(perPage) : this.perPageLimit = 60
     this.pokemonNbOfPages = Math.round(this.getPokemonsCount / this.perPageLimit)
   }
 }

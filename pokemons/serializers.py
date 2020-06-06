@@ -57,13 +57,7 @@ class PokemonDetailSerializer(serializers.HyperlinkedModelSerializer):
     def get_local_name(self, obj):
         query_language = self.context['request'].query_params.get(
             'language', None
-        )
-
-        lang = Language.objects.get(name='en')
-        local_name = PokemonSpeciesName.objects.get(
-            language=lang,
-            pokemon_species=obj.pokemon_species
-        )
+        ) or 'en'
 
         if query_language:
             lang = Language.objects.get(name=query_language)
