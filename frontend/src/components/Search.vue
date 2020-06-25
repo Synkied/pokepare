@@ -41,15 +41,17 @@ export default {
       var thisVm = this
       /* axios to ajax the query */
       thisVm.userQuery = thisVm.$route.query.query || ''
+      console.log(thisVm.userQuery)
       if (thisVm.userQuery) {
         const searchCardUrl = `${this.$constants('cardsUrl')}?insensitive_name=${encodeURI(thisVm.userQuery)}`
         axios.get(searchCardUrl).then(response => {
+          console.log(response)
           if (response.data.count > 0) {
             thisVm.cards = response.data
           } else {
             thisVm.errorMsg = 'No result found for this query.'
             thisVm.cards = ''
-            console.log(thisVm.errorMsg)
+            console.error(thisVm.errorMsg)
           }
         })
           .catch(function (error) {
@@ -77,6 +79,8 @@ export default {
     }
   },
   mounted () {
+    this.searchCards(this.$route.query.query)
+
   },
   components: {
     'cards': Cards

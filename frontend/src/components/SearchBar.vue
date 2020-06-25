@@ -88,7 +88,7 @@ export default {
   watch: {
     query: {
       handler (newVal, oldVal) {
-        this.liveSearchCards(newVal)
+        this.liveSearch(newVal)
       }
     }
   },
@@ -104,7 +104,7 @@ export default {
         this.$router.push({ name: 'search', query: { query: this.selectedItem } })
       }
     },
-    async liveSearchCards (userQuery) {
+    async liveSearch (userQuery) {
       if (userQuery) {
         // const searchCardUrl = `${this.$constants('cardsUrl')}?insensitive_name=${encodeURI(userQuery)}&limit=2000`
         const searchPokemonUrl = `${this.$constants('pokemonsUrl')}?insensitive_name=${encodeURI(userQuery)}&limit=2000&language=${this.getUserLanguage}`

@@ -127,7 +127,6 @@ export default {
     },
     perPageLimit: {
       handler (newVal, oldVal) {
-        console.log(newVal, oldVal)
         let maxNumberPerPage = Math.max(...this.numberPerPage)
         if (newVal !== oldVal) {
           let curQuery = JSON.parse(JSON.stringify(this.$route.query))
@@ -178,7 +177,6 @@ export default {
       'setPokemonsCount'
     ]),
     async getPokemonPage (pokemonPageUrl) {
-      console.log(pokemonPageUrl)
       try {
         let response = await axios.get(pokemonPageUrl)
         let pokemons = utils.deepGet(response, 'data.results', [])
