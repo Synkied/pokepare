@@ -17,7 +17,7 @@
           <div class="mt-2 related-pokemon-image" v-if="pokemon">
             <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}" class="pokemon-link">
               <img :src="pokemon.front_sprite" :alt="pokemon.local_name">
-              <p>#{{ pokemon.number }}</p>
+              <p class="pokemon-name">{{ pokemon.local_name }} <small>#{{ pokemon.number }}</small></p>
             </router-link>
           </div>
           <price-table :cards="[card]"></price-table>
@@ -181,6 +181,12 @@ export default {
 
 .pokemon-title small {
   font-size: 60%;
+  color: #6f6f6f;
+  line-height: 0;
+}
+
+.pokemon-name small {
+  font-size: 70%;
   color: #6f6f6f;
   line-height: 0;
 }

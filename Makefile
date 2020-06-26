@@ -26,6 +26,9 @@ import_languages:
 import_cards:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data cards'
 
+import_cardsets:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data cardsets'
+
 add_images:
 	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all'
 

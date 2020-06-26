@@ -49,7 +49,7 @@ class Command(BaseCommand):
             self.import_languages()
             self.import_pokemons()
             self.import_cards()
-            self.import_sets()
+            self.import_cardsets()
         elif import_type == 'languages':
             self.clear_languages()
             self.import_languages()
@@ -60,9 +60,9 @@ class Command(BaseCommand):
         elif import_type == 'cards':
             self.clear_cards()
             self.import_cards()
-        elif import_type == 'sets':
+        elif import_type == 'cardsets':
             self.clear_sets()
-            self.import_sets()
+            self.import_cardsets()
         elif import_type == 'clear':
             self.clear_pokemons()
             self.clear_cards()
@@ -406,7 +406,7 @@ class Command(BaseCommand):
     ##############################
     # Importing cardsets
     ##############################
-    def import_sets(self):
+    def import_cardsets(self):
         self.stdout.write('Importing cardsets...')
 
         url_tcg = 'https://api.pokemontcg.io/v1/sets?pageSize=100'

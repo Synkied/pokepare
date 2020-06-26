@@ -80,7 +80,6 @@ export default {
   },
   mounted () {
     this.searchCards(this.$route.query.query)
-
   },
   components: {
     'cards': Cards
