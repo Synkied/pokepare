@@ -5,7 +5,10 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
+from pokemons.models import Language
 from pokemons.models import Pokemon
+from pokemons.models import PokemonSpecies
+from pokemons.models import PokemonSpeciesName
 
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -22,7 +25,37 @@ class PokemonDRFTestCase(TestCase):
         self.client = APIClient()
         self.user = User.objects.create_superuser(
             'test_user', '', 'test_password')
-        self.pokemon_data = {'id': 1, 'name': "Bulbasaur", 'number': 1}
+        self.language_data = {
+            'name': 'en',
+            'iso639': 'en',
+            'iso3166': 'us',
+            'official': True,
+            'local_name': 'English',
+            'sprite': 'https://www.countryflags.io/us/flat/16.png'
+        }
+        language = Language.objects.create(
+            **self.language_data
+        )
+        self.pokemon_species_data = {
+            'name': 'Bulbasaur',
+        }
+        pokemon_species = PokemonSpecies.objects.create(
+            **self.pokemon_species_data
+        )
+        new_poke_name = {
+            'name': 'Bulbasaur',
+            'language': language,
+            'pokemon_species': pokemon_species
+        }
+        poke_sp_name, created = PokemonSpeciesName.objects.get_or_create(
+            **new_poke_name
+        )
+        self.pokemon_data = {
+            'id': 1,
+            'name': "Bulbasaur",
+            'number': 1,
+            'pokemon_species': pokemon_species
+        }
         _ = Pokemon.objects.create(**self.pokemon_data)
 
     def test_api_can_get_a_pokemon(self):

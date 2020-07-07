@@ -33,10 +33,10 @@ add_images:
 	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all'
 
 cov_test:
-	coverage run manage.py test
+	docker exec pokepare_py /bin/sh -c 'coverage run manage.py test'
 
 cov_report:
-	coverage report
+	docker exec pokepare_py /bin/sh -c 'coverage report'
 
 build:
 	docker-compose build
