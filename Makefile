@@ -1,3 +1,5 @@
+rootdir = $(realpath .)
+
 init:
 	pip install -r requirements.txt
 
@@ -30,7 +32,7 @@ import_cardsets:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data cardsets'
 
 add_images:
-	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all'
+	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all /usr/src/app/public/media/cards/'
 
 cov_test:
 	docker exec pokepare_py /bin/sh -c 'coverage run manage.py test'

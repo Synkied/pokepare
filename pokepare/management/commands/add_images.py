@@ -16,8 +16,8 @@ class Command(BaseCommand):
     # dirlist = os.listdir(img_dir)
 
     def add_arguments(self, parser):
-        parser.add_argument('-import_type', type=str, nargs='?', default='all')
-        parser.add_argument('-dir', type=str, nargs='?', default='')
+        parser.add_argument('import_type', type=str, nargs='?', default='all')
+        parser.add_argument('dir', type=str, nargs='?', default='')
 
     def handle(self, *args, **options):
         import_type = options.get('import_type', None)
