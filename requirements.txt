@@ -20,7 +20,7 @@ gunicorn==19.9.0
 idna==2.7
 -e git://github.com/EdjoLabs/image-match.git#egg=image-match
 kiwisolver==1.0.1
-lxml==4.6.2
+lxml==4.6.3
 Markdown==2.6.11
 matplotlib==2.2.2
 networkx==2.1
