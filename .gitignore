@@ -14,3 +14,4 @@ log_import_pokemons.txt
 .coverage
 public/
 frontend/package-lock.json
+src/

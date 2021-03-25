@@ -66,6 +66,8 @@ python manage.py runserver
 ```
 ## Docker
 ```sh
+docker network create proxy
+
 docker-compose build | make build
 
 docker-compose up -d | make up
