@@ -1,5 +1,5 @@
-all: build up create_user_db yarn_build collectstatic create_cache_table migrate_db import_data
-all_no_cache: build_no_cache up yarn_build collectstatic create_user_db create_cache_table migrate_db import_data
+all: build up create_user_db npm_build collectstatic create_cache_table migrate_db import_data
+all_no_cache: build_no_cache up npm_build collectstatic create_user_db create_cache_table migrate_db import_data
 
 init:
 	pip install -r requirements.txt
@@ -52,8 +52,8 @@ bash_web:
 bash_db:
 	docker exec -ti pokepare_db bash
 
-yarn_build:
-	cd frontend && yarn build && cd ..
+npm_build:
+	cd frontend && npm run build && cd ..
 
 freeze:
 	pip freeze > requirements.txt
