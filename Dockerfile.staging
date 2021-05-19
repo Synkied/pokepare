@@ -3,11 +3,11 @@ FROM python:3.6.10-stretch
 # Update with new repo
 RUN apt-get update
 
-# Install software 
-RUN apt-get install -y git
+# Install software
+RUN apt-get install -y git libfreetype6-dev
 
 COPY requirements.txt ./requirements.txt
-RUN pip install numpy
+RUN pip install numpy Cython
 RUN pip install -r /requirements.txt
 
 WORKDIR /usr/src/app
