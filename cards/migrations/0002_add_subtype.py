@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cards', '0018_auto_20180721_1423'),
+        ('cards', '0001_initial'),
     ]
 
     operations = [
@@ -21,10 +21,6 @@ class Migration(migrations.Migration):
             model_name='card',
             name='image_url',
             field=models.URLField(default='/static/assets/pokepare_card.png', help_text='The front image of the card.'),
-        ),
-        migrations.RemoveField(
-            model_name='card',
-            name='subtype',
         ),
         migrations.AddField(
             model_name='card',

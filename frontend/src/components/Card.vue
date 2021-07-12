@@ -16,8 +16,8 @@
           <img :src="card.image" :alt="card.name">
           <div class="mt-2 related-pokemon-image" v-if="pokemon">
             <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}" class="pokemon-link">
-              <img :src="pokemon.image" :alt="pokemon.name">
-              <p>#{{ pokemon.number }}</p>
+              <img :src="pokemon.front_sprite" :alt="pokemon.local_name">
+              <p class="pokemon-name">{{ pokemon.local_name }} <small>#{{ pokemon.number }}</small></p>
             </router-link>
           </div>
           <price-table :cards="[card]"></price-table>
@@ -32,6 +32,7 @@
 import axios from 'axios'
 import { loadProgressBar } from 'axios-progress-bar'
 import 'axios-progress-bar/dist/nprogress.css'
+import { mapGetters } from 'vuex'
 
 import PriceTable from './PriceTable.vue'
 import utils from '@/utils'
@@ -77,7 +78,7 @@ export default {
     }
   },
   title () {
-    return `PokePare — ${this.card.name}`
+    return `PokePare — ${utils.deepGet(this.card, 'name')}`
   },
   watch: {
     card: function (newCard, oldCard) {
@@ -97,7 +98,10 @@ export default {
         return a.market_price - b.market_price
       })
       return sortedCardPrices
-    }
+    },
+    ...mapGetters([
+      'getUserLanguage'
+    ])
   },
   methods: {
     async getCardData () {
@@ -116,22 +120,26 @@ export default {
         .then(response => {
           if (response.data) {
             thisVm.status = response.status
-            thisVm.card = response.data.results[0]
-            thisVm.card.prices.map(price => {
-              let cardUniqueId = utils.deepGet(thisVm.card, 'unique_id')
-              price.card_unique_id = `${cardUniqueId}`
-            })
+            thisVm.card = response.data.results[0] || ''
+            let cardPrices = utils.deepGet(thisVm.card, 'prices')
+            if (cardPrices) {
+              cardPrices.map(price => {
+                let cardUniqueId = utils.deepGet(thisVm.card, 'unique_id')
+                price.card_unique_id = `${cardUniqueId}`
+              })
+            }
             thisVm.numberInCardSet = response.data.results[0].number_in_set
           }
           // get the pokemon data linked to the card
           let pokemonId = response.data.results[0].pokemon
-          return axios.get(`${pokemonsUrl}${pokemonId}`)
+          return axios.get(`${pokemonsUrl}${pokemonId}?language=${this.getUserLanguage}`)
         })
         .then(response => {
           thisVm.pokemon = response.data
           thisVm.pokemonId = response.data.id
           // get the card's set data
-          const cardSetPath = `${cardSetsUrl}?code=${encodeURI(thisVm.card.card_set_code)}`
+          let cardSetCode = utils.deepGet(thisVm.card, 'card_set_code')
+          const cardSetPath = `${cardSetsUrl}?code=${encodeURI(cardSetCode)}`
           return axios.get(cardSetPath)
         })
         .then(response => {
@@ -173,6 +181,12 @@ export default {
 
 .pokemon-title small {
   font-size: 60%;
+  color: #6f6f6f;
+  line-height: 0;
+}
+
+.pokemon-name small {
+  font-size: 70%;
   color: #6f6f6f;
   line-height: 0;
 }

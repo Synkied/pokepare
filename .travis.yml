@@ -24,4 +24,5 @@ before_script:
 
 script:
   - python manage.py add_images all /home/travis/build/Synkied/pokepare/mock_data/
-  - make cov_test
+  - coverage run manage.py test
+

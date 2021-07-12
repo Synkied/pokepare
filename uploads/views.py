@@ -1,3 +1,5 @@
+import os
+
 from cards.models import Card
 
 from django.conf import settings
@@ -44,7 +46,9 @@ class UploadFileView(CreateView):
                 if search:
                     for result in search:
                         image_name_ext = result['path'].split('/')[-1::]
-                        image_name = ''.join(image_name_ext).split('.')[-2::][0]
+                        image_name = "".join(
+                            image_name_ext
+                        ).split('.')[-2::][0]
                         # print(image_name)
                     if image_name:
                         card = Card.objects.get(unique_id=image_name)
@@ -64,3 +68,17 @@ class UploadFileView(CreateView):
         }
 
         return(JsonResponse(context))
+
+    def add_to_es(self, img_dir=""):
+
+        es = Elasticsearch(hosts=[{"host": settings.ELASTICSEARCH_HOST}])
+        ses = SignatureES(es, distance_cutoff=0.3)
+
+        dirlist = os.listdir(img_dir)
+
+        for file in dirlist:
+            file_ext = "".join(file.split('.')[-1::])
+            img_path = img_dir + file
+            if file_ext in ('png', 'jpg'):
+                print(img_path, 'added.')
+                ses.add_image(img_path)

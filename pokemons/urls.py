@@ -1,14 +1,9 @@
 from django.urls import path
 
-from . import views
+from . import api
 
 app_name = "pokemons"
 
 urlpatterns = [
-    path('', views.PokemonView.as_view(), name="pokemon_list"),
-    path(
-        '<str:name>',
-        views.PokemonViewDetail.as_view(),
-        name="pokemon_detail"
-    ),
+    path('', api.PokemonView.as_view(), name="pokemon_list"),
 ]

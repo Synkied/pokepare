@@ -6,7 +6,11 @@ const routerOptions = [
   { path: '', component: 'Home', name: 'home' },
   { path: '/cards/', component: 'Cards', name: 'allCards' },
   { path: '/cards/:unique_id', component: 'Card', name: 'cardDetail' },
-  { path: '/pokemons/', component: 'Pokemons', name: 'allPokemons' },
+  { path: '/pokemons/',
+    component: 'Pokemons',
+    props: (route) => ({ page: route.query.page, 'per_page': route.query['per_page'] }),
+    name: 'allPokemons'
+  },
   { path: '/pokemons/:name', component: 'Pokemon', name: 'pokemonDetail' },
   { path: '/cardsets/', component: 'CardSets', name: 'allCardSets' },
   { path: '/cardsets/:code', component: 'CardSet', props: true, name: 'cardSetDetail' },

@@ -3,10 +3,16 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import reverse
 
+from uploads.views import UploadFileView
+
 # Create your tests here.
 
 
 class UploadFileTest(TestCase):
+
+    def setUp(self):
+        upload_view = UploadFileView()
+        upload_view.add_to_es('mock_data/')
 
     def test_upload_valid_file(self):
         """
@@ -24,7 +30,10 @@ class UploadFileTest(TestCase):
         response = client.post(reverse('file_upload'), form_data, follow=True)
 
         # get the json response and verify it succeeds.
-        self.assertJSONEqual(str(response.content, encoding='utf8'), {"success": True, "result": ""})
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {"success": True, "result": ""}
+        )
 
     def test_upload_invalid_file(self):
         """

@@ -1,14 +1,14 @@
 <template>
   <v-container id="pokemons">
-    <v-card tile flat outlined>
-      <v-card-title class="secondary darken-1 headline" v-if="pokemonCount">
+    <v-card tile flat outlined v-if="getPokemonsCount">
+      <v-card-title class="secondary darken-1 headline">
         <template>
           <v-row class="justify-center">
             <v-col
               cols="2"
             >
               <span>
-                {{ pokemonCount }} POKÉMON
+                {{ getPokemonsCount }} POKÉMON
               </span>
             </v-col>
             <v-spacer></v-spacer>
@@ -26,6 +26,7 @@
             cols="4"
           >
             <v-pagination
+              v-if="pokemonNbOfPages"
               v-model="pokemonPage"
               :length="pokemonNbOfPages"
               next-icon="arrow_right"
@@ -53,22 +54,23 @@
           <v-col
             cols="4"
             md="3"
-            v-for="pokemon in pokemons"
+            v-for="pokemon in getPokemonsFromStore"
             :key="pokemon.id">
             <ul>
               <li class="ns-li">
                 <router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">
-                  <img class="card-img" :src="pokemon.image" :alt="pokemon.name">
+                  <img class="card-img" :src="pokemon.front_sprite" :alt="pokemon.local_name">
                 </router-link>
               </li>
               <li class="ns-li">
-                <p><router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">{{ pokemon.name }}</router-link></p>
+                <p><router-link :to="{ name: 'pokemonDetail', params: { name: pokemon.name }}">{{ titleize(pokemon.local_name) }}</router-link></p>
               </li>
             </ul>
           </v-col>
         </v-row>
       </div>
       <v-pagination
+        v-if="pokemonNbOfPages"
         v-model="pokemonPage"
         :length="pokemonNbOfPages"
         next-icon="arrow_right"
@@ -83,8 +85,7 @@
 <script>
 /* Imports */
 import axios from 'axios'
-import { loadProgressBar } from 'axios-progress-bar'
-import 'axios-progress-bar/dist/nprogress.css'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 import utils from '@/utils'
 
@@ -92,13 +93,11 @@ import utils from '@/utils'
 export default {
   data () {
     return {
-      pokemonCount: '',
       moduleTitle: 'Pokémon',
-      perPageLimit: 60,
-      pageOffset: 0,
+      perPageLimit: null,
+      pageOffset: null,
       pokemons: [],
-      pokemonPage: 1,
-      pokemonNbOfPages: 0,
+      pokemonPage: null,
       numberPerPage: [
         20,
         60,
@@ -112,49 +111,79 @@ export default {
   watch: {
     pokemonPage: {
       handler (newVal, oldVal) {
-        if (newVal) {
+        if (newVal && oldVal) {
           let curQuery = JSON.parse(JSON.stringify(this.$route.query))
           if (Number(curQuery['page']) !== newVal) {
             this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, page: newVal } })
           }
-          let perPageLimit = this.perPageLimit
-          let pageOffset = (this.perPageLimit * newVal) - this.perPageLimit
-          let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
-          this.getPokemonPage(pokemonPageUrl)
+          if (newVal > this.pokemonNbOfPages && this.pokemonNbOfPages > 0) {
+            this.pokemonPage = this.pokemonNbOfPages
+          }
+          this.pageOffset = (this.perPageLimit * newVal) - this.perPageLimit
+          this.getPokemonPage(this.pokemonPageUrl)
+          this.setPokemonsPage(newVal)
         }
       }
     },
     perPageLimit: {
       handler (newVal, oldVal) {
-        if (newVal && oldVal) {
+        let maxNumberPerPage = Math.max(...this.numberPerPage)
+        if (newVal !== oldVal) {
           let curQuery = JSON.parse(JSON.stringify(this.$route.query))
-          if (Number(curQuery['per-page']) !== newVal) {
-            this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, 'per-page': newVal } })
+          if (Number(curQuery['per_page']) !== newVal) {
+            this.$router.replace({ path: this.$route.params[0], query: { ...curQuery, 'per_page': newVal } })
           }
-          let perPageLimit = this.perPageLimit
-          let pageOffset = (this.perPageLimit * this.pokemonPage) - this.perPageLimit
-          let pokemonPageUrl = `${this.$constants('pokemonsUrl')}?limit=${perPageLimit}&offset=${pageOffset}`
-          this.getPokemonPage(pokemonPageUrl)
+          if (this.pokemonPage > this.pokemonNbOfPages && this.pokemonNbOfPages > 0) {
+            this.pokemonPage = this.pokemonNbOfPages
+          }
+          if (newVal > maxNumberPerPage) {
+            this.perPageLimit = maxNumberPerPage
+          } else {
+            this.pageOffset = (this.perPageLimit * this.pokemonPage) - this.perPageLimit
+            this.getPokemonPage(this.pokemonPageUrl)
+            this.setPokemonsByPage(newVal)
+          }
         }
+      }
+    },
+    userLanguage: {
+      handler (newVal, oldVal) {
+        this.getPokemonPage(this.pokemonPageUrl)
       }
     }
   },
-  methods: {
-    async getPokemons () {
-      const pokemonsUrl = `${this.$constants('pokemonsUrl')}?limit=${this.perPageLimit}&offset=${this.pageOffset}`
-      loadProgressBar()
-      await this.getPokemonPage(pokemonsUrl)
+  computed: {
+    ...mapGetters([
+      'getPokemonsFromStore',
+      'getUserLanguage',
+      'getPokemonsCount'
+    ]),
+    ...mapState([
+      'userLanguage'
+    ]),
+    pokemonPageUrl () {
+      return `${this.$constants('pokemonsUrl')}?limit=${this.perPageLimit}&offset=${this.pageOffset}&language=${this.getUserLanguage}`
     },
+    pokemonNbOfPages () {
+      return Math.round(this.getPokemonsCount / this.perPageLimit)
+    }
+  },
+  methods: {
+    titleize: utils.titleize,
+    ...mapMutations([
+      'setPokemonsToStore',
+      'setPokemonsPage',
+      'setPokemonsByPage',
+      'setPokemonsCount'
+    ]),
     async getPokemonPage (pokemonPageUrl) {
       try {
         let response = await axios.get(pokemonPageUrl)
-        if (response.data) {
-          this.pokemons = response.data.results
-          this.pokemonCount = response.data.count
-          this.perPageLimit = Number(utils.urlArgsParser(pokemonPageUrl)['limit']) || 60
-          this.pageOffset = Number(utils.urlArgsParser(pokemonPageUrl)['offset']) || 0
-          this.pokemonNbOfPages = Math.round(this.pokemonCount / this.perPageLimit)
-        }
+        let pokemons = utils.deepGet(response, 'data.results', [])
+        this.setPokemonsCount(response.data.count)
+        this.setPokemonsToStore(pokemons)
+        this.pageOffset = Number(utils.urlArgsParser(pokemonPageUrl)['offset']) || 0
+        this.perPageLimit = Number(utils.urlArgsParser(pokemonPageUrl)['limit']) || 60
       } catch (err) {
         if (err.response) {
           // The request was made and the server responded with a status code
@@ -175,18 +204,11 @@ export default {
       }
     }
   },
-  async mounted () {
-    await this.getPokemons()
+  async created () {
     let page = utils.deepGet(this.$route, 'query.page')
-    let perPage = utils.deepGet(this.$route, 'query.per-page')
-    if (page && parseInt(page, 10) && page <= this.pokemonNbOfPages) {
-      this.pokemonPage = Number(page)
-    } else {
-      this.pokemonPage = 1
-    }
-    if (perPage && parseInt(perPage, 10) && perPage <= this.pokemonCount) {
-      this.perPageLimit = Number(perPage)
-    }
+    this.pokemonPage = Number(page)
+    this.perPageLimit = Number(utils.deepGet(this.$route, 'query.per_page'))
+    this.pageOffset = (this.perPageLimit * Number(page)) - this.perPageLimit
   }
 }
 </script>

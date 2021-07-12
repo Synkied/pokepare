@@ -1,3 +1,4 @@
+rootdir = $(realpath .)
 all: build up create_user_db npm_build collectstatic create_cache_table migrate_db import_data
 all_no_cache: build_no_cache up npm_build collectstatic create_user_db create_cache_table migrate_db import_data
 
@@ -11,19 +12,35 @@ create_cache_table:
 	docker exec pokepare_py /bin/sh -c "python manage.py createcachetable" 
 
 migrate_db:
+	docker exec pokepare_py /bin/sh -c 'python manage.py makemigrations'
 	docker exec pokepare_py /bin/sh -c 'python manage.py migrate'
+
+flush_db:
+	docker exec pokepare_py /bin/sh -c 'python manage.py flush --no-input'
 
 import_data:
 	docker exec pokepare_py /bin/sh -c 'python manage.py import_data all'
 
+import_pokemons:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data pokemons'
+
+import_languages:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data languages'
+
+import_cards:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data cards'
+
+import_cardsets:
+	docker exec pokepare_py /bin/sh -c 'python manage.py import_data cardsets'
+
 add_images:
-	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all'
+	docker exec pokepare_py /bin/sh -c 'python manage.py add_images all /usr/src/app/public/media/cards/'
 
 cov_test:
-	coverage run manage.py test
+	docker exec pokepare_py /bin/sh -c 'coverage run manage.py test'
 
 cov_report:
-	coverage report
+	docker exec pokepare_py /bin/sh -c 'coverage report'
 
 build:
 	docker-compose build
