@@ -104,7 +104,7 @@ def build_production():
     Remotely builds the app to be served on production.
     """
     with cd(REMOTE_SRV_DIR):
-        run('make npm_build')
+        run('make yarn_build')
 
     with cd(REMOTE_SRV_DIR):
         run('make collectstatic')
