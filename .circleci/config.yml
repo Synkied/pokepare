@@ -34,6 +34,7 @@ jobs:
       - run:
           command: |
             pip install numpy
+            pip install Cython
       - python/install-packages:
           pkg-manager: pip
           # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
