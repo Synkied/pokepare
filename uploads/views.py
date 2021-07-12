@@ -12,8 +12,8 @@ from elasticsearch import Elasticsearch
 
 from image_match.elasticsearch_driver import SignatureES
 
-from .forms import ImageForm
-from .models import Image
+from uploads.forms import ImageForm
+from uploads.models import Image
 
 
 # Create your views here.

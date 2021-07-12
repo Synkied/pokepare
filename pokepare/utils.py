@@ -57,7 +57,6 @@ class OverwriteStorage(FileSystemStorage):
 class PriceFinder():
 
     def get_ebay_prices(self, name, number_in_set, set_name):
-
         items_list = []
 
         try:
@@ -138,7 +137,6 @@ class PriceFinder():
         return items_list
 
     def get_tcgplayer_prices(self, name):
-
         token = settings.TCGPLAYER_BEARER_TOKEN
         product_url = ("http://api.tcgplayer.com/catalog/products?categoryId=3&productTypes=Cards&limit=100&productName=" + name)  # noqa
         # esetting header for tcgplayer api bearer token

@@ -1,3 +1,6 @@
+from cardsets.models import CardSet
+from cardsets.serializers import CardSetSerializer
+
 from django.shortcuts import render
 from django.views import View
 
@@ -7,8 +10,6 @@ from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
 
-from .models import CardSet
-from .serializers import CardSetSerializer
 
 # Create your views here.
 

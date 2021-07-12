@@ -66,6 +66,8 @@ python manage.py runserver
 ```
 ## Docker
 ```sh
+docker network create proxy
+
 docker-compose build | make build
 
 docker-compose up -d | make up
@@ -117,8 +119,3 @@ Remember to navigate to Applications/Python x.x (where x.x is your version) and 
 * sets do not display the correct cards
 * pokemon paging is bugged if the user clicks too fast on "next"
 
-
-# TODO
-
-* Add pokémon' names in french
-* Add pokémon' names in japanese

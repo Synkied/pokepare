@@ -1,10 +1,12 @@
 rootdir = $(realpath .)
+all: build up create_user_db npm_build collectstatic create_cache_table migrate_db import_data
+all_no_cache: build_no_cache up npm_build collectstatic create_user_db create_cache_table migrate_db import_data
 
 init:
 	pip install -r requirements.txt
 
 create_user_db:
-	docker exec --user postgres pokepare_db /bin/sh -c "createuser pokepare -s && createdb -U pokepare pokepare"
+	docker exec --user postgres pokepare_db /bin/sh -c "psql -tc \"SELECT 1 FROM pg_user WHERE usename = 'pokepare'\" | grep -q 1 || (createuser pokepare -s && createdb -U pokepare pokepare)"
 
 create_cache_table:
 	docker exec pokepare_py /bin/sh -c "python manage.py createcachetable" 
@@ -67,8 +69,8 @@ bash_web:
 bash_db:
 	docker exec -ti pokepare_db bash
 
-yarn_build:
-	cd frontend && yarn build
+npm_build:
+	cd frontend && npm run build && cd ..
 
 freeze:
 	pip freeze > requirements.txt
