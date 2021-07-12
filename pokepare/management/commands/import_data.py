@@ -245,26 +245,26 @@ class Command(BaseCommand):
 
             for index, card in enumerate(datas):
                 card["national_pokedex_number"] = card.pop(
-                    "nationalPokedexNumbers"
+                    "nationalPokedexNumbers", None
                 )[0]
-                card["unique_id"] = card.pop("id")
-                card["number_in_set"] = card.pop("number")
+                card["unique_id"] = card.pop("id", None)
+                card["number_in_set"] = card.pop("number", None)
 
                 # card set
                 card["card_set"] = deep_get(card, 'set.name')
                 card["series"] = deep_get(card, 'set.series')
                 set_id = deep_get(card, 'set.id')
                 card["card_set_code"] = set_id
-                card.pop('set')
+                card.pop('set', None)
 
                 image_url = deep_get(card, 'images.large')
                 card["image_url"] = image_url
-                card.pop('images')
+                card.pop('images', None)
                 card['subtypes'] = set()
                 for subtype in card['subtypes']:
                     subtype = SubType.objects.get(name=subtype)
                     card['subtypes'].add(subtype)
-                card.pop('subtypes')
+                card.pop('subtypes', None)
 
                 if card["supertype"] == "Pokémon":
                     # link cards and pokemons together using Q objects
