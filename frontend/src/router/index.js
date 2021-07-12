@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 const routerOptions = [
   /* what to render depending on the url passed */
-  { path: '', component: 'Home', name: 'home' },
+  { path: '/', component: 'Home', name: 'home' },
   { path: '/cards/', component: 'Cards', name: 'allCards' },
   { path: '/cards/:unique_id', component: 'Card', name: 'cardDetail' },
   { path: '/pokemons/',

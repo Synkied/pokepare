@@ -1,9 +1,12 @@
+from api.views.pokemon import PokemonDetailView
+from api.views.pokemon import PokemonListView
+
 from django.urls import path
 
-from . import api
 
 app_name = "pokemons"
 
 urlpatterns = [
-    path('', api.PokemonView.as_view(), name="pokemon_list"),
+    path('', PokemonListView.as_view(), name="pokemon_list"),
+    path('<str:name>', PokemonDetailView.as_view(), name="pokemon_detail"),
 ]

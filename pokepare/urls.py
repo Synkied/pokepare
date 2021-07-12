@@ -1,3 +1,5 @@
+from api.urls import router
+
 from django.conf import settings
 from django.conf.urls import include
 from django.conf.urls.static import static
@@ -8,7 +10,6 @@ from django.views.generic import TemplateView
 
 from uploads.views import UploadFileView
 
-from .routers import router
 from .views import SearchView
 
 urlpatterns = [

@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 (
                     'local_name',
                     models.CharField(
-                        default='en', max_length=64
+                        max_length=64
                     )
                 ),
             ],

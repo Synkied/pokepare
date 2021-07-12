@@ -1,14 +1,15 @@
 from django.urls import path
 
-from . import views
+from .views import CardSetDetailView
+from .views import CardSetListView
 
 app_name = "cardsets"
 
 urlpatterns = [
-    path('', views.CardSetView.as_view(), name="cardset_list"),
+    path('', CardSetListView.as_view(), name="cardset_list"),
     path(
         '<str:code>',
-        views.CardSetViewDetail.as_view(),
+        CardSetDetailView.as_view(),
         name="cardset_detail"
     ),
 ]
