@@ -48,16 +48,16 @@ class Command(BaseCommand):
             self.import_cards()
             self.import_sets()
         elif import_type == 'pokemons':
-            self.clear_pokemons()
             self.import_pokemons()
         elif import_type == 'cards':
-            self.clear_cards()
             self.import_cards()
         elif import_type == 'sets':
-            self.clear_sets()
             self.import_sets()
+        elif import_type == 'subtypes':
+            self.import_subtypes()
         elif import_type == 'clear':
             self.clear_pokemons()
+            self.clear_sets()
             self.clear_cards()
         else:
             self.stdout.write(
@@ -259,7 +259,7 @@ class Command(BaseCommand):
                 card["card_set_code"] = set_id
                 card.pop('set', None)
 
-                image_url = deep_get(card, 'images.large')
+                image_url = deep_get(card, 'images.small')
                 card["image_url"] = image_url
                 card.pop('images', None)
                 card['subtypes'] = set()
