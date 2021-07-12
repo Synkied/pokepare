@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils import timezone
 
@@ -8,6 +7,13 @@ from pokemons.models import Pokemon
 from pokepare.utils import OverwriteStorage
 
 # Create your models here.
+
+
+class SubType(models.Model):
+    name = models.CharField(
+        help_text='The subtype name.',
+        max_length=256
+    )
 
 
 class Card(models.Model):
@@ -38,12 +44,7 @@ class Card(models.Model):
         blank=True,
         null=True
     )
-    subtype = models.CharField(
-        help_text='MEGA/BREAK/Supporter...',
-        max_length=100,
-        blank=True,
-        null=True
-    )
+    subtype = models.ManyToManyField(SubType)
     supertype = models.CharField(
         help_text='Pokémon/Trainer/Energy',
         max_length=100,
@@ -110,7 +111,7 @@ class Card(models.Model):
 
     condition = models.CharField(max_length=50, blank=True, null=True)
     edition = models.CharField(max_length=50, blank=True, null=True)
-    prices = JSONField(blank=True, null=True, default=list)
+    prices = models.JSONField(blank=True, null=True, default=list)
 
     image_hash = models.PositiveIntegerField(blank=True, null=True)
 
