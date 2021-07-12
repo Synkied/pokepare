@@ -49,10 +49,16 @@ class Command(BaseCommand):
             self.import_sets()
         elif import_type == 'pokemons':
             self.import_pokemons()
+        elif import_type == 'clear_pokemons':
+            self.clear_pokemons()
         elif import_type == 'cards':
             self.import_cards()
+        elif import_type == 'clear_cards':
+            self.clear_cards()
         elif import_type == 'sets':
             self.import_sets()
+        elif import_type == 'clear_sets':
+            self.clear_sets()
         elif import_type == 'subtypes':
             self.import_subtypes()
         elif import_type == 'clear':
