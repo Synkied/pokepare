@@ -244,9 +244,11 @@ class Command(BaseCommand):
             ]
 
             for index, card in enumerate(datas):
-                card["national_pokedex_number"] = card.pop(
+                pokedex_numbers = card.pop(
                     "nationalPokedexNumbers", None
-                )[0]
+                )
+                if pokedex_numbers:
+                    card["national_pokedex_number"] = pokedex_numbers[0]
                 card["unique_id"] = card.pop("id", None)
                 card["number_in_set"] = card.pop("number", None)
 
