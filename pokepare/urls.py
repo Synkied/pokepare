@@ -19,9 +19,9 @@ urlpatterns = [
         'api-auth/',
         include('rest_framework.urls', namespace='rest_framework')
     ),
-    path('cards/', include('cards.urls'), name="cards"),
-    path('pokemons/', include('pokemons.urls'), name="pokemons"),
-    path('cardsets/', include('cardsets.urls'), name="cardsets"),
+    # path('cards/', include('cards.urls'), name="cards"),
+    # path('pokemons/', include('pokemons.urls'), name="pokemons"),
+    # path('cardsets/', include('cardsets.urls'), name="cardsets"),
     path('search/', SearchView.as_view(), name="search"),
     path(
         'file-upload/',
