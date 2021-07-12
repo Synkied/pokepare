@@ -15,3 +15,4 @@ log_import_pokemons.txt
 public/
 frontend/package-lock.json
 src/
+*.db
