@@ -12,16 +12,16 @@ from .routers import router
 from .views import SearchView
 
 urlpatterns = [
-    # path('', TemplateView.as_view(template_name="index.html")),
+    path('', TemplateView.as_view(template_name="index.html")),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path(
         'api-auth/',
         include('rest_framework.urls', namespace='rest_framework')
     ),
-    # path('cards/', include('cards.urls'), name="cards"),
-    # path('pokemons/', include('pokemons.urls'), name="pokemons"),
-    # path('cardsets/', include('cardsets.urls'), name="cardsets"),
+    path('cards/', include('cards.urls'), name="cards"),
+    path('pokemons/', include('pokemons.urls'), name="pokemons"),
+    path('cardsets/', include('cardsets.urls'), name="cardsets"),
     path('search/', SearchView.as_view(), name="search"),
     path(
         'file-upload/',
