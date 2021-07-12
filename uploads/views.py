@@ -10,8 +10,8 @@ from elasticsearch import Elasticsearch
 
 from image_match.elasticsearch_driver import SignatureES
 
-from .forms import ImageForm
-from .models import Image
+from uploads.forms import ImageForm
+from uploads.models import Image
 
 
 # Create your views here.
@@ -44,7 +44,7 @@ class UploadFileView(CreateView):
                 if search:
                     for result in search:
                         image_name_ext = result['path'].split('/')[-1::]
-                        image_name = "".join(image_name_ext).split('.')[-2::][0]
+                        image_name = ''.join(image_name_ext).split('.')[-2::][0]
                         # print(image_name)
                     if image_name:
                         card = Card.objects.get(unique_id=image_name)

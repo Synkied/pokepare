@@ -6,12 +6,12 @@ from django.views import View
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
+from pokemons.models import Pokemon
+from pokemons.serializers import PokemonSerializer
+
 from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
-
-from .models import Pokemon
-from .serializers import PokemonSerializer
 
 # Create your views here.
 
@@ -76,7 +76,6 @@ class PokemonCardsViewDetail(View):
 
     def get(self, request):
         # initial instantiation to avoid TypeError and empty card.prices
-        print('test')
         cards = Card.objects.all()
         context = {
             "cards": cards,

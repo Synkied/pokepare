@@ -10,6 +10,13 @@ from pokepare.utils import OverwriteStorage
 # Create your models here.
 
 
+class SubType(models.Model):
+    name = models.CharField(
+        help_text='The subtype name.',
+        max_length=256
+    )
+
+
 class Card(models.Model):
     unique_id = models.CharField(
         help_text='A unique id for this card. It is made up by taking the set code and concatenating the card number to it. (ex. xy1-1)',  # noqa
@@ -38,12 +45,7 @@ class Card(models.Model):
         blank=True,
         null=True
     )
-    subtype = models.CharField(
-        help_text='MEGA/BREAK/Supporter...',
-        max_length=100,
-        blank=True,
-        null=True
-    )
+    subtype = models.ManyToManyField(SubType)
     supertype = models.CharField(
         help_text='Pokémon/Trainer/Energy',
         max_length=100,
