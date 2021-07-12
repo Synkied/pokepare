@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils import timezone
 
@@ -111,7 +112,7 @@ class Card(models.Model):
 
     condition = models.CharField(max_length=50, blank=True, null=True)
     edition = models.CharField(max_length=50, blank=True, null=True)
-    prices = models.JSONField(blank=True, null=True, default=list)
+    prices = JSONField(blank=True, null=True, default=list)
 
     image_hash = models.PositiveIntegerField(blank=True, null=True)
 
