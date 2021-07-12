@@ -1,3 +1,4 @@
+numpy==1.14.5
 asgiref==3.3.1
 certifi==2018.4.16
 chardet==3.0.4
@@ -24,7 +25,6 @@ lxml==4.6.3
 Markdown==2.6.11
 matplotlib==2.2.2
 networkx==2.1
-numpy==1.14.5
 Pillow==8.1.1
 psycopg2-binary==2.8.6
 pyparsing==2.2.0
