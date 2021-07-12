@@ -1,7 +1,6 @@
 import pprint
 
 from cards.models import Card
-from cards.serializers import CardSerializer
 
 from cardsets.models import CardSet
 
@@ -9,60 +8,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.views import View
 
-from django_filters import rest_framework as filters
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet
-
 from pokepare.utils import PriceFinder
 
-from rest_framework import permissions
-from rest_framework.filters import OrderingFilter
-from rest_framework.viewsets import ReadOnlyModelViewSet
 
-# Create your views here.
-
-
-class CardFilter(FilterSet):
-    # set a filterset to use filters
-    # you can use: http://django-filter.readthedocs.io/en/latest/guide/rest_framework.html#using-the-filter-fields-shortcut  # noqa
-    # but it won't let you use "exclude"
-    insensitive_name = filters.CharFilter(
-        field_name="name",
-        lookup_expr='icontains'
-    )
-    pokemon_id = filters.CharFilter(
-        field_name="pokemon",
-    )
-
-    class Meta:
-        model = Card
-        exclude = ['image']
-        fields = [
-            'insensitive_name',
-            'card_set_code',
-            'unique_id',
-            'pokemon_id'
-        ]
-
-
-class CardViewSet(ReadOnlyModelViewSet):
-    """
-    API endpoint that allows cards to be viewed or edited.
-    """
-    queryset = Card.objects.all()
-    serializer_class = CardSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    filter_backends = (DjangoFilterBackend, OrderingFilter,)
-    ordering_fields = '__all__'  # what field can be ordered via the API
-    ordering = ['national_pokedex_number']  # default ordering
-    filter_class = CardFilter
-
-    def get_queryset(self):
-        qs = super(CardViewSet, self).get_queryset()
-        qs = qs.select_related('pokemon')
-        return qs
-
-
-class CardView(View):
+class CardViewList(View):
 
     template_name = "index.html"
 

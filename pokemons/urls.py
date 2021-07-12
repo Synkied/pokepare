@@ -1,5 +1,5 @@
-from api.views.pokemon import PokemonListView
 from api.views.pokemon import PokemonDetailView
+from api.views.pokemon import PokemonListView
 
 from django.urls import path
 

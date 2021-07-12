@@ -1,34 +1,32 @@
-from cards import views as card_views
-
-from cardsets import views as cardset_views
-
-from pokemons import api as pokemon_api
-
 from rest_framework import routers
+
+from .views import card
+from .views import cardset
+from .views import pokemon
 
 router = routers.DefaultRouter()
 router.register(
     r'card',
-    card_views.CardViewSet,
+    card.CardViewSet,
     basename="card",
 )
 router.register(
     r'cardset',
-    cardset_views.CardSetViewSet,
+    cardset.CardSetViewSet,
     basename="cardset",
 )
 router.register(
     r'language',
-    pokemon_api.LanguageResource,
+    pokemon.LanguageResource,
     basename="language",
 )
 router.register(
     r'pokemon',
-    pokemon_api.PokemonResource,
+    pokemon.PokemonResource,
     basename="pokemon",
 )
 router.register(
     r'pokemonspecie',
-    pokemon_api.PokemonSpeciesResource,
+    pokemon.PokemonSpeciesResource,
     basename="pokemonspecies",
 )
