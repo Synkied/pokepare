@@ -207,6 +207,19 @@ class PokemonSpeciesResource(PokePareCommonResource, ModelViewSet):
     serializer_class = PokemonSpeciesDetailSerializer
 
 
+class PokemonViewSet(ModelViewSet):
+    """
+    API endpoint that allows pokemons to be viewed or edited.
+    """
+    queryset = Pokemon.objects.all()
+    serializer_class = PokemonSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter,)
+    filter_class = PokemonFilter
+    ordering_fields = '__all__'  # what field can be ordered via the API
+    ordering = ['number']  # default ordering
+
+
 class PokemonListView(View):
     template_name = "index.html"
 
