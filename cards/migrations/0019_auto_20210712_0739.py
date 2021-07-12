@@ -22,11 +22,6 @@ class Migration(migrations.Migration):
             name='image_url',
             field=models.URLField(default='/static/assets/pokepare_card.png', help_text='The front image of the card.'),
         ),
-        migrations.AlterField(
-            model_name='card',
-            name='prices',
-            field=models.JSONField(blank=True, default=list, null=True),
-        ),
         migrations.RemoveField(
             model_name='card',
             name='subtype',
