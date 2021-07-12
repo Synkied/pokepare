@@ -12,7 +12,7 @@ from .routers import router
 from .views import SearchView
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name="index.html")),
+    # path('', TemplateView.as_view(template_name="index.html")),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path(
