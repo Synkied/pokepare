@@ -2,6 +2,7 @@ import hashlib
 
 from cards.models import Card
 
+from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -43,3 +44,6 @@ class EbayNotificationView(View):
         verif = verif.hexdigest()
 
         return JsonResponse({'challengeResponse': verif})
+
+    def post(self, request, *args, **kwargs):
+        return HttpResponse(status=200)
