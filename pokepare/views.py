@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -45,5 +46,6 @@ class EbayNotificationView(View):
 
         return JsonResponse({'challengeResponse': verif})
 
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         return HttpResponse(status=200)
