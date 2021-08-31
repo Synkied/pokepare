@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 
 from uploads.views import UploadFileView
 
+from .views import EbayNotificationView
 from .views import SearchView
 
 urlpatterns = [
@@ -24,6 +25,11 @@ urlpatterns = [
     path('pokemons/', include('pokemons.urls'), name="pokemons"),
     path('cardsets/', include('cardsets.urls'), name="cardsets"),
     path('search/', SearchView.as_view(), name="search"),
+    path(
+        'ebay_marketplace_notification/',
+        EbayNotificationView.as_view(),
+        name="ebay_marketplace_notification"
+    ),
     path(
         'file-upload/',
         csrf_exempt(UploadFileView.as_view()),

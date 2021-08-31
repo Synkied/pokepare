@@ -11,5 +11,4 @@ urlpatterns = [
     path('<str:unique_id>', cache_page(60 * 60)(
         CardViewDetail.as_view()
     ), name="card_detail"),
-    # caching page for 1 hour (3600 secs)
 ]
