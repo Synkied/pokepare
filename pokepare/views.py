@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
@@ -29,6 +30,7 @@ class SearchView(View):
         return render(request, self.template_name, context)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class EbayNotificationView(View):
 
     def get(self, request):
@@ -46,6 +48,5 @@ class EbayNotificationView(View):
 
         return JsonResponse({'challengeResponse': verif})
 
-    @csrf_exempt
     def post(self, request, *args, **kwargs):
         return HttpResponse(status=200)
