@@ -1,6 +1,10 @@
+import hashlib
+
 from cards.models import Card
 
+from django.http import JsonResponse
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import View
 
 
@@ -21,3 +25,21 @@ class SearchView(View):
         }
 
         return render(request, self.template_name, context)
+
+
+class EbayNotificationView(View):
+
+    def get(self, request):
+        challenge_code = request.GET.get('challenge_code')
+        compute = '%s%s%s' % (
+            challenge_code,
+            'pokepare_verification_token_42ql',
+            request.build_absolute_uri(
+                reverse('ebay_marketplace_notification')
+            )
+        )
+        compute = compute.encode('utf-8')
+        verif = hashlib.sha256(compute)
+        verif = verif.hexdigest()
+
+        return JsonResponse({'challengeResponse': verif})

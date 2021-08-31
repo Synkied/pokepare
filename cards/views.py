@@ -12,7 +12,6 @@ from pokepare.utils import PriceFinder
 
 
 class CardViewList(View):
-
     template_name = "index.html"
 
     def get(self, request):
@@ -25,7 +24,6 @@ class CardViewList(View):
 
 
 class CardViewDetail(View):
-
     template_name = "index.html"
 
     def get(self, request, unique_id):
