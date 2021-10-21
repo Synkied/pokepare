@@ -2,7 +2,6 @@
 __pycache__/
 pokepare.sublime-project
 pokepare.sublime-workspace
-settings/production.py
 staticfiles
 **/node_modules
 public/media
@@ -16,3 +15,6 @@ public/
 frontend/package-lock.json
 src/
 *.db
+secrets_*.py
+production.py
+staging.py

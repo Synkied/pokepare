@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+from pokepare.settings.secrets_base import (
+    DJANGO_SECRET_KEY,
+)
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # noqa
 
@@ -22,7 +27,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'll=xdhy3oj8)e&97)98&wnui(rfn$%^eifqmd*fog#uj_$iw=g'
+SECRET_KEY = DJANGO_SECRET_KEY
 
 TCGPLAYER_BEARER_TOKEN = '5JRfsdi6dPfliFKY-rTbcP1puDhEkT65QNT0u1Ep32dEcD2Qd9TPCoOYmS8KWnRknXsxXaomWgurzsqKpvtLnWKr74BuLMP7vnAJPqo41bUwznOAUVqpl17NcalM5NQMWj7jETqlnNvW1lq9ki3nle_RCADq692tAWl_ErBr3UJkIWMrp75sI_E6XKT1d-63cvSKADrRsNNooY0EeFn_M3LxydA4Qbl1dho5-BiFLDUtGAhZaRRJG1f6BaSNCGFQzLkrSdE5xJv4RLu4Iz_DdgUzourCe_xJFAznO2eiWXuAmDW-1jjNUeq_GX7lcuG2LIfcIQ'  # noqa
 
